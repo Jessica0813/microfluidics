@@ -7,4 +7,3 @@ import CustomizedTable from './components/CustomizedTable.vue'
     <CustomizedTable />
   </div>
 </template>
-

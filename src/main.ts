@@ -13,21 +13,21 @@ import * as directives from 'vuetify/directives'
 const app = createApp(App)
 
 const vuetify = createVuetify({
-    components,
-    directives,
-    icons: {
-      defaultSet: 'mdi'
+  components,
+  directives,
+  icons: {
+    defaultSet: 'mdi'
+  },
+  defaults: {
+    global: {
+      ripple: false
     },
-    defaults: {
-      global: {
-        ripple: false
-      },
-      VBtn: {
-        style: [{ textTransform: 'none', letterSpacing: '0' }]
-      }
+    VBtn: {
+      style: [{ textTransform: 'none', letterSpacing: '0' }]
     }
-  })
-  
+  }
+})
+
 app.use(vuetify)
 
 app.use(createPinia())

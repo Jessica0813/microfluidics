@@ -3,7 +3,7 @@ import { computed, defineModel } from 'vue'
 import CustomizedButton from './CustomizedButton.vue'
 import { useFluidStore } from '@/stores/fluid'
 import ColorPicker from './ColorPicker.vue'
-import type { Fluid } from '@/types/fluid';
+import type { Fluid } from '@/types/fluid'
 
 const fluidStore = useFluidStore()
 
@@ -21,7 +21,8 @@ const emit = defineEmits(['close', 'cancel', 'save'])
 const isNameExisted = computed(() => {
   const enteredName = nameInput.value?.trim().toLowerCase()
   return fluidStore.fluidTypes.some(
-    (fluid: Fluid, index: number) => index !== props.itemIndex && fluid.name.toLowerCase() === enteredName
+    (fluid: Fluid, index: number) =>
+      index !== props.itemIndex && fluid.name.toLowerCase() === enteredName
   )
 })
 </script>

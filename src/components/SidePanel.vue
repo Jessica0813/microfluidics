@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { VDialogBottomTransition } from 'vuetify/components'
-
 function onDragStart(event: any, nodeType: string) {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', nodeType)

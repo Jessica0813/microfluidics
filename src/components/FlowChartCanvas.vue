@@ -6,10 +6,16 @@ import { Background } from '@vue-flow/background'
 import ActionNode from './ActionNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
+import CustomEdge from './CustomEdge.vue'
 
-let id = 0
+let nodeId = 0
+let edgeId = 0
 function getId() {
-  return `node_${id++}`
+  return `node_${nodeId++}`
+}
+
+function getEdgeId() {
+  return `edge_${edgeId++}`
 }
 
 const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef } = useVueFlow()
@@ -22,7 +28,9 @@ function onDragOver(event: any) {
   }
 }
 
-onConnect((params) => addEdges(params))
+onConnect((params) =>
+  addEdges([{ ...params, type: 'custom', markerEnd: 'arrow', id: getEdgeId() }])
+)
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
@@ -38,8 +46,7 @@ function onDrop(event: any) {
   const newNode = {
     id: getId(),
     type,
-    position,
-    label: `${type} node`
+    position
   }
 
   addNodes([newNode])
@@ -73,10 +80,13 @@ function onDrop(event: any) {
     <VueFlow @dragover="onDragOver" fit-view-on-init>
       <Background patternColor="grey-darken-3" />
       <template #node-custom="customNodeProps">
-        <ActionNode v-bind="customNodeProps" />
+        <ActionNode v-bind="customNodeProps" :nodeId="customNodeProps.id" />
       </template>
       <template #node-condition="conditionNodeProps">
         <ConditionNode v-bind="conditionNodeProps" />
+      </template>
+      <template #edge-custom="props">
+        <CustomEdge v-bind="props" />
       </template>
       <Controls />
     </VueFlow>
@@ -86,7 +96,7 @@ function onDrop(event: any) {
 <style scoped>
 .side-panel {
   position: absolute;
-  top: 0; /* Adjust the top position as needed */
+  top: 0;
   left: 0;
   z-index: 5;
   cursor: pointer;

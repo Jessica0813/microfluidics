@@ -1,10 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Handle, Position } from '@vue-flow/core'
+import { ref, watch } from 'vue'
+import { Handle, Position, useVueFlow } from '@vue-flow/core'
+import type { Operation } from '@/types/operation'
+
+const { findNode } = useVueFlow()
+
+const props = defineProps({
+  nodeId: {
+    type: String,
+    required: true
+  }
+})
 
 const items = ref(['inlet 1', 'inlet 2', 'inlet 3'])
 const ways = ref(['droplet', 'Needlenedddke'])
 const fluids = ref(['water', 'oil'])
+
+const flowControl = ref<Operation>({
+  inlet: '',
+  injection: '',
+  fluid: '',
+  pressure: 0,
+  startTime: 0,
+  endTime: 0
+})
+
+watch(flowControl.value, (newFlowControl) => {
+  const node = findNode(props.nodeId)
+  if (node === undefined) {
+    return
+  }
+  node.data.flowControl = newFlowControl
+  console.log(node)
+})
 </script>
 
 <template>
@@ -27,22 +55,23 @@ const fluids = ref(['water', 'oil'])
       <v-row dense>
         <v-col cols="6">
           <v-select
+            v-model="flowControl.inlet"
             variant="outlined"
             density="compact"
             :items="items"
             color="blue-darken-3"
             label="inlet"
-            class="custom-v-field"
           >
           </v-select>
         </v-col>
         <v-col cols="6">
           <v-select
+            v-model="flowControl.injection"
             variant="outlined"
             density="compact"
             :items="ways"
             color="blue-darken-3"
-            label="ways"
+            label="injection"
           >
           </v-select>
         </v-col>
@@ -51,17 +80,19 @@ const fluids = ref(['water', 'oil'])
       <v-row dense>
         <v-col cols="6">
           <v-select
+            v-model="flowControl.fluid"
             variant="outlined"
             density="compact"
             :items="fluids"
             color="blue-darken-3"
-            label="fluids"
+            label="fluid"
             class="custom-v-field"
           >
           </v-select>
         </v-col>
         <v-col cols="6">
           <v-text-field
+            v-model="flowControl.pressure"
             type="number"
             label="Pressure"
             variant="outlined"
@@ -76,6 +107,7 @@ const fluids = ref(['water', 'oil'])
       <v-row dense>
         <v-col cols="6">
           <v-text-field
+            v-model="flowControl.startTime"
             type="number"
             label="start time"
             variant="outlined"
@@ -87,6 +119,7 @@ const fluids = ref(['water', 'oil'])
         </v-col>
         <v-col cols="6">
           <v-text-field
+            v-model="flowControl.endTime"
             type="number"
             label="end time"
             variant="outlined"

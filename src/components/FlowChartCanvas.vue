@@ -7,6 +7,7 @@ import ActionNode from './ActionNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
+import TableConfigureButton from './TableConfigureButton.vue'
 
 let nodeId = 0
 let edgeId = 0
@@ -77,7 +78,10 @@ function onDrop(event: any) {
     <div class="side-panel">
       <SidePanel />
     </div>
-    <VueFlow @dragover="onDragOver" fit-view-on-init>
+    <div>
+      <TableConfigureButton class="table-configure-button" />
+    </div>
+    <VueFlow @dragover="onDragOver" fit-view-on-init :default-viewport="{ zoom: 0.5 }">
       <Background patternColor="grey-darken-3" />
       <template #node-custom="customNodeProps">
         <ActionNode v-bind="customNodeProps" :nodeId="customNodeProps.id" />
@@ -96,12 +100,17 @@ function onDrop(event: any) {
 <style scoped>
 .side-panel {
   position: absolute;
-  top: 0;
+  top: 70px;
   left: 0;
   z-index: 5;
   cursor: pointer;
 }
-
+.table-configure-button {
+  position: absolute;
+  top: 15px;
+  left: 52%;
+  z-index: 5;
+}
 .vue-flow__controls {
   display: flex;
 }

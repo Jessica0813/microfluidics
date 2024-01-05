@@ -5,8 +5,11 @@ import { ref } from 'vue'
 import CustomizedButton from './CustomizedButton.vue'
 import DeleteConfirmationDialog from './DeleteConfirmationDialog.vue'
 import ItemFormDialog from './ItemFormDialog.vue'
+import { defineModel } from 'vue'
 
 const fluidStore = useFluidStore()
+
+const isTableVisible = defineModel<boolean>('isTableVisible')
 
 const headers: any = [
   { title: 'Name', align: 'start', sortable: false, key: 'name', width: '40%' },
@@ -87,6 +90,8 @@ function handleEditFluid(index: number, fluid: Fluid) {
 </script>
 
 <template>
+<v-dialog v-model="isTableVisible" width="80%" min-height="80%" max-height="80%" scrollable>
+  <v-card class="pa-10" >
   <DeleteConfirmationDialog
     v-model="dialogDelete"
     @close="closeDeleteDialog"
@@ -113,7 +118,7 @@ function handleEditFluid(index: number, fluid: Fluid) {
   <v-data-table-virtual
     :headers="headers"
     :items="fluidStore.fluidTypes"
-    density="default"
+    density="comfortable"
     :hover="true"
   >
     <template v-slot:headers="{ columns }">
@@ -139,4 +144,6 @@ function handleEditFluid(index: number, fluid: Fluid) {
       </v-icon>
     </template>
   </v-data-table-virtual>
+</v-card>
+</v-dialog>
 </template>

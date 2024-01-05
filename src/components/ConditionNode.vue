@@ -12,16 +12,16 @@ const items = ref(['sensor 1', 'sensor 2', 'sensor 3'])
     <Handle type="source" :position="Position.Right" />
     <Handle type="source" :position="Position.Left" />
     <v-sheet
-      class="pa-5 align-center justify-center"
+      class="pa-3 align-center justify-center"
       width="300"
       color="grey-lighten-4"
       :rounded="true"
     >
       <div class="d-flex align-center mb-3">
-        <v-icon size="24" style="transform: rotate(180deg)" class="mr-2" color="grey-darken-3">
+        <v-icon size="small" style="transform: rotate(180deg)" class="mr-2" color="grey-darken-3">
           mdi-call-split</v-icon
         >
-        <p class="text-h6">Condition</p>
+        <p class="text-subtitle-2">Condition</p>
       </div>
 
       <v-row dense>

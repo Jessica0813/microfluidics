@@ -3,6 +3,8 @@
 @import 'https://cdn.jsdelivr.net/npm/@vue-flow/controls@latest/dist/style.css';
 
 #app {
+  display: flex;
+  flex-direction: row; 
   margin: 0 auto;
   padding: 0rem;
   font-weight: normal;

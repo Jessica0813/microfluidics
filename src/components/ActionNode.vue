@@ -42,14 +42,14 @@ watch(flowControl.value, (newFlowControl) => {
     <Handle type="source" :position="Position.Right" />
     <Handle type="source" :position="Position.Left" />
     <v-sheet
-      class="pa-5 align-center justify-center"
+      class="pa-4 align-center justify-center"
       width="300"
       color="grey-lighten-4"
       :rounded="true"
     >
       <div class="d-flex align-center mb-3">
-        <v-icon size="24" class="mr-2" color="grey-darken-3"> mdi-cog</v-icon>
-        <p class="text-h6">Action</p>
+        <v-icon size="small" class="mr-2" color="grey-darken-3"> mdi-cog</v-icon>
+        <p class="text-subtitle-2">Action</p>
       </div>
 
       <v-row dense>
@@ -135,11 +135,11 @@ watch(flowControl.value, (newFlowControl) => {
 </template>
 
 <style>
-/* .v-input__details {
+.v-input__details {
     display: none !important;
     min-height: 12px !important;
     padding-top: 4px !important;
-} */
+}
 .v-input--density-compact .v-field--variant-outlined,
 .v-input--density-compact .v-field--single-line,
 .v-input--density-compact .v-field--no-label {

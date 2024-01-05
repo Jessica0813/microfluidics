@@ -90,60 +90,70 @@ function handleEditFluid(index: number, fluid: Fluid) {
 </script>
 
 <template>
-<v-dialog v-model="isTableVisible" width="80%" min-height="80%" max-height="80%" scrollable>
-  <v-card class="pa-10" >
-  <DeleteConfirmationDialog
-    v-model="dialogDelete"
-    @close="closeDeleteDialog"
-    @cancel="cancelItemDelete"
-    @confirm="confirmItemDelete"
-  />
-  <ItemFormDialog
-    v-model:isDialogVisible="dialogCreateOrEdit"
-    v-model:nameInput="name"
-    v-model:colorInput="color"
-    v-model:viscosityInput="viscosity"
-    @close="closeCreateOrEditDialog"
-    @cancel="cancelItemCreateOrEdit"
-    @save="confirmItemCreateOrEdit"
-    :itemIndex="createOrEditItemIndex"
-  />
-  <v-card-title class="d-flex align-center pe-2">
-    Fluids
-    <v-spacer></v-spacer>
-    <CustomizedButton buttonName="Add new item" @onClick="handleAddNewFluid" />
-  </v-card-title>
+  <v-dialog v-model="isTableVisible" width="80%" min-height="80%" max-height="80%" scrollable>
+    <v-card class="pa-10">
+      <DeleteConfirmationDialog
+        v-model="dialogDelete"
+        @close="closeDeleteDialog"
+        @cancel="cancelItemDelete"
+        @confirm="confirmItemDelete"
+      />
+      <ItemFormDialog
+        v-model:isDialogVisible="dialogCreateOrEdit"
+        v-model:nameInput="name"
+        v-model:colorInput="color"
+        v-model:viscosityInput="viscosity"
+        @close="closeCreateOrEditDialog"
+        @cancel="cancelItemCreateOrEdit"
+        @save="confirmItemCreateOrEdit"
+        :itemIndex="createOrEditItemIndex"
+      />
+      <v-card-title class="d-flex align-center pe-2">
+        Fluids
+        <v-spacer></v-spacer>
+        <CustomizedButton buttonName="Add new item" @onClick="handleAddNewFluid" />
+      </v-card-title>
 
-  <v-divider></v-divider>
-  <v-data-table-virtual
-    :headers="headers"
-    :items="fluidStore.fluidTypes"
-    density="comfortable"
-    :hover="true"
-  >
-    <template v-slot:headers="{ columns }">
-      <tr class="bg-grey-lighten-3">
-        <template v-for="column in columns" :key="column.key">
-          <td class="">
-            <p class="font-weight-bold">{{ column.title }}</p>
-          </td>
+      <v-divider></v-divider>
+      <v-data-table-virtual
+        :headers="headers"
+        :items="fluidStore.fluidTypes"
+        density="comfortable"
+        :hover="true"
+      >
+        <template v-slot:headers="{ columns }">
+          <tr class="bg-grey-lighten-3">
+            <template v-for="column in columns" :key="column.key">
+              <td class="">
+                <p class="font-weight-bold">{{ column.title }}</p>
+              </td>
+            </template>
+          </tr>
         </template>
-      </tr>
-    </template>
-    <template v-slot:item.color="{ item }">
-      <div
-        :style="{ width: '30px', height: '15px', borderRadius: '2px', backgroundColor: item.color }"
-      ></div>
-    </template>
-    <template v-slot:item.actions="{ item, index }">
-      <v-icon size="small" class="me-2" color="grey-darken-3" @click="handleEditFluid(index, item)">
-        mdi-pencil-outline
-      </v-icon>
-      <v-icon size="small" color="grey-darken-3" @click="deleteItem(index)">
-        mdi-delete-outline
-      </v-icon>
-    </template>
-  </v-data-table-virtual>
-</v-card>
-</v-dialog>
+        <template v-slot:item.color="{ item }">
+          <div
+            :style="{
+              width: '30px',
+              height: '15px',
+              borderRadius: '2px',
+              backgroundColor: item.color
+            }"
+          ></div>
+        </template>
+        <template v-slot:item.actions="{ item, index }">
+          <v-icon
+            size="small"
+            class="me-2"
+            color="grey-darken-3"
+            @click="handleEditFluid(index, item)"
+          >
+            mdi-pencil-outline
+          </v-icon>
+          <v-icon size="small" color="grey-darken-3" @click="deleteItem(index)">
+            mdi-delete-outline
+          </v-icon>
+        </template>
+      </v-data-table-virtual>
+    </v-card>
+  </v-dialog>
 </template>

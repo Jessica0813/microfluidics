@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import FileUploadButton from './components/FileUploadButton.vue';
+import FileUploadButton from './components/FileUploadButton.vue'
 import FlowChartCanvas from './components/FlowChartCanvas.vue'
 </script>
 
 <template>
   <div id="app">
     <div class="flowchart-canvas">
-    <FlowChartCanvas />
+      <FlowChartCanvas />
     </div>
     <div class="design">
       <FileUploadButton />
@@ -14,11 +14,10 @@ import FlowChartCanvas from './components/FlowChartCanvas.vue'
   </div>
 </template>
 
-
 <style scoped>
 .flowchart-canvas {
   width: 60%;
-  border-right: 1px solid #BDBDBD;
+  border-right: 1px solid #bdbdbd;
 }
 .design {
   width: 40%;

@@ -1,14 +1,14 @@
 <template>
-    <label for="upload" class="upload-button">
-    <v-icon color="grey-darken-3" size="small" >mdi-upload</v-icon>
-    <input type="file" id="upload" style="display: none;" />
+  <label for="upload" class="upload-button">
+    <v-icon color="grey-darken-3" size="small">mdi-upload</v-icon>
+    <input type="file" id="upload" style="display: none" />
   </label>
 </template>
 
 <style scoped>
 .upload-button {
   cursor: pointer;
-  border: 1px solid #BDBDBD;
+  border: 1px solid #bdbdbd;
   border-radius: 4px;
   padding: 4px;
   width: fit-content;
@@ -19,6 +19,6 @@
   top: 15px;
 }
 .upload-button:hover {
-  background-color: #EEEEEE
+  background-color: #eeeeee;
 }
 </style>

@@ -136,9 +136,9 @@ watch(flowControl.value, (newFlowControl) => {
 
 <style>
 .v-input__details {
-    display: none !important;
-    min-height: 12px !important;
-    padding-top: 4px !important;
+  display: none !important;
+  min-height: 12px !important;
+  padding-top: 4px !important;
 }
 .v-input--density-compact .v-field--variant-outlined,
 .v-input--density-compact .v-field--single-line,

@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { VueFlow, useVueFlow } from '@vue-flow/core'
+import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import SidePanel from './SidePanel.vue'
 import { Background } from '@vue-flow/background'
-import ActionNode from './ActionNode.vue'
+import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
 import TableConfigureButton from './TableConfigureButton.vue'
 
-let nodeId = 0
+let processNodeId = 0
+let conditionNodeId = 0
 let edgeId = 0
-function getId() {
-  return `node_${nodeId++}`
+function getProcessNodeId() {
+  return `process_node_${processNodeId++}`
+}
+
+function getConditionNodeId() {
+  return `condition_node_${conditionNodeId++}`
 }
 
 function getEdgeId() {
   return `edge_${edgeId++}`
 }
 
-const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef } = useVueFlow()
+const { getEdges, findNode, onConnect, updateEdge, addEdges, addNodes, project, vueFlowRef } =
+  useVueFlow()
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -29,9 +35,36 @@ function onDragOver(event: any) {
   }
 }
 
-onConnect((params) =>
-  addEdges([{ ...params, type: 'custom', markerEnd: 'arrow', id: getEdgeId() }])
-)
+onConnect((params) => {
+  // look through edges to check if any edge is connected to the source node
+  if (params.source.includes('process_node')) {
+    addEdges([{ ...params, type: 'custom', id: getEdgeId() }])
+  } else if (params.source.includes('condition_node')) {
+    let isTrueEdgeExist: boolean = false
+    let isFalseEdgeExist: boolean = false
+    getEdges.value.forEach((edge) => {
+      if (edge.source === params.source) {
+        if (edge.label === 'Yes') {
+          isTrueEdgeExist = true
+        } else if (edge.label === 'No') {
+          isFalseEdgeExist = true
+        }
+      }
+    })
+
+    if (isTrueEdgeExist && isFalseEdgeExist) {
+      return
+    } else if ((!isTrueEdgeExist && !isFalseEdgeExist) || isFalseEdgeExist) {
+      addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'Yes' }])
+    } else if (isTrueEdgeExist) {
+      addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'No' }])
+    } 
+  }
+})
+
+function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
+  return updateEdge(edge, connection, false)
+}
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
@@ -44,8 +77,14 @@ function onDrop(event: any) {
     y: event.clientY - top
   })
 
+  let nodeId: string = '';
+  if (type === 'process') {
+     nodeId = getProcessNodeId()
+  } else if (type === 'condition') {
+     nodeId = getConditionNodeId()
+  }
   const newNode = {
-    id: getId(),
+    id: nodeId,
     type,
     position
   }
@@ -74,17 +113,23 @@ function onDrop(event: any) {
 </script>
 
 <template>
-  <div @drop="onDrop" style="width: 100%; height: 100vh">
+  <div @drop="onDrop" style="width: 100%; height: 100%">
     <div class="side-panel">
       <SidePanel />
     </div>
     <div>
       <TableConfigureButton class="table-configure-button" />
     </div>
-    <VueFlow @dragover="onDragOver" fit-view-on-init :default-viewport="{ zoom: 0.5 }">
-      <Background patternColor="grey-darken-3" />
-      <template #node-custom="customNodeProps">
-        <ActionNode v-bind="customNodeProps" :nodeId="customNodeProps.id" />
+    <VueFlow
+      @dragover="onDragOver"
+      fit-view-on-init
+      :default-viewport="{ zoom: 1 }"
+      :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
+      @edge-update="onEdgeUpdate"
+    >
+      <Background />
+      <template #node-process="processNodeProps">
+        <ProcessNode v-bind="processNodeProps" :nodeId="processNodeProps.id" />
       </template>
       <template #node-condition="conditionNodeProps">
         <ConditionNode v-bind="conditionNodeProps" />

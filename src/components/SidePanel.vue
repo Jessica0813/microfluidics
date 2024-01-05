@@ -14,7 +14,7 @@ function onDragStart(event: any, nodeType: string) {
         <div
           class="pa-1"
           :draggable="true"
-          @dragstart="onDragStart($event, 'custom')"
+          @dragstart="onDragStart($event, 'process')"
           v-bind="props"
           :style="{ backgroundColor: isHovering ? '#EEEEEE' : '', borderBottom: '1px solid #eee' }"
         >

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import CustomizedButton from './CustomizedButton.vue';
-import CustomizedTable from './CustomizedTable.vue';
-import { ref } from 'vue';
+import CustomizedButton from './CustomizedButton.vue'
+import CustomizedTable from './CustomizedTable.vue'
+import { ref } from 'vue'
 
-const tableDialog = ref(false);
+const tableDialog = ref(false)
 
 function onButtonClick() {
-  tableDialog.value = true;
+  tableDialog.value = true
 }
 </script>
 

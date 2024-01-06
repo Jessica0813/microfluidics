@@ -129,7 +129,7 @@ function onDrop(event: any) {
     >
       <Background />
       <template #node-process="processNodeProps">
-        <ProcessNode v-bind="processNodeProps" :nodeId="processNodeProps.id" />
+        <ProcessNode v-bind="processNodeProps" />
       </template>
       <template #node-condition="conditionNodeProps">
         <ConditionNode v-bind="conditionNodeProps" />

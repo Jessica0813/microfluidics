@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { Handle, Position, useVueFlow } from '@vue-flow/core'
+import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 import type { Operation } from '@/types/operation'
 
 const { findNode } = useVueFlow()
-
-const props = defineProps({
-  nodeId: {
-    type: String,
-    required: true
-  }
-})
+const { id, selected } = defineProps<NodeProps>()
+const nodeIsHovered = ref(false)
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ref(['droplet', 'Needlenedddke'])
@@ -26,7 +21,7 @@ const flowControl = ref<Operation>({
 })
 
 watch(flowControl.value, (newFlowControl) => {
-  const node = findNode(props.nodeId)
+  const node = findNode(id)
   if (node === undefined) {
     return
   }
@@ -36,18 +31,42 @@ watch(flowControl.value, (newFlowControl) => {
 </script>
 
 <template>
-  <div>
-    <Handle type="source" :position="Position.Top">
-      <!-- <slot>
-
-        <div style="width: 20px; height: 20px; background-color: #00f;"></div>
-      </slot> -->
-    </Handle>
-    <Handle type="source" :position="Position.Bottom" />
-    <Handle type="source" :position="Position.Right" />
-    <Handle type="source" :position="Position.Left" />
+  <div
+    @mouseover="nodeIsHovered = true"
+    @mouseout="nodeIsHovered = false"
+    :style="{
+      boxShadow:
+        selected || nodeIsHovered
+          ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
+          : ''
+    }"
+  >
+    <!-- <CustomizedHandle 
+        :type="'source'"
+        :position="Position.Top"
+      ></CustomizedHandle> -->
+    <Handle
+      type="source"
+      :position="Position.Top"
+      :class="selected || nodeIsHovered ? '' : 'top-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Bottom"
+      :class="selected || nodeIsHovered ? '' : 'bottom-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :class="selected || nodeIsHovered ? '' : 'right-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Left"
+      :class="selected || nodeIsHovered ? '' : 'left-handle'"
+    />
     <v-sheet
-      class="pa-4 align-center justify-center"
+      class="pa-3 align-center justify-center"
       width="300"
       color="grey-lighten-4"
       :rounded="true"
@@ -159,27 +178,55 @@ watch(flowControl.value, (newFlowControl) => {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  top: -15px;
+  top: -17px;
+}
+
+.top-handle {
+  height: 0;
+  width: 0;
+  top: 0;
+  opacity: 0;
 }
 
 .vue-flow__handle-right {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  right: -15px;
+  right: -17px;
+}
+
+.right-handle {
+  height: 0;
+  width: 0;
+  right: 0;
+  opacity: 0;
 }
 
 .vue-flow__handle-bottom {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  bottom: -15px;
+  bottom: -17px;
+}
+
+.bottom-handle {
+  height: 0;
+  width: 0;
+  bottom: 0;
+  opacity: 0;
 }
 
 .vue-flow__handle-left {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  left: -15px;
+  left: -17px;
+}
+
+.left-handle {
+  height: 0;
+  width: 0;
+  left: 0;
+  opacity: 0;
 }
 </style>

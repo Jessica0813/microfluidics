@@ -58,7 +58,7 @@ onConnect((params) => {
       addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'Yes' }])
     } else if (isTrueEdgeExist) {
       addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'No' }])
-    } 
+    }
   }
 })
 
@@ -77,11 +77,11 @@ function onDrop(event: any) {
     y: event.clientY - top
   })
 
-  let nodeId: string = '';
+  let nodeId: string = ''
   if (type === 'process') {
-     nodeId = getProcessNodeId()
+    nodeId = getProcessNodeId()
   } else if (type === 'condition') {
-     nodeId = getConditionNodeId()
+    nodeId = getConditionNodeId()
   }
   const newNode = {
     id: nodeId,

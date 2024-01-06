@@ -18,7 +18,7 @@ function onDragStart(event: any, nodeType: string) {
           v-bind="props"
           :style="{ backgroundColor: isHovering ? '#EEEEEE' : '', borderBottom: '1px solid #eee' }"
         >
-          <v-icon size="20" color="grey-darken-3"> mdi-cog</v-icon>
+          <v-icon size="20" color="grey-darken-3"> mdi-form-select </v-icon>
         </div>
       </template>
     </v-hover>

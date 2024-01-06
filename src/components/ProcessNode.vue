@@ -12,9 +12,9 @@ const props = defineProps({
   }
 })
 
-const items = ref(['inlet 1', 'inlet 2', 'inlet 3'])
-const ways = ref(['droplet', 'Needlenedddke'])
-const fluids = ref(['water', 'oil'])
+const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
+const injections = ref(['droplet', 'Needlenedddke'])
+const fluids = ['water', 'oil']
 
 const flowControl = ref<Operation>({
   inlet: '',
@@ -37,7 +37,12 @@ watch(flowControl.value, (newFlowControl) => {
 
 <template>
   <div>
-    <Handle type="source" :position="Position.Top" />
+    <Handle type="source" :position="Position.Top">
+      <!-- <slot>
+
+        <div style="width: 20px; height: 20px; background-color: #00f;"></div>
+      </slot> -->
+    </Handle>
     <Handle type="source" :position="Position.Bottom" />
     <Handle type="source" :position="Position.Right" />
     <Handle type="source" :position="Position.Left" />
@@ -48,8 +53,8 @@ watch(flowControl.value, (newFlowControl) => {
       :rounded="true"
     >
       <div class="d-flex align-center mb-3">
-        <v-icon size="small" class="mr-2" color="grey-darken-3"> mdi-cog</v-icon>
-        <p class="text-subtitle-2">Action</p>
+        <v-icon size="small" class="mr-2" color="grey-darken-3"> mdi-form-select</v-icon>
+        <p class="text-subtitle-2">Procedure</p>
       </div>
 
       <v-row dense>
@@ -58,7 +63,7 @@ watch(flowControl.value, (newFlowControl) => {
             v-model="flowControl.inlet"
             variant="outlined"
             density="compact"
-            :items="items"
+            :items="inlets"
             color="blue-darken-3"
             label="inlet"
           >
@@ -69,7 +74,7 @@ watch(flowControl.value, (newFlowControl) => {
             v-model="flowControl.injection"
             variant="outlined"
             density="compact"
-            :items="ways"
+            :items="injections"
             color="blue-darken-3"
             label="injection"
           >

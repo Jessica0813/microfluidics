@@ -2,22 +2,20 @@
 import { ref, watch } from 'vue'
 import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 import type { Operation } from '@/types/operation'
+import ProcessEditMenu from './ProcessEditMenu.vue'
 
 const { findNode } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-
-const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ref(['droplet', 'Needlenedddke'])
-const fluids = ['water', 'oil']
+const isMenuOpen = ref(false)
 
 const flowControl = ref<Operation>({
-  inlet: '',
-  injection: '',
-  fluid: '',
-  pressure: 0,
+  inlet: 'inlet 1',
+  injection: 'droplet',
+  fluid: 'water',
+  pressure: 3000,
   startTime: 0,
-  endTime: 0
+  endTime: 20
 })
 
 watch(flowControl.value, (newFlowControl) => {
@@ -36,15 +34,11 @@ watch(flowControl.value, (newFlowControl) => {
     @mouseout="nodeIsHovered = false"
     :style="{
       boxShadow:
-        selected || nodeIsHovered
+        selected || nodeIsHovered || isMenuOpen
           ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
           : ''
     }"
   >
-    <!-- <CustomizedHandle 
-        :type="'source'"
-        :position="Position.Top"
-      ></CustomizedHandle> -->
     <Handle
       type="source"
       :position="Position.Top"
@@ -65,115 +59,30 @@ watch(flowControl.value, (newFlowControl) => {
       :position="Position.Left"
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
-    <v-sheet
-      class="pa-3 align-center justify-center"
-      width="300"
-      color="grey-lighten-4"
-      :rounded="true"
+    <div
+      class="flex align-center justify-center"
+      style="width: 280px; height: auto; background-color: #f5f5f5; border-radius: 4px"
     >
-      <div class="d-flex align-center mb-3">
-        <v-icon size="small" class="mr-2" color="grey-darken-3"> mdi-form-select</v-icon>
-        <p class="text-subtitle-2">Procedure</p>
+      <div class="d-flex align-center pt-3 pb-2">
+        <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
+        <p class="text-subtitle-2">{{  "Time period: " + flowControl.startTime + " - " + flowControl.endTime + "s" }}</p>
+        <v-spacer></v-spacer>
+        <div>
+          <ProcessEditMenu  v-model="isMenuOpen"/>
+        </div>
       </div>
-
-      <v-row dense>
-        <v-col cols="6">
-          <v-select
-            v-model="flowControl.inlet"
-            variant="outlined"
-            density="compact"
-            :items="inlets"
-            color="blue-darken-3"
-            label="inlet"
-          >
-          </v-select>
-        </v-col>
-        <v-col cols="6">
-          <v-select
-            v-model="flowControl.injection"
-            variant="outlined"
-            density="compact"
-            :items="injections"
-            color="blue-darken-3"
-            label="injection"
-          >
-          </v-select>
-        </v-col>
-      </v-row>
-
-      <v-row dense>
-        <v-col cols="6">
-          <v-select
-            v-model="flowControl.fluid"
-            variant="outlined"
-            density="compact"
-            :items="fluids"
-            color="blue-darken-3"
-            label="fluid"
-            class="custom-v-field"
-          >
-          </v-select>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model="flowControl.pressure"
-            type="number"
-            label="Pressure"
-            variant="outlined"
-            density="compact"
-            suffix="Pa"
-            color="blue-darken-3"
-          >
-          </v-text-field>
-        </v-col>
-      </v-row>
-
-      <v-row dense>
-        <v-col cols="6">
-          <v-text-field
-            v-model="flowControl.startTime"
-            type="number"
-            label="start time"
-            variant="outlined"
-            density="compact"
-            suffix="s"
-            color="blue-darken-3"
-          >
-          </v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model="flowControl.endTime"
-            type="number"
-            label="end time"
-            variant="outlined"
-            density="compact"
-            suffix="s"
-            color="blue-darken-3"
-          >
-          </v-text-field>
-        </v-col>
-      </v-row>
-    </v-sheet>
+      <v-divider thickness="2" />
+      <div class="flex pa-3">
+          <v-chip class="mr-1 mb-2">{{ 'inlet: ' + flowControl.inlet }}</v-chip>
+          <v-chip class="mr-1 mb-2">{{ 'fluid: ' + flowControl.fluid }}</v-chip>
+          <v-chip class="mr-1 mb-2">{{ 'pressure:' + flowControl.pressure }}</v-chip>
+          <v-chip class="mr-1 mb-2">{{ 'injection: ' + flowControl.injection }}</v-chip>
+      </div>
+    </div>
   </div>
 </template>
 
 <style>
-.v-input__details {
-  display: none !important;
-  min-height: 12px !important;
-  padding-top: 4px !important;
-}
-.v-input--density-compact .v-field--variant-outlined,
-.v-input--density-compact .v-field--single-line,
-.v-input--density-compact .v-field--no-label {
-  --v-field-padding-bottom: 2px !important;
-  --v-field-input-padding-top: 2px !important;
-}
-.v-input--density-compact {
-  --v-input-control-height: 36px !important;
-}
-
 .vue-flow__handle-top {
   height: 30px;
   width: 30px;

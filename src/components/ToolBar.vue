@@ -10,13 +10,28 @@ import TableConfigureButton from './TableConfigureButton.vue'
     <button class="button">
       <v-icon color="grey-darken-3" size="small">mdi-download</v-icon>
     </button>
-    <TableConfigureButton />
-    <button class="button">
-      <v-icon size="small" color="grey-darken-3">mdi-waves</v-icon>
-    </button>
-    <button class="button">
-      <v-icon size="small" color="grey-darken-3">mdi-play</v-icon>
-    </button>
+    <v-tooltip location="bottom">
+      <template v-slot:activator="{ props }">
+        <TableConfigureButton v-bind="props" />
+      </template>
+      <span>Fluid table</span>
+    </v-tooltip>
+    <v-tooltip location="bottom">
+      <template v-slot:activator="{ props }">
+        <button class="button" v-bind="props">
+          <v-icon size="small" color="grey-darken-3">mdi-waves</v-icon>
+        </button>
+      </template>
+      <span>Chip design</span>
+    </v-tooltip>
+    <v-tooltip location="bottom">
+      <template v-slot:activator="{ props }">
+        <button class="button" v-bind="props">
+          <v-icon size="small" color="grey-darken-3">mdi-play</v-icon>
+        </button>
+      </template>
+      <span>Run simulation</span>
+    </v-tooltip>
   </div>
 </template>
 

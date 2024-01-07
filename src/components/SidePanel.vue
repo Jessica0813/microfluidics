@@ -9,14 +9,34 @@ function onDragStart(event: any, nodeType: string) {
 
 <template>
   <div class="panel text-center flex-column elevation-1">
-    <div class="icon-padding" :draggable="true" @dragstart="onDragStart($event, 'process')">
-      <v-icon size="small" color="grey-darken-3"> mdi-form-select </v-icon>
-    </div>
-    <div class="icon-padding" :draggable="true" @dragstart="onDragStart($event, 'condition')">
-      <v-icon size="small" color="grey-darken-3" style="transform: rotate(180deg)">
-        mdi-call-split</v-icon
-      >
-    </div>
+    <v-tooltip>
+      <template v-slot:activator="{ props }">
+        <div
+          class="icon-padding"
+          :draggable="true"
+          @dragstart="onDragStart($event, 'process')"
+          v-bind="props"
+        >
+          <v-icon size="small" color="grey-darken-3"> mdi-form-select </v-icon>
+        </div>
+      </template>
+      <span>Process Node</span>
+    </v-tooltip>
+    <v-tooltip>
+      <template v-slot:activator="{ props }">
+        <div
+          class="icon-padding"
+          :draggable="true"
+          @dragstart="onDragStart($event, 'condition')"
+          v-bind="props"
+        >
+          <v-icon size="small" color="grey-darken-3" style="transform: rotate(180deg)">
+            mdi-call-split</v-icon
+          >
+        </div>
+      </template>
+      <span>Condition Node</span>
+    </v-tooltip>
   </div>
 </template>
 

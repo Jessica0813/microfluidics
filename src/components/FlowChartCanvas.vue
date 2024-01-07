@@ -120,6 +120,7 @@ function onDrop(event: any) {
     <div class="icon-button-group">
       <ToolBar />
     </div>
+    <div class="design-canvas elevation-5"></div>
     <VueFlow
       @dragover="onDragOver"
       fit-view-on-init
@@ -155,6 +156,18 @@ function onDrop(event: any) {
   position: absolute;
   top: 15px;
   right: 30px;
+  z-index: 5;
+}
+
+.design-canvas {
+  position: absolute;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #ffffff;
+  width: 40%;
+  height: 40%;
+  bottom: 15px;
+  right: 15px;
   z-index: 5;
 }
 

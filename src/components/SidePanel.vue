@@ -24,7 +24,6 @@ function onDragStart(event: any, nodeType: string) {
 .panel {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  margin: 15px;
   border-radius: 4px;
   padding: 2px;
 }

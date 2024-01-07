@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CustomizedButton from './CustomizedButton.vue'
 import CustomizedTable from './CustomizedTable.vue'
 import { ref } from 'vue'
 
@@ -12,7 +11,21 @@ function onButtonClick() {
 
 <template>
   <div>
-    <CustomizedButton @onClick="onButtonClick" buttonName="Fluid Table" />
+    <button @click="onButtonClick" class="button">
+      <v-icon size="small" color="grey-darken-3">mdi-table-cog</v-icon>
+    </button>
     <CustomizedTable v-model:isTableVisible="tableDialog" />
   </div>
 </template>
+
+<style scoped>
+.button {
+  cursor: pointer;
+  padding: 4px 6px;
+  width: fit-content;
+  text-align: center;
+}
+.button:hover {
+  background-color: #e0e0e0;
+}
+</style>

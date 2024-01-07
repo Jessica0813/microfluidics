@@ -7,7 +7,7 @@ import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
-import TableConfigureButton from './TableConfigureButton.vue'
+import ToolBar from './ToolBar.vue'
 
 let processNodeId = 0
 let conditionNodeId = 0
@@ -113,12 +113,12 @@ function onDrop(event: any) {
 </script>
 
 <template>
-  <div @drop="onDrop" style="width: 100%; height: 100%">
+  <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
     <div class="side-panel">
       <SidePanel />
     </div>
-    <div>
-      <TableConfigureButton class="table-configure-button" />
+    <div class="icon-button-group">
+      <ToolBar />
     </div>
     <VueFlow
       @dragover="onDragOver"
@@ -145,17 +145,19 @@ function onDrop(event: any) {
 <style scoped>
 .side-panel {
   position: absolute;
-  top: 70px;
-  left: 0;
+  top: 20%;
+  left: 15px;
   z-index: 5;
   cursor: pointer;
 }
-.table-configure-button {
+
+.icon-button-group {
   position: absolute;
   top: 15px;
-  left: 52%;
+  right: 30px;
   z-index: 5;
 }
+
 .vue-flow__controls {
   display: flex;
 }

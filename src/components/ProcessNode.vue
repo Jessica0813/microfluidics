@@ -18,13 +18,15 @@ const flowControl = ref<Operation>({
   endTime: 20
 })
 
-watch(flowControl.value, (newFlowControl) => {
-  const node = findNode(id)
-  if (node === undefined) {
-    return
+watch(isMenuOpen, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    const node = findNode(id)
+    if (node === undefined) {
+      return
+    }
+    node.data.flowControl = flowControl.value
+    console.log(node)
   }
-  node.data.flowControl = newFlowControl
-  console.log(node)
 })
 </script>
 
@@ -61,14 +63,22 @@ watch(flowControl.value, (newFlowControl) => {
     />
     <div
       class="flex align-center justify-center"
-      style="width: 280px; height: auto; background-color: #f5f5f5; border-radius: 4px"
+      style="width: 300px; height: auto; background-color: #eeeeee; border-radius: 4px"
     >
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
         <p class="text-subtitle-2">{{  "Time period: " + flowControl.startTime + " - " + flowControl.endTime + "s" }}</p>
         <v-spacer></v-spacer>
         <div>
-          <ProcessEditMenu  v-model="isMenuOpen"/>
+          <ProcessEditMenu 
+          v-model:menu="isMenuOpen" 
+          v-model:startTime="flowControl.startTime"
+          v-model:endTime="flowControl.endTime"
+          v-model:inlet="flowControl.inlet"
+          v-model:fluid="flowControl.fluid"
+          v-model:pressure="flowControl.pressure"
+          v-model:injection="flowControl.injection"
+          :id="id"/>
         </div>
       </div>
       <v-divider thickness="2" />

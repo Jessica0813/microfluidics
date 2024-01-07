@@ -3,7 +3,17 @@ const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['droplet', 'Needlenedddke']
 const fluids = ['water', 'oil']
 
-const menu = defineModel<boolean>({ default: false })
+defineProps({
+  id: String,
+})
+const menu = defineModel<boolean>('menu', { default: false })
+const startTime = defineModel('startTime', { default: 0 })
+const endTime = defineModel('endTime', { default: 0 })
+const inlet = defineModel<string>('inlet', { default: '' })
+const injection = defineModel<string>('injection', { default: '' })
+const fluid = defineModel<string>('fluid', { default: '' })
+const pressure = defineModel('pressure', { default: 0 })
+
 </script>
 
 <template>
@@ -11,18 +21,14 @@ const menu = defineModel<boolean>({ default: false })
     <template v-slot:activator="{ props }">
       <v-icon color="grey-darken-3" v-bind="props"> mdi-dots-vertical</v-icon>
     </template>
-    <v-sheet
-      class="pt-4 px-4 align-center justify-center"
-      :rounded="true"
-       width="360"
-       height="270"
-    >
+    <v-sheet class="pt-4 px-4 align-center justify-center" :rounded="true" width="360" height="270">
       <div class="d-flex align-center justify-center mb-4">
         <p class="text-subtitle-1">Inlet Configuration</p>
       </div>
       <v-row dense>
         <v-col cols="6">
           <v-text-field
+            v-model="startTime"
             type="number"
             label="start time"
             variant="outlined"
@@ -34,6 +40,7 @@ const menu = defineModel<boolean>({ default: false })
         </v-col>
         <v-col cols="6">
           <v-text-field
+            v-model="endTime"
             type="number"
             label="end time"
             variant="outlined"
@@ -47,6 +54,7 @@ const menu = defineModel<boolean>({ default: false })
       <v-row dense>
         <v-col cols="6">
           <v-select
+            v-model="inlet"
             variant="outlined"
             density="compact"
             :items="inlets"
@@ -57,6 +65,7 @@ const menu = defineModel<boolean>({ default: false })
         </v-col>
         <v-col cols="6">
           <v-select
+            v-model="injection"
             variant="outlined"
             density="compact"
             :items="injections"
@@ -70,6 +79,7 @@ const menu = defineModel<boolean>({ default: false })
       <v-row dense>
         <v-col cols="6">
           <v-select
+            v-model="fluid"
             variant="outlined"
             density="compact"
             :items="fluids"
@@ -81,6 +91,7 @@ const menu = defineModel<boolean>({ default: false })
         </v-col>
         <v-col cols="6">
           <v-text-field
+            v-model="pressure"
             type="number"
             label="Pressure"
             variant="outlined"

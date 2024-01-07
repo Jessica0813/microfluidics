@@ -1,103 +1,98 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { Handle, Position } from '@vue-flow/core'
+import { ref, watch } from 'vue'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
+import type { Condition } from '@/types/condition'
+import { useVueFlow } from '@vue-flow/core'
+import ConditionEditMenu from './ConditionEditMenu.vue'
 
-const items = ['color sensor 1', 'viscosity sensor 2']
-
-const sensorInput = ref()
-const operatorInput = ref()
-const valueInput = ref()
-
-const dynamicOperators = computed(() => {
-  // Get the selected sensor
-  const selectedSensor = sensorInput.value
-
-  if (selectedSensor === 'color sensor 1' || selectedSensor === undefined) {
-    return ['=', '!=']
-  } else if (selectedSensor === 'viscosity sensor 2') {
-    return ['>', '<', '=', '!=', '>=', '<=']
-  } else {
-    return []
-  }
+const { findNode } = useVueFlow()
+const { id, selected } = defineProps<NodeProps>()
+const isMenuOpen = ref<boolean>(false)
+const nodeIsHovered = ref<boolean>(false)
+const condition = ref<Condition>({
+  sensor: 'color sensor',
+  operator: '=',
+  color: '#FFFFFF',
+  viscosity: 0
 })
 
-watch(sensorInput, (newSensor, oldSensor) => {
-  // Check if the sensorInput has changed
-  if (newSensor !== oldSensor) {
-    // Reset operatorInput and valueInput when the sensorInput changes
-    operatorInput.value = null
-    valueInput.value = null
+watch(isMenuOpen, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    const node = findNode(id)
+    if (node === undefined) {
+      return
+    }
+    node.data.condition = condition.value
+    console.log(node)
   }
 })
 </script>
 
 <template>
-  <div>
-    <Handle type="source" :position="Position.Top" />
-    <Handle type="source" :position="Position.Bottom" />
-    <Handle type="source" :position="Position.Right" />
-    <Handle type="source" :position="Position.Left" />
-    <v-sheet
-      class="pa-3 align-center justify-center"
-      width="300"
-      color="grey-lighten-4"
-      :rounded="true"
+  <div
+    @mouseover="nodeIsHovered = true"
+    @mouseout="nodeIsHovered = false"
+    :style="{
+      boxShadow:
+        selected || nodeIsHovered || isMenuOpen
+          ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
+          : ''
+    }"
+  >
+    <Handle
+      type="source"
+      :position="Position.Top"
+      :class="selected || nodeIsHovered ? '' : 'top-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Bottom"
+      :class="selected || nodeIsHovered ? '' : 'bottom-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :class="selected || nodeIsHovered ? '' : 'right-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Left"
+      :class="selected || nodeIsHovered ? '' : 'left-handle'"
+    />
+    <div
+      class="flex align-center justify-center"
+      style="width: 300px; height: auto; background-color: #eeeeee; border-radius: 4px"
     >
-      <div class="d-flex align-center mb-3">
-        <v-icon size="small" style="transform: rotate(180deg)" class="mr-2" color="grey-darken-3">
+      <div class="d-flex align-center pt-3 pb-2">
+        <v-icon size="small" class="mx-2" style="transform: rotate(180deg)" color="grey-darken-3">
           mdi-call-split</v-icon
         >
-        <p class="text-subtitle-2">Condition</p>
+        <p class="text-subtitle-2">
+          {{ condition.sensor }}
+        </p>
+        <v-spacer></v-spacer>
+        <div>
+          <ConditionEditMenu
+            :id="id"
+            v-model:menu="isMenuOpen"
+            v-model:sensor="condition.sensor"
+            v-model:operator="condition.operator"
+            v-model:color="condition.color"
+            v-model:viscosity="condition.viscosity"
+          />
+        </div>
       </div>
-
-      <v-row dense>
-        <v-col cols="12">
-          <v-select
-            v-model="sensorInput"
-            variant="outlined"
-            density="compact"
-            :items="items"
-            color="blue-darken-3"
-            label="sensor"
-          >
-          </v-select>
-        </v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols="6">
-          <v-select
-            v-model="operatorInput"
-            variant="outlined"
-            density="compact"
-            :items="dynamicOperators"
-            color="blue-darken-3"
-            label="operators"
-          >
-          </v-select>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-if="sensorInput === undefined || sensorInput === 'color sensor 1'"
-            v-model="valueInput"
-            label="value"
-            variant="outlined"
-            density="compact"
-            color="blue-darken-3"
-          >
-          </v-text-field>
-          <v-text-field
-            v-else-if="sensorInput === 'viscosity sensor 2'"
-            v-model="valueInput"
-            type="number"
-            label="value"
-            variant="outlined"
-            density="compact"
-            suffix="cp"
-            color="blue-darken-3"
-          >
-          </v-text-field>
-        </v-col>
-      </v-row>
-    </v-sheet>
+      <v-divider thickness="2" />
+      <div class="flex pa-3">
+        <v-chip
+          class="mr-1 mb-2"
+          v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
+          >{{ 'color ' + condition.operator + ' ' + condition.color }}</v-chip
+        >
+        <v-chip class="mr-1 mb-2" v-else-if="condition.sensor === 'viscosity sensor'">{{
+          'viscosity ' + condition.operator + ' ' + condition.viscosity
+        }}</v-chip>
+      </div>
+    </div>
   </div>
 </template>

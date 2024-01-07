@@ -1,6 +1,6 @@
 // import type { Fluid } from './fluid'
 
-export interface Operation {
+export interface FlowControl {
   inlet: string
   injection: string
   fluid: string

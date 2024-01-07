@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
-import type { Operation } from '@/types/operation'
+import type { FlowControl } from '@/types/flowControl'
 import ProcessEditMenu from './ProcessEditMenu.vue'
 
 const { findNode } = useVueFlow()
@@ -9,7 +9,7 @@ const { id, selected } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 const isMenuOpen = ref(false)
 
-const flowControl = ref<Operation>({
+const flowControl = ref<FlowControl>({
   inlet: 'inlet 1',
   injection: 'droplet',
   fluid: 'water',
@@ -67,26 +67,29 @@ watch(isMenuOpen, (newValue, oldValue) => {
     >
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
-        <p class="text-subtitle-2">{{  "Time period: " + flowControl.startTime + " - " + flowControl.endTime + "s" }}</p>
+        <p class="text-subtitle-2">
+          {{ 'Time period: ' + flowControl.startTime + ' - ' + flowControl.endTime + 's' }}
+        </p>
         <v-spacer></v-spacer>
         <div>
-          <ProcessEditMenu 
-          v-model:menu="isMenuOpen" 
-          v-model:startTime="flowControl.startTime"
-          v-model:endTime="flowControl.endTime"
-          v-model:inlet="flowControl.inlet"
-          v-model:fluid="flowControl.fluid"
-          v-model:pressure="flowControl.pressure"
-          v-model:injection="flowControl.injection"
-          :id="id"/>
+          <ProcessEditMenu
+            v-model:menu="isMenuOpen"
+            v-model:startTime="flowControl.startTime"
+            v-model:endTime="flowControl.endTime"
+            v-model:inlet="flowControl.inlet"
+            v-model:fluid="flowControl.fluid"
+            v-model:pressure="flowControl.pressure"
+            v-model:injection="flowControl.injection"
+            :id="id"
+          />
         </div>
       </div>
       <v-divider thickness="2" />
       <div class="flex pa-3">
-          <v-chip class="mr-1 mb-2">{{ 'inlet: ' + flowControl.inlet }}</v-chip>
-          <v-chip class="mr-1 mb-2">{{ 'fluid: ' + flowControl.fluid }}</v-chip>
-          <v-chip class="mr-1 mb-2">{{ 'pressure:' + flowControl.pressure }}</v-chip>
-          <v-chip class="mr-1 mb-2">{{ 'injection: ' + flowControl.injection }}</v-chip>
+        <v-chip class="mr-1 mb-2">{{ 'inlet: ' + flowControl.inlet }}</v-chip>
+        <v-chip class="mr-1 mb-2">{{ 'fluid: ' + flowControl.fluid }}</v-chip>
+        <v-chip class="mr-1 mb-2">{{ 'pressure:' + flowControl.pressure }}</v-chip>
+        <v-chip class="mr-1 mb-2">{{ 'injection: ' + flowControl.injection }}</v-chip>
       </div>
     </div>
   </div>
@@ -149,3 +152,4 @@ watch(isMenuOpen, (newValue, oldValue) => {
   opacity: 0;
 }
 </style>
+@/types/flowControl

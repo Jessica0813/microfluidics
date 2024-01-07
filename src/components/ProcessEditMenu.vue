@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['droplet', 'Needlenedddke']
+const injections = ['droplet', 'Needle']
 const fluids = ['water', 'oil']
 
 defineProps({
-  id: String,
+  id: String
 })
 const menu = defineModel<boolean>('menu', { default: false })
 const startTime = defineModel('startTime', { default: 0 })
@@ -13,13 +13,12 @@ const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
 const fluid = defineModel<string>('fluid', { default: '' })
 const pressure = defineModel('pressure', { default: 0 })
-
 </script>
 
 <template>
   <v-menu v-model="menu" :close-on-content-click="false" location="end">
     <template v-slot:activator="{ props }">
-      <v-icon color="grey-darken-3" v-bind="props"> mdi-dots-vertical</v-icon>
+      <v-icon size="small" color="grey-darken-3" v-bind="props"> mdi-dots-vertical</v-icon>
     </template>
     <v-sheet class="pt-4 px-4 align-center justify-center" :rounded="true" width="360" height="270">
       <div class="d-flex align-center justify-center mb-4">

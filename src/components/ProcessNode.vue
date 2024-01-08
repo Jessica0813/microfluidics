@@ -152,4 +152,3 @@ watch(isMenuOpen, (newValue, oldValue) => {
   opacity: 0;
 }
 </style>
-@/types/flowControl

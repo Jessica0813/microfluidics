@@ -20,7 +20,7 @@ const pressure = defineModel('pressure', { default: 0 })
     <template v-slot:activator="{ props }">
       <v-icon size="small" color="grey-darken-3" v-bind="props"> mdi-dots-vertical</v-icon>
     </template>
-    <v-sheet class="pt-4 px-4 align-center justify-center" :rounded="true" width="360" height="270">
+    <v-sheet class="pt-4 px-4 align-center justify-center" :rounded="true" color="grey-lighten-4" width="360" height="270">
       <div class="d-flex align-center justify-center mb-4">
         <p class="text-subtitle-1">Inlet Configuration</p>
       </div>

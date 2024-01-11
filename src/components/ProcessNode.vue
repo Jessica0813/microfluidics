@@ -14,8 +14,7 @@ const flowControl = ref<FlowControl>({
   injection: 'droplet',
   fluid: 'water',
   pressure: 3000,
-  startTime: 0,
-  endTime: 20
+  duration: 0,
 })
 
 watch(isMenuOpen, (newValue, oldValue) => {
@@ -68,14 +67,13 @@ watch(isMenuOpen, (newValue, oldValue) => {
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
         <p class="text-subtitle-2">
-          {{ 'Time period: ' + flowControl.startTime + ' - ' + flowControl.endTime + 's' }}
+          {{ 'Duration: ' + flowControl.duration + 's'}}
         </p>
         <v-spacer></v-spacer>
         <div>
           <ProcessEditMenu
             v-model:menu="isMenuOpen"
-            v-model:startTime="flowControl.startTime"
-            v-model:endTime="flowControl.endTime"
+            v-model:startTime="flowControl.duration"
             v-model:inlet="flowControl.inlet"
             v-model:fluid="flowControl.fluid"
             v-model:pressure="flowControl.pressure"

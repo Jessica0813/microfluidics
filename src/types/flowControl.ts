@@ -5,6 +5,5 @@ export interface FlowControl {
   injection: string
   fluid: string
   pressure: number
-  startTime: number
-  endTime: number
+  duration: number
 }

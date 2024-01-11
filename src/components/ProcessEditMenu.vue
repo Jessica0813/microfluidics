@@ -7,8 +7,7 @@ defineProps({
   id: String
 })
 const menu = defineModel<boolean>('menu', { default: false })
-const startTime = defineModel('startTime', { default: 0 })
-const endTime = defineModel('endTime', { default: 0 })
+const duration = defineModel('duration', { default: 0 })
 const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
 const fluid = defineModel<string>('fluid', { default: '' })
@@ -31,23 +30,11 @@ const pressure = defineModel('pressure', { default: 0 })
         <p class="text-subtitle-1">Inlet Configuration</p>
       </div>
       <v-row dense>
-        <v-col cols="6">
+        <v-col cols="12">
           <v-text-field
-            v-model="startTime"
+            v-model="duration"
             type="number"
-            label="start time"
-            variant="outlined"
-            density="compact"
-            suffix="s"
-            color="blue-darken-3"
-          >
-          </v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model="endTime"
-            type="number"
-            label="end time"
+            label="duration"
             variant="outlined"
             density="compact"
             suffix="s"

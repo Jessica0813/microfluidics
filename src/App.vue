@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/FlowChartCanvas.vue'
+import ScheduledProcessNode from './components/ScheduledProcessNode.vue'
 </script>
 
 <template>
   <div id="app">
-    <div class="flowchart-canvas">
+    <!-- <div class="flowchart-canvas">
       <FlowChartCanvas />
-    </div>
+    </div> -->
+    <ScheduledProcessNode />
   </div>
 </template>
 

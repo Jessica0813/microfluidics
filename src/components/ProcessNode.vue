@@ -14,7 +14,7 @@ const flowControl = ref<FlowControl>({
   injection: 'droplet',
   fluid: 'water',
   pressure: 3000,
-  duration: 0,
+  duration: 0
 })
 
 watch(isMenuOpen, (newValue, oldValue) => {
@@ -67,7 +67,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
         <p class="text-subtitle-2">
-          {{ 'Duration: ' + flowControl.duration + 's'}}
+          {{ 'Duration: ' + flowControl.duration + 's' }}
         </p>
         <v-spacer></v-spacer>
         <div>

@@ -36,9 +36,9 @@ function onDragOver(event: any) {
 }
 
 onConnect((params) => {
-   if (params.source === params.target) {
+  if (params.source === params.target) {
     return
-   }
+  }
   // look through edges to check if any edge is connected to the source node
   if (params.source.includes('process_node')) {
     addEdges([{ ...params, type: 'custom', id: getEdgeId() }])

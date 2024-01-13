@@ -5,10 +5,9 @@ import ScheduledProcessNode from './components/ScheduledProcessNode.vue'
 
 <template>
   <div id="app">
-    <!-- <div class="flowchart-canvas">
+    <div class="flowchart-canvas">
       <FlowChartCanvas />
-    </div> -->
-    <ScheduledProcessNode />
+    </div>
   </div>
 </template>
 

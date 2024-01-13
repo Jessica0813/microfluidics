@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
 type Duration = {
   startTime: number
@@ -10,6 +11,10 @@ type Duration = {
 type DurationSet = {
   list: Duration[]
 }
+const { selected } = defineProps<NodeProps>()
+const nodeIsHovered = ref(false)
+
+const totalDuration = ref<number>(10)
 
 const data1: Duration = {
   startTime: 0,
@@ -78,16 +83,16 @@ function addData(data: Duration) {
 function calculateLeft(startTime: number, index: number, durationSet: DurationSet): number {
   // Calculate the left position based on the startTime
   if (index === 0) {
-    return (startTime / 10) * 384
+    return (startTime / 10) * 368
   } else {
     const previousItem = durationSet.list[index - 1]
-    return ((startTime - previousItem.endTime) / 10) * 384
+    return ((startTime - previousItem.endTime) / 10) * 368
   }
 }
 
 function calculateWidth(duration: number): number {
   // Calculate the width of the rectangle based on the duration
-  return (duration / 10) * 384 // Assuming 10s as the total width
+  return (duration / 10) * 368 // Assuming 10s as the total width
 }
 
 addData(data1)
@@ -99,38 +104,73 @@ console.log(dataCollection.value)
 </script>
 
 <template>
-  <div class="chart">
-    <div v-for="(durationSet, idx) in dataCollection" :key="idx" class="row">
-      <div
-        v-for="(duration, index) in durationSet.list"
-        :key="index"
-        :style="{
-          marginLeft: calculateLeft(duration.startTime, index, durationSet) + 'px',
-          width: calculateWidth(duration.duration) + 'px'
-        }"
-        class="rectangle"
-      ></div>
-    </div>
-    <div class="d-flex">
-      <div class="wrap">
-        <div class="timeslot"></div>
-        <p class="tick">0</p>
+  <div
+    @mouseover="nodeIsHovered = true"
+    @mouseout="nodeIsHovered = false"
+    :style="{
+      boxShadow:
+        selected || nodeIsHovered
+          ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
+          : ''
+    }"
+  >
+    <Handle
+      type="source"
+      :position="Position.Top"
+      :class="selected || nodeIsHovered ? '' : 'top-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Bottom"
+      :class="selected || nodeIsHovered ? '' : 'bottom-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :class="selected || nodeIsHovered ? '' : 'right-handle'"
+    />
+    <Handle
+      type="source"
+      :position="Position.Left"
+      :class="selected || nodeIsHovered ? '' : 'left-handle'"
+    />
+    <div class="chart">
+      <div v-for="(durationSet, idx) in dataCollection" :key="idx" class="row">
+        <div
+          v-for="(duration, index) in durationSet.list"
+          :key="index"
+          :style="{
+            marginLeft: calculateLeft(duration.startTime, index, durationSet) + 'px',
+            width: calculateWidth(duration.duration) + 'px'
+          }"
+          class="rectangle"
+        ></div>
       </div>
-      <div class="wrap">
-        <div class="timeslot"></div>
-        <p class="tick">2</p>
-      </div>
-      <div class="wrap">
-        <div class="timeslot"></div>
-        <p class="tick">4</p>
-      </div>
-      <div class="wrap">
-        <div class="timeslot"></div>
-        <p class="tick">6</p>
-      </div>
-      <div class="wrap">
-        <div class="timeslot"></div>
-        <p class="tick">8</p>
+      <div class="d-flex">
+        <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">0</p>
+        </div>
+        <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">2</p>
+        </div>
+        <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">4</p>
+        </div>
+        <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">6</p>
+        </div>
+        <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">8</p>
+        </div>
+        <div class="wrap">
+          <div class="last-timeslot"></div>
+          <p class="tick">10</p>
+        </div>
       </div>
     </div>
   </div>
@@ -141,9 +181,11 @@ console.log(dataCollection.value)
   width: 400px;
   height: fit-content;
   border: 1px solid #bdbdbd;
-  padding: 8px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
+  background-color: #eeeeee;
+  border-radius: 4px;
 }
 
 .row {
@@ -152,7 +194,7 @@ console.log(dataCollection.value)
 
 .rectangle {
   cursor: pointer;
-  height: 25px;
+  height: 20px;
   background-color: #757575; /* Rectangle color */
   border: 1px solid #424242; /* Border color */
   box-sizing: border-box;
@@ -160,21 +202,29 @@ console.log(dataCollection.value)
   border-radius: 4px;
 }
 
-.wrap{
+.wrap {
   display: flex;
   flex-direction: column;
   align-items: left;
 }
 
 .tick {
-  margin-left: -2px;
+  margin-left: -4px;
+  font-size: 12px;
 }
 
 .timeslot {
-  width: 77.2px;
-  height: 20px;
-  background-color: lightblue;
+  width: 73.6px;
+  height: 5px;
   display: flex;
-  border: 1px solid #424242;
+  border-left: 1px solid #424242;
+  border-bottom: 1px solid #424242;
+}
+
+.last-timeslot {
+  width: 0px;
+  height: 5px;
+  display: flex;
+  border-right: 1px solid #424242;
 }
 </style>

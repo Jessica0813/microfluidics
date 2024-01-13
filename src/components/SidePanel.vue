@@ -37,6 +37,19 @@ function onDragStart(event: any, nodeType: string) {
       </template>
       <span>Condition Node</span>
     </v-tooltip>
+    <v-tooltip>
+      <template v-slot:activator="{ props }">
+        <div
+          class="icon-padding"
+          :draggable="true"
+          @dragstart="onDragStart($event, 'schedule')"
+          v-bind="props"
+        >
+          <v-icon size="small" color="grey-darken-3"> mdi-chart-gantt</v-icon>
+        </div>
+      </template>
+      <span>Process Schedule Node</span>
+    </v-tooltip>
   </div>
 </template>
 

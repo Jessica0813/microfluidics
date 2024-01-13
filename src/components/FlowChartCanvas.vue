@@ -8,9 +8,12 @@ import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
 import ToolBar from './ToolBar.vue'
+import ScheduledProcessNode from './ScheduledProcessNode.vue'
 
 let processNodeId = 0
 let conditionNodeId = 0
+let processScheduleNodeId = 0
+
 let edgeId = 0
 function getProcessNodeId() {
   return `process_node_${processNodeId++}`
@@ -18,6 +21,10 @@ function getProcessNodeId() {
 
 function getConditionNodeId() {
   return `condition_node_${conditionNodeId++}`
+}
+
+function getProcessScheduleNodeId() {
+  return `process_schedule_node_${processScheduleNodeId++}`
 }
 
 function getEdgeId() {
@@ -40,7 +47,7 @@ onConnect((params) => {
     return
   }
   // look through edges to check if any edge is connected to the source node
-  if (params.source.includes('process_node')) {
+  if (params.source.includes('process_node') || params.source.includes('process_schedule_node')) {
     addEdges([{ ...params, type: 'custom', id: getEdgeId() }])
   } else if (params.source.includes('condition_node')) {
     let isTrueEdgeExist: boolean = false
@@ -71,6 +78,7 @@ function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
+  console.log(type)
 
   if (vueFlowRef.value === null) return
   const { left, top } = vueFlowRef.value.getBoundingClientRect()
@@ -85,6 +93,8 @@ function onDrop(event: any) {
     nodeId = getProcessNodeId()
   } else if (type === 'condition') {
     nodeId = getConditionNodeId()
+  } else if (type === 'schedule') {
+    nodeId = getProcessScheduleNodeId()
   }
   const newNode = {
     id: nodeId,
@@ -137,6 +147,9 @@ function onDrop(event: any) {
       </template>
       <template #node-condition="conditionNodeProps">
         <ConditionNode v-bind="conditionNodeProps" />
+      </template>
+      <template #node-schedule="ScheduleNodeProps">
+        <ScheduledProcessNode v-bind="ScheduleNodeProps" />
       </template>
       <template #edge-custom="props">
         <CustomEdge v-bind="props" />

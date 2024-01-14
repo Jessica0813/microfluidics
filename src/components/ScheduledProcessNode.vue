@@ -18,26 +18,32 @@ const totalDuration = ref<number>(10)
 
 const data1: Duration = {
   startTime: 0,
-  duration: 6,
-  endTime: 6
+  duration: 12,
+  endTime: 12
 }
 
 const data2: Duration = {
   startTime: 2,
-  duration: 3,
-  endTime: 5
+  duration: 6,
+  endTime: 8
 }
 
 const data3: Duration = {
   startTime: 8,
-  duration: 2,
-  endTime: 10
+  duration: 4,
+  endTime: 12
 }
 
 const data4: Duration = {
   startTime: 7,
+  duration: 2,
+  endTime: 9
+}
+
+const data5: Duration = {
+  startTime: 13,
   duration: 1,
-  endTime: 8
+  endTime: 14
 }
 
 const dataCollection = ref<DurationSet[]>([])
@@ -83,24 +89,23 @@ function addData(data: Duration) {
 function calculateLeft(startTime: number, index: number, durationSet: DurationSet): number {
   // Calculate the left position based on the startTime
   if (index === 0) {
-    return (startTime / 10) * 368
+    return (startTime / 20) * 368
   } else {
     const previousItem = durationSet.list[index - 1]
-    return ((startTime - previousItem.endTime) / 10) * 368
+    return ((startTime - previousItem.endTime) / 20) * 368
   }
 }
 
 function calculateWidth(duration: number): number {
   // Calculate the width of the rectangle based on the duration
-  return (duration / 10) * 368 // Assuming 10s as the total width
+  return (duration / 20) * 368 // Assuming 20s as the total width
 }
 
 addData(data1)
 addData(data2)
 addData(data3)
 addData(data4)
-
-console.log(dataCollection.value)
+addData(data5)
 </script>
 
 <template>
@@ -153,23 +158,23 @@ console.log(dataCollection.value)
         </div>
         <div class="wrap">
           <div class="timeslot"></div>
-          <p class="tick">2</p>
-        </div>
-        <div class="wrap">
-          <div class="timeslot"></div>
           <p class="tick">4</p>
-        </div>
-        <div class="wrap">
-          <div class="timeslot"></div>
-          <p class="tick">6</p>
         </div>
         <div class="wrap">
           <div class="timeslot"></div>
           <p class="tick">8</p>
         </div>
         <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">12</p>
+        </div>
+        <div class="wrap">
+          <div class="timeslot"></div>
+          <p class="tick">16</p>
+        </div>
+        <div class="wrap">
           <div class="last-timeslot"></div>
-          <p class="tick">10</p>
+          <p class="tick">20</p>
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/FlowChartCanvas.vue'
-import ScheduledProcessNode from './components/ScheduledProcessNode.vue'
 </script>
 
 <template>

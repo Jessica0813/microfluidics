@@ -73,7 +73,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         <div>
           <ProcessEditMenu
             v-model:menu="isMenuOpen"
-            v-model:startTime="flowControl.duration"
+            v-model:duration="flowControl.duration"
             v-model:inlet="flowControl.inlet"
             v-model:fluid="flowControl.fluid"
             v-model:pressure="flowControl.pressure"

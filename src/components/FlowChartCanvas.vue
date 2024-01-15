@@ -141,7 +141,7 @@ function onDrop(event: any) {
       :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
       @edge-update="onEdgeUpdate"
     >
-      <Background />
+      <Background style="background-color: #faf9f7" pattern-color="black" />
       <template #node-process="processNodeProps">
         <ProcessNode v-bind="processNodeProps" />
       </template>

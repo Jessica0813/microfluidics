@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import * as d3 from 'd3'
 import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
 import { zoom } from 'd3-zoom'
@@ -7,7 +6,10 @@ import { select } from 'd3-selection'
 import { ref, onMounted, computed } from 'vue'
 
 const viewPort = ref<HTMLElement | null>(null)
+const viewSvg = ref<HTMLElement | null>(null)
 const scale = ref(1)
+const xx = ref<number>(36)
+const yy = ref<number>(38)
 const test = ref<HTMLElement | null>(null)
 
 onMounted(() => {
@@ -15,14 +17,18 @@ onMounted(() => {
   // const bbox = viewDiv.value.getBoundingClientRect()
   const d3Zoom = zoom<HTMLDivElement, any>()
     .scaleExtent([0.2, 2])
-    .translateExtent([
-      [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
-      [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY]
-    ])
     .on('zoom', (event) => {
-      const { k } = event.transform
-      console.log(event.transform)
+      const { k, x, y } = event.transform
       scale.value = k
+      xx.value = x
+      yy.value = y
+      console.log(x,y, k)
+      if (viewSvg.value) {
+        // viewSvg.value.style.top = `${-x}px`
+        // viewSvg.value.style.left = `${-y}px`
+        console.log(viewSvg.value.getBoundingClientRect())
+      }
+  
     })
   const d3Selection = select(viewPort.value).call(d3Zoom)
   d3Selection.on('wheel.zoom')
@@ -56,16 +62,26 @@ const data = computed(() => {
   const width = 50 * scale.value
   const height = width
   const firstLineX = width
-  const firstLineY = 38 * scale.value
+  let absyy = Math.abs(yy.value) % 50
+
+  if (absyy === 0) {
+    absyy = 1
+  }
+  const firstLineY = absyy * scale.value
+  
   const firstPathGroup = Array.from(
     { length: 5 },
-    (_, index) => `M0 ${scale.value * (8 + index * 10)} H ${width}`
+    (_, index) => `M0 ${scale.value * (absyy % 10 + index * 10)} H ${width}`
   )
-  const secondLineX = 36 * scale.value
+  let absxx = Math.abs(xx.value) % 50
+  if (absxx === 0) {
+    absxx = 1
+  }
+  const secondLineX = absxx * scale.value
   const secondLineY = height
   const secondPathGroup = Array.from(
     { length: 5 },
-    (_, index) => `M${scale.value * (6 + index * 10)} 0 V ${height}`
+    (_, index) => `M${scale.value * ((absxx % 10) + index * 10)} 0 V ${height}`
   )
   return {
     width,
@@ -99,7 +115,7 @@ const value = computed(() => {
     ref="viewPort"
     style="width: 100%; height: 100%; background-color: #faf9f7; overflow: hidden"
   >
-    <div
+  <div
       ref="test"
       draggable="true"
       :style="{
@@ -114,7 +130,7 @@ const value = computed(() => {
     <div style="width: 200px; position: absolute; z-index: 1">
       <v-slider v-model="scale" min="0.2" :max="2"></v-slider>
     </div>
-    <svg width="100%" height="100%">
+    <svg ref="viewSvg" width="100%" height="100%">
       <pattern
         id="grid"
         x="0"

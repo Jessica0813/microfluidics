@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { drag } from 'd3-drag'
-import type { D3DragEvent } from 'd3-drag'
 import { zoom } from 'd3-zoom'
 import { select } from 'd3-selection'
 import { ref, onMounted, computed } from 'vue'
+import { useSensorStore } from '@/stores/useSensor'
+import SensorWrapper from '@/components/SensorWrapper.vue'
 
 const viewPort = ref<HTMLElement | null>(null)
 const viewSvg = ref<HTMLElement | null>(null)
 const scale = ref(1)
 const xx = ref<number>(36)
 const yy = ref<number>(38)
-const test = ref<HTMLElement | null>(null)
+
+const { sensors } = useSensorStore()
 
 onMounted(() => {
   if (!viewPort.value) return
@@ -22,40 +23,9 @@ onMounted(() => {
       scale.value = k
       xx.value = x
       yy.value = y
-      console.log(x,y, k)
-      if (viewSvg.value) {
-        // viewSvg.value.style.top = `${-x}px`
-        // viewSvg.value.style.left = `${-y}px`
-        console.log(viewSvg.value.getBoundingClientRect())
-      }
-  
     })
   const d3Selection = select(viewPort.value).call(d3Zoom)
   d3Selection.on('wheel.zoom')
-
-  if (!test.value) return
-  const d3Drag = drag()
-  const selected = select(test.value)
-  let startOffsetX: number
-  let startOffsetY: number
-  d3Drag.on('start', (event: D3DragEvent<HTMLElement, any, any>) => {
-    if (!test.value) return
-    startOffsetX = event.x - test.value.getBoundingClientRect().x
-    startOffsetY = event.y - test.value.getBoundingClientRect().y
-  })
-  d3Drag.on('drag', (event: D3DragEvent<HTMLElement, any, any>) => {
-    if (!test.value) return
-    // test.value.style.transform = `translate(${event.x - startOffsetX}px, ${event.y- startOffsetY}px)`
-    test.value.style.left = `${event.x - startOffsetX}px`
-    test.value.style.top = `${event.y - startOffsetY}px`
-  })
-  d3Drag.on('end', () => {
-    console.log('end')
-    if (!test.value) return
-    console.log(test.value)
-    console.log(test.value.getBoundingClientRect())
-  })
-  selected.call(d3Drag)
 })
 
 const data = computed(() => {
@@ -68,10 +38,10 @@ const data = computed(() => {
     absyy = 1
   }
   const firstLineY = absyy * scale.value
-  
+
   const firstPathGroup = Array.from(
     { length: 5 },
-    (_, index) => `M0 ${scale.value * (absyy % 10 + index * 10)} H ${width}`
+    (_, index) => `M0 ${scale.value * ((absyy % 10) + index * 10)} H ${width}`
   )
   let absxx = Math.abs(xx.value) % 50
   if (absxx === 0) {
@@ -94,20 +64,6 @@ const data = computed(() => {
     secondPathGroup
   }
 })
-
-const value = computed(() => {
-  const width = 100 * scale.value
-  const height = 100 * scale.value
-  const top = 100 * scale.value
-  const left = 100 * scale.value
-
-  return {
-    width,
-    height,
-    top,
-    left
-  }
-})
 </script>
 
 <template>
@@ -115,21 +71,14 @@ const value = computed(() => {
     ref="viewPort"
     style="width: 100%; height: 100%; background-color: #faf9f7; overflow: hidden"
   >
-  <div
-      ref="test"
-      draggable="true"
-      :style="{
-        width: `${value.width}px`,
-        height: `${value.height}px`,
-        left: `${value.left}px`,
-        top: `${value.top}px`,
-        backgroundColor: 'grey',
-        position: 'absolute'
-      }"
-    ></div>
-    <div style="width: 200px; position: absolute; z-index: 1">
+    <SensorWrapper
+      v-for="sensor in sensors"
+      :key="sensor.id"
+      :sensor= "sensor"
+    />
+    <!-- <div style="width: 200px; position: absolute; z-index: 1">
       <v-slider v-model="scale" min="0.2" :max="2"></v-slider>
-    </div>
+    </div> -->
     <svg ref="viewSvg" width="100%" height="100%">
       <pattern
         id="grid"

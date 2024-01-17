@@ -6,7 +6,6 @@ import { useSensorStore } from '@/stores/useSensor'
 import SensorWrapper from '@/components/SensorWrapper.vue'
 
 const viewPort = ref<HTMLElement | null>(null)
-const viewSvg = ref<HTMLElement | null>(null)
 const scale = ref(1)
 const xx = ref<number>(36)
 const yy = ref<number>(38)
@@ -15,7 +14,6 @@ const { sensors } = useSensorStore()
 
 onMounted(() => {
   if (!viewPort.value) return
-  // const bbox = viewDiv.value.getBoundingClientRect()
   const d3Zoom = zoom<HTMLDivElement, any>()
     .scaleExtent([0.2, 2])
     .on('zoom', (event) => {
@@ -71,15 +69,13 @@ const data = computed(() => {
     ref="viewPort"
     style="width: 100%; height: 100%; background-color: #faf9f7; overflow: hidden"
   >
+  <!-- <SensorPanel class="side-panel"/> -->
     <SensorWrapper
       v-for="sensor in sensors"
       :key="sensor.id"
       :sensor= "sensor"
     />
-    <!-- <div style="width: 200px; position: absolute; z-index: 1">
-      <v-slider v-model="scale" min="0.2" :max="2"></v-slider>
-    </div> -->
-    <svg ref="viewSvg" width="100%" height="100%">
+    <svg width="100%" height="100%">
       <pattern
         id="grid"
         x="0"

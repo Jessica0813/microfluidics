@@ -78,7 +78,6 @@ function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
-  console.log(type)
 
   if (vueFlowRef.value === null) return
   const { left, top } = vueFlowRef.value.getBoundingClientRect()

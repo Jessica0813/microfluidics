@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/FlowChartCanvas.vue'
-import DesginCanvas from './components/DesginCanvas.vue'
+import DesignCanvas from './components/DesignCanvas.vue';
 </script>
 
 <template>
   <div id="app">
     <div class="flowchart-canvas">
       <!-- <FlowChartCanvas /> -->
-      <DesginCanvas />
+      <DesignCanvas />
     </div>
   </div>
 </template>

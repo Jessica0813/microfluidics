@@ -3,6 +3,7 @@ import type { Sensor } from '@/types/sensor'
 import { useDrag } from '@/stores/useDrag'
 import { ref } from 'vue'
 import { onMounted } from 'vue';
+import { watch } from 'vue';
 
 const props = defineProps({
   sensor: {
@@ -14,6 +15,15 @@ const props = defineProps({
 const sensorRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
+  if (!sensorRef.value) return
+  useDrag({
+  el: sensorRef,
+  id: props.sensor.id,
+ })
+})
+
+//not sure if it's a good solution
+watch(() => props.sensor.position, () => {
   if (!sensorRef.value) return
   useDrag({
   el: sensorRef,

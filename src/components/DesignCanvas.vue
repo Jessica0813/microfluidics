@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Sensor } from '@/types/sensor'
-import { nextTick, watch } from 'vue'
 import SensorPanel from '@/components/SensorPanel.vue'
 import { useSensorStore } from '@/stores/useSensor'
 import DesignViewPort from '@/components/DesignViewPort.vue'

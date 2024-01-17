@@ -9,19 +9,14 @@ function onDragStart(event: DragEvent, sensorType: string) {
 
 <template>
   <div class="panel text-center flex-column elevation-1">
-    <v-tooltip>
-      <template v-slot:activator="{ props }">
-        <div
-          class="icon-padding"
-          :draggable="true"
-          @dragstart="onDragStart($event, 'temperature')"
-          v-bind="props"
-        >
-          <v-icon size="small" color="grey-darken-3"> mdi-rectangle-outline </v-icon>
-        </div>
-      </template>
-      <span>sensor</span>
-    </v-tooltip>
+    <div
+      title="Pressure Sensor"
+      class="icon-padding"
+      :draggable="true"
+      @dragstart="onDragStart($event, 'temperature')"
+    >
+      <v-icon size="small" color="grey-darken-3"> mdi-rectangle-outline </v-icon>
+    </div>
   </div>
 </template>
 

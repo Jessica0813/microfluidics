@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import TableConfigureButton from './TableConfigureButton.vue'
 </script>
+
 <template>
   <div class="d-flex gx-2 button-group">
     <label for="upload" class="button">
@@ -10,28 +11,13 @@ import TableConfigureButton from './TableConfigureButton.vue'
     <button class="button">
       <v-icon color="grey-darken-3" size="small">mdi-download</v-icon>
     </button>
-    <v-tooltip location="bottom">
-      <template v-slot:activator="{ props }">
-        <TableConfigureButton v-bind="props" />
-      </template>
-      <span>Fluid table</span>
-    </v-tooltip>
-    <v-tooltip location="bottom">
-      <template v-slot:activator="{ props }">
-        <button class="button" v-bind="props">
-          <v-icon size="small" color="grey-darken-3">mdi-waves</v-icon>
-        </button>
-      </template>
-      <span>Chip design</span>
-    </v-tooltip>
-    <v-tooltip location="bottom">
-      <template v-slot:activator="{ props }">
-        <button class="button" v-bind="props">
-          <v-icon size="small" color="grey-darken-3">mdi-play</v-icon>
-        </button>
-      </template>
-      <span>Run simulation</span>
-    </v-tooltip>
+    <TableConfigureButton title="fluid table" />
+    <button class="button" title="chip design">
+      <v-icon size="small" color="grey-darken-3">mdi-waves</v-icon>
+    </button>
+    <button class="button" title="run">
+      <v-icon size="small" color="grey-darken-3">mdi-play</v-icon>
+    </button>
   </div>
 </template>
 

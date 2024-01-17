@@ -9,47 +9,32 @@ function onDragStart(event: DragEvent, nodeType: string) {
 
 <template>
   <div class="panel text-center flex-column elevation-1">
-    <v-tooltip>
-      <template v-slot:activator="{ props }">
-        <div
-          class="icon-padding"
-          :draggable="true"
-          @dragstart="onDragStart($event, 'process')"
-          v-bind="props"
-        >
-          <v-icon size="small" color="grey-darken-3"> mdi-form-select </v-icon>
-        </div>
-      </template>
-      <span>Process Node</span>
-    </v-tooltip>
-    <v-tooltip>
-      <template v-slot:activator="{ props }">
-        <div
-          class="icon-padding"
-          :draggable="true"
-          @dragstart="onDragStart($event, 'condition')"
-          v-bind="props"
-        >
-          <v-icon size="small" color="grey-darken-3" style="transform: rotate(180deg)">
-            mdi-call-split</v-icon
-          >
-        </div>
-      </template>
-      <span>Condition Node</span>
-    </v-tooltip>
-    <v-tooltip>
-      <template v-slot:activator="{ props }">
-        <div
-          class="icon-padding"
-          :draggable="true"
-          @dragstart="onDragStart($event, 'schedule')"
-          v-bind="props"
-        >
-          <v-icon size="small" color="grey-darken-3"> mdi-chart-gantt</v-icon>
-        </div>
-      </template>
-      <span>Process Schedule Node</span>
-    </v-tooltip>
+    <div
+      title="Process Node"
+      class="icon-padding"
+      :draggable="true"
+      @dragstart="onDragStart($event, 'process')"
+    >
+      <v-icon size="small" color="grey-darken-3"> mdi-form-select </v-icon>
+    </div>
+    <div
+      title="Condition Node"
+      class="icon-padding"
+      :draggable="true"
+      @dragstart="onDragStart($event, 'condition')"
+    >
+      <v-icon size="small" color="grey-darken-3" style="transform: rotate(180deg)">
+        mdi-call-split</v-icon
+      >
+    </div>
+    <div
+      title="Schedule Node"
+      class="icon-padding"
+      :draggable="true"
+      @dragstart="onDragStart($event, 'schedule')"
+    >
+      <v-icon size="small" color="grey-darken-3"> mdi-chart-gantt</v-icon>
+    </div>
   </div>
 </template>
 

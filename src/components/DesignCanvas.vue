@@ -4,7 +4,7 @@ import SensorPanel from '@/components/SensorPanel.vue'
 import { useSensorStore } from '@/stores/useSensor'
 import DesignViewPort from '@/components/DesignViewPort.vue'
 
-let id = 0;
+let id = 0
 
 function getSensorId() {
   return `sensor_${id++}`
@@ -25,8 +25,8 @@ function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/desgin')
   console.log(type)
 
-//   if (viewPort.value === null) return
-//   const { left, top } = viewPort.value.getBoundingClientRect()
+  //   if (viewPort.value === null) return
+  //   const { left, top } = viewPort.value.getBoundingClientRect()
 
   const position = {
     x: event.clientX - 25,
@@ -69,29 +69,26 @@ function onDrop(event: any) {
 </script>
 
 <template>
-    <div class="design-canvas"     
-    @dragover="onDragOver"
-    @drop="onDrop" >
-        <SensorPanel class="side-panel"/>
-        <DesignViewPort />
-    </div>
+  <div class="design-canvas">
+    <SensorPanel class="side-panel" />
+    <DesignViewPort @dragover="onDragOver" @drop="onDrop" />
+  </div>
 </template>
 
-    <!-- <div style="width: 200px; position: absolute; z-index: 1">
+<!-- <div style="width: 200px; position: absolute; z-index: 1">
       <v-slider v-model="scale" min="0.2" :max="2"></v-slider>
     </div> -->
 
 <style scoped>
-    .design-canvas {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-    .side-panel {
-      position: absolute;
-      top: 20%;
-      left: 15px;
-      z-index: 5;
-    }
-  </style>
-  
+.design-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.side-panel {
+  position: absolute;
+  top: 20%;
+  left: 15px;
+  z-index: 5;
+}
+</style>

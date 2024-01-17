@@ -29,11 +29,11 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function editSensor(id: string, updatedSensor: Partial<Sensor>) {
-    const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id);
+    const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id)
 
     if (sensorIndex !== -1) {
-    // If the sensor with the given id is found, update it
-        Object.assign(sensors.value[sensorIndex], updatedSensor);
+      // If the sensor with the given id is found, update it
+      Object.assign(sensors.value[sensorIndex], updatedSensor)
     }
   }
 

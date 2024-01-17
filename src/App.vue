@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/FlowChartCanvas.vue'
-import DesignCanvas from './components/DesignCanvas.vue';
+import DesignCanvas from './components/DesignCanvas.vue'
 </script>
 
 <template>

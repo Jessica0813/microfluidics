@@ -69,12 +69,8 @@ const data = computed(() => {
     ref="viewPort"
     style="width: 100%; height: 100%; background-color: #faf9f7; overflow: hidden"
   >
-  <!-- <SensorPanel class="side-panel"/> -->
-    <SensorWrapper
-      v-for="sensor in sensors"
-      :key="sensor.id"
-      :sensor= "sensor"
-    />
+    <!-- <SensorPanel class="side-panel"/> -->
+    <SensorWrapper v-for="sensor in sensors" :key="sensor.id" :sensor="sensor" />
     <svg width="100%" height="100%">
       <pattern
         id="grid"

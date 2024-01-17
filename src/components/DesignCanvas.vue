@@ -10,7 +10,7 @@ function getSensorId() {
   return `sensor_${id++}`
 }
 
-const { addSensor, findSensor } = useSensorStore()
+const { addSensor } = useSensorStore()
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -46,25 +46,6 @@ function onDrop(event: any) {
   }
 
   addSensor(newSensor)
-
-  // align node position after drop, so it's centered to the mouse
-  // nextTick(() => {
-  //   const sensor = findSensor(newSensor.id)
-  //   if (sensor === undefined) return
-  //   const stop = watch(
-  //     () => sensor.dimension,
-  //     (dimension) => {
-  //       if (dimension.width > 0 && dimension.height > 0) {
-  //         sensor.position = {
-  //           x: sensor.position.x - sensor.dimension.width / 2,
-  //           y: sensor.position.y - sensor.dimension.height / 2
-  //         }
-  //         stop()
-  //       }
-  //     },
-  //     { deep: true, flush: 'post' }
-  //   )
-  // })
 }
 </script>
 

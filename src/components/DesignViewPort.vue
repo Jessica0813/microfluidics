@@ -14,13 +14,17 @@ const { sensors } = useSensorStore()
 
 onMounted(() => {
   if (!viewPort.value) return
-  const d3Zoom = zoom<HTMLDivElement, any>()
+  const d3Zoom = zoom<HTMLElement, any>()
     .scaleExtent([0.2, 2])
     .on('zoom', (event) => {
       const { k, x, y } = event.transform
       scale.value = k
       xx.value = x
       yy.value = y
+    })
+    .filter((event) => {
+      const isDoubleClick = event.type === 'dblclick'
+      return !isDoubleClick
     })
   const d3Selection = select(viewPort.value).call(d3Zoom)
   d3Selection.on('wheel.zoom')

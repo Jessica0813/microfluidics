@@ -39,7 +39,6 @@ watch(
   <div
     ref="sensorRef"
     :id="sensor.id"
-    draggable="true"
     :style="{
       width: `${sensor.dimension.width}px`,
       height: `${sensor.dimension.height}px`,

@@ -15,7 +15,7 @@ function onDragStart(event: DragEvent, nodeType: string) {
       :draggable="true"
       @dragstart="onDragStart($event, 'process')"
     >
-      <v-icon size="small" color="grey-darken-3"> mdi-form-select </v-icon>
+      <v-icon size="small" color="#515a6e"> mdi-form-select </v-icon>
     </div>
     <div
       title="Condition Node"
@@ -23,7 +23,7 @@ function onDragStart(event: DragEvent, nodeType: string) {
       :draggable="true"
       @dragstart="onDragStart($event, 'condition')"
     >
-      <v-icon size="small" color="grey-darken-3" style="transform: rotate(180deg)">
+      <v-icon size="small" color="#515a6e" style="transform: rotate(180deg)">
         mdi-call-split</v-icon
       >
     </div>
@@ -33,7 +33,7 @@ function onDragStart(event: DragEvent, nodeType: string) {
       :draggable="true"
       @dragstart="onDragStart($event, 'schedule')"
     >
-      <v-icon size="small" color="grey-darken-3"> mdi-chart-gantt</v-icon>
+      <v-icon size="small" color="#515a6e"> mdi-chart-gantt</v-icon>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ function onDragStart(event: DragEvent, nodeType: string) {
 <style scoped>
 .panel {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 2px;
 }

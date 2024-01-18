@@ -15,7 +15,7 @@ function onDragStart(event: DragEvent, sensorType: string) {
       :draggable="true"
       @dragstart="onDragStart($event, 'temperature')"
     >
-      <v-icon size="small" color="grey-darken-3"> mdi-rectangle-outline </v-icon>
+      <v-icon size="small" color="#515a6e"> mdi-rectangle-outline </v-icon>
     </div>
   </div>
 </template>
@@ -23,7 +23,7 @@ function onDragStart(event: DragEvent, sensorType: string) {
 <style scoped>
 .panel {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 2px;
 }

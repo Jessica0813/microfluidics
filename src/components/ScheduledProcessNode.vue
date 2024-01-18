@@ -140,7 +140,7 @@ addData(data5)
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
     <div class="chart">
-      <div v-for="(durationSet, idx) in dataCollection" :key="idx" class="row">
+      <div v-for="(durationSet, idx) in dataCollection" :key="idx" class="bar">
         <div
           v-for="(duration, index) in durationSet.list"
           :key="index"
@@ -193,7 +193,7 @@ addData(data5)
   border-radius: 4px;
 }
 
-.row {
+.bar {
   display: flex;
 }
 

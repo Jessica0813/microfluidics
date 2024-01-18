@@ -7,8 +7,8 @@ import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
-import ToolBar from './ToolBar.vue'
 import ScheduledProcessNode from './ScheduledProcessNode.vue'
+import UploadDownLoadControls from './UploadDownloadControls.vue'
 
 let processNodeId = 0
 let conditionNodeId = 0
@@ -130,9 +130,9 @@ function onDrop(event: any) {
       <SidePanel />
     </div>
     <div class="icon-button-group">
-      <ToolBar />
+      <UploadDownLoadControls />
     </div>
-    <div class="design-canvas elevation-5"></div>
+    <!-- <div class="design-canvas elevation-5"></div> -->
     <VueFlow
       @dragover="onDragOver"
       fit-view-on-init
@@ -170,7 +170,7 @@ function onDrop(event: any) {
 .icon-button-group {
   position: absolute;
   top: 15px;
-  right: 30px;
+  left: 30px;
   z-index: 5;
 }
 

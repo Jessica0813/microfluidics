@@ -1,0 +1,54 @@
+<script setup lang="ts">
+defineProps({
+  isFlowDesignCanvasOpen: {
+    type: Boolean,
+    default: true
+  }
+})
+defineEmits(['onFlowDesignClick', 'onSensorPlacementClick'])
+</script>
+
+<template>
+  <div class="tab-bar">
+    <button
+      class="tab-button"
+      :style="{
+        backgroundColor: isFlowDesignCanvasOpen ? '#515a6e' : '#f4f3ef',
+        color: isFlowDesignCanvasOpen ? 'white' : 'black'
+      }"
+      @click="$emit('onFlowDesignClick')"
+    >
+      Flow Design
+    </button>
+    <button
+      class="tab-button"
+      :style="{
+        backgroundColor: !isFlowDesignCanvasOpen ? '#515a6e' : '#f4f3ef',
+        color: !isFlowDesignCanvasOpen ? 'white' : 'black'
+      }"
+      @click="$emit('onSensorPlacementClick')"
+    >
+      Sensor Placement
+    </button>
+  </div>
+</template>
+
+<style scoped>
+.tab-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tab-button {
+  text-align: center;
+  width: 130px;
+  border-radius: 4px;
+  color: white;
+  padding: 2px 0px;
+}
+</style>

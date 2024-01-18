@@ -11,21 +11,9 @@ function onButtonClick() {
 
 <template>
   <div>
-    <button @click="onButtonClick" class="button">
-      <v-icon size="small" color="grey-darken-3">mdi-table-cog</v-icon>
+    <button @click="onButtonClick" class="icon-button with-bottom-border">
+      <v-icon size="small" color="#66615b">mdi-table</v-icon>
     </button>
     <CustomizedTable v-model:isTableVisible="tableDialog" />
   </div>
 </template>
-
-<style scoped>
-.button {
-  cursor: pointer;
-  padding: 4px 6px;
-  width: fit-content;
-  text-align: center;
-}
-.button:hover {
-  background-color: #e0e0e0;
-}
-</style>

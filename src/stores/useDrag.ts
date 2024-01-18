@@ -28,7 +28,8 @@ export function useDrag(params: UseDragParams) {
     el.value.style.top = `${event.y - startOffsetY}px`
   })
   d3Drag.on('end', (event: D3DragEvent<HTMLElement, any, any>) => {
-    // update sensor position
+    if (event.x - startOffsetX === dragItem.left && event.y - startOffsetY === dragItem.right)
+      return
     editSensor(id, {
       position: {
         x: event.x - startOffsetX,

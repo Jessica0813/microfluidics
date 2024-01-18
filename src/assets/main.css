@@ -5,9 +5,31 @@
 #app {
   display: flex;
   flex-direction: row;
-  margin: 0 auto;
-  padding: 0rem;
+  margin: 0;
+  padding: 0;
   font-weight: normal;
   height: 100vh;
   width: 100vw;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+.icon-button {
+  padding: 4px 6px;
+  width: fit-content;
+  text-align: center;
+}
+
+.icon-button:hover {
+  background-color: #d4d4d4;
+}
+
+.icon-button.with-bottom-border {
+  border-bottom: 1px solid #dfdfdf; /* Adjust color and thickness as needed */
+}
+
+.icon-button.with-right-border {
+  border-right: 1px solid #dfdfdf;
 }

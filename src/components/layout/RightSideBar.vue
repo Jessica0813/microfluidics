@@ -3,7 +3,7 @@ import TableConfigureButton from './TableConfigureButton.vue'
 </script>
 
 <template>
-  <div class="vertical-button-group">
+  <div class="vertical-button-group elevation-1">
     <TableConfigureButton title="fluid table" />
     <button class="icon-button with-bottom-border" title="DRC">
       <v-icon size="small" color="#66615b">mdi-text-box-check-outline</v-icon>

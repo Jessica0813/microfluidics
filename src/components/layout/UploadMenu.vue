@@ -24,6 +24,7 @@
 .button {
   text-align: center;
   padding: 4px 0px;
+  cursor: pointer;
 }
 .button:hover {
   background-color: #e0e0e0;

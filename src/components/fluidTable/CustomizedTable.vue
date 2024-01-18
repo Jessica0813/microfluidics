@@ -4,7 +4,7 @@ import { useFluidStore } from '@/stores/fluid'
 import { ref } from 'vue'
 import CustomizedButton from './CustomizedButton.vue'
 import DeleteConfirmationDialog from './DeleteConfirmationDialog.vue'
-import ItemFormDialog from './ItemFormDialog.vue'
+import ItemCreateEditDialog from './ItemCreateEditDialog.vue'
 import { defineModel } from 'vue'
 
 const fluidStore = useFluidStore()
@@ -98,7 +98,7 @@ function handleEditFluid(index: number, fluid: Fluid) {
         @cancel="cancelItemDelete"
         @confirm="confirmItemDelete"
       />
-      <ItemFormDialog
+      <ItemCreateEditDialog
         v-model:isDialogVisible="dialogCreateOrEdit"
         v-model:nameInput="name"
         v-model:colorInput="color"

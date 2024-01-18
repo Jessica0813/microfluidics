@@ -161,16 +161,16 @@ function onDrop(event: any) {
 <style scoped>
 .side-panel {
   position: absolute;
-  top: 20%;
-  left: 15px;
+  top: 25%;
+  left: 10px;
   z-index: 5;
   cursor: pointer;
 }
 
 .icon-button-group {
   position: absolute;
-  top: 15px;
-  left: 30px;
+  top: 10px;
+  left: 10%;
   z-index: 5;
 }
 

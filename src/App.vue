@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import FlowChartCanvas from './components/FlowChartCanvas.vue'
-import DesignCanvas from './components/DesignCanvas.vue'
-import CanvasSwitch from './components/CanvasSwitch.vue'
-import RightSideBar from './components/RightSideBar.vue'
+import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
+import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
+import CanvasSwitch from './components/layout/CanvasSwitch.vue'
+import RightSideBar from './components/layout/RightSideBar.vue'
 import { ref } from 'vue'
+import { useVueFlow } from '@vue-flow/core'
+
+// to keep the state of flow design canvas and sensor
+// need to figure out how it achieved
+const { getNodes } = useVueFlow()
 
 const isFlowDesignCanvasOpen = ref(true)
 function onFlowDesignClick() {
@@ -30,7 +35,6 @@ function onSensorPlacementClick() {
       <FlowChartCanvas v-if="isFlowDesignCanvasOpen" />
       <DesignCanvas v-else />
     </div>
-    <!-- <DesignCanvas /> -->
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CustomizedTable from './CustomizedTable.vue'
+import CustomizedTable from '../fluidTable/CustomizedTable.vue'
 import { ref } from 'vue'
 
 const tableDialog = ref(false)

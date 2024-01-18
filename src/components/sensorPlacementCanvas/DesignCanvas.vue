@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Sensor } from '@/types/sensor'
-import SensorPanel from '@/components/SensorPanel.vue'
+import SensorPanel from './SensorPanel.vue'
 import { useSensorStore } from '@/stores/useSensor'
-import DesignViewPort from '@/components/DesignViewPort.vue'
+import DesignViewPort from './DesignViewPort.vue'
 
 let id = 0
 

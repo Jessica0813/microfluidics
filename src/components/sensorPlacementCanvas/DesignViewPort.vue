@@ -3,7 +3,7 @@ import { zoom } from 'd3-zoom'
 import { select } from 'd3-selection'
 import { ref, onMounted, computed } from 'vue'
 import { useSensorStore } from '@/stores/useSensor'
-import SensorWrapper from '@/components/SensorWrapper.vue'
+import SensorWrapper from './SensorWrapper.vue'
 
 const viewPort = ref<HTMLElement | null>(null)
 const scale = ref(1)

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
-import SidePanel from './SidePanel.vue'
+import NodePanel from './NodePanel.vue'
 import { Background } from '@vue-flow/background'
 import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
 import ScheduledProcessNode from './ScheduledProcessNode.vue'
-import UploadDownLoadControls from './UploadDownloadControls.vue'
+import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 
 let processNodeId = 0
 let conditionNodeId = 0
@@ -127,7 +127,7 @@ function onDrop(event: any) {
 <template>
   <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
     <div class="side-panel">
-      <SidePanel />
+      <NodePanel />
     </div>
     <div class="icon-button-group">
       <UploadDownLoadControls />

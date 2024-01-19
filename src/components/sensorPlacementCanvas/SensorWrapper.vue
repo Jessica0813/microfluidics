@@ -4,10 +4,16 @@ import { useDrag } from '@/stores/useDrag'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 import { watch } from 'vue'
+import type { Transform } from '@/types/sensor.ts'
+import IconSensor from '../icons/IconSensor.vue'
 
 const props = defineProps({
   sensor: {
     type: Object as () => Sensor,
+    required: true
+  },
+  transform: {
+    type: Object as () => Transform,
     required: true
   }
 })
@@ -22,7 +28,6 @@ onMounted(() => {
   })
 })
 
-//not sure if it's a good solution
 watch(
   () => props.sensor.position,
   () => {
@@ -33,6 +38,15 @@ watch(
     })
   }
 )
+
+watch(
+  () => props.transform,
+  () => {
+    if (!sensorRef.value) return
+    // sensorRef.value.style.transform = `translate(${props.transform.x}px, ${props.transform.y}px), scale(${props.transform.k})`
+    // console.log(props.transform)
+  }
+)
 </script>
 
 <template>
@@ -40,12 +54,13 @@ watch(
     ref="sensorRef"
     :id="sensor.id"
     :style="{
-      width: `${sensor.dimension.width}px`,
-      height: `${sensor.dimension.height}px`,
-      left: `${sensor.position.x}px`,
-      top: `${sensor.position.y}px`,
-      backgroundColor: 'grey',
-      position: 'absolute'
+      position: 'absolute',
+      left: props.transform.x + 'px',
+      top: props.transform.y + 'px',
+      width: sensor.dimension.width * props.transform.k + 'px',
+      height: sensor.dimension.height * props.transform.k + 'px',
     }"
-  ></div>
+  >
+  <IconSensor />
+  </div>
 </template>

@@ -138,6 +138,7 @@ function onDrop(event: any) {
       fit-view-on-init
       :default-viewport="{ zoom: 1 }"
       :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
+      :zoom-on-double-click="false"
       @edge-update="onEdgeUpdate"
     >
       <Background style="background-color: #faf9f7" pattern-color="black" />

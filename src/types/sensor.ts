@@ -5,3 +5,9 @@ export interface Sensor {
   position: { x: number; y: number }
   dimension: { width: number; height: number }
 }
+
+export interface Transform {
+  x: number
+  y: number
+  k: number
+}

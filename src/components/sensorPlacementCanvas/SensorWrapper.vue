@@ -58,9 +58,9 @@ watch(
       left: props.transform.x + 'px',
       top: props.transform.y + 'px',
       width: sensor.dimension.width * props.transform.k + 'px',
-      height: sensor.dimension.height * props.transform.k + 'px',
+      height: sensor.dimension.height * props.transform.k + 'px'
     }"
   >
-  <IconSensor />
+    <IconSensor />
   </div>
 </template>

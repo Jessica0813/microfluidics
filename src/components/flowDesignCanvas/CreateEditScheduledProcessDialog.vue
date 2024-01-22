@@ -23,6 +23,10 @@ const props = defineProps({
   index: {
     type: Number,
     required: true
+  },
+  isCreateNewProcessMode: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -47,6 +51,8 @@ watch(
         : flowControlProcesses.value[props.index].flowControlList
     startTime.value = props.index < 0 ? 0 : flowControlProcesses.value[props.index].startTime
     endTime.value = props.index < 0 ? 0 : flowControlProcesses.value[props.index].endTime
+    console.log('props.index', props.index)
+    console.log('inletConfigs.value', inletConfigs.value)
   }
 )
 
@@ -76,6 +82,14 @@ function onAddOrEditButtonClick() {
     flowControlProcesses.value.splice(props.index, 1, newFlowControlProcess)
   }
 }
+
+function OnDeleteButtonClick() {
+  isCreateNewProcessDialogVisible.value = false
+  if (flowControlProcesses.value !== undefined) {
+    //replace the process base on the index
+    flowControlProcesses.value.splice(props.index, 1)
+  }
+}
 </script>
 
 <template>
@@ -88,10 +102,11 @@ function onAddOrEditButtonClick() {
   >
     <div class="dialog-div">
       <div class="d-flex pb-2 align-center">
-        <p class="text-subtitle-2">Add New Process</p>
+        <p class="text-subtitle-2">{{ isCreateNewProcessMode ? 'Add New Process' : 'Edit Process' }}</p>
         <v-spacer></v-spacer>
         <button class="button mr-2" @click="onCancelButtonClick">Cancel</button>
-        <button class="button" @click="onAddOrEditButtonClick()">Add</button>
+        <button  class="button mr-2" v-if="!isCreateNewProcessMode" @click="OnDeleteButtonClick">Delete</button>
+        <button class="button" @click="onAddOrEditButtonClick()">{{ isCreateNewProcessMode ? 'Add' : 'Edit' }}</button>
       </div>
 
       <v-divider thickness="2"></v-divider>
@@ -202,7 +217,7 @@ function onAddOrEditButtonClick() {
 .dialog-div {
   border-radius: 4px;
   height: fit-content;
-  width: 400px;
+  width: 500px;
   height: fit-content;
   display: flex;
   flex-direction: column;

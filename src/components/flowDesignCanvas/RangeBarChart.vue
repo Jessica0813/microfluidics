@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FlowConfigs } from '@/types/flowControl'
-import { computed, ref, watch } from 'vue'
-import EditChildScheduledProcess from './EditChildScheduledProcess.vue'
+import { computed, ref } from 'vue'
+import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue';
 
 // const rangeBar = ref<HTMLElement | null>(null)
 // let width = 0;
@@ -30,6 +30,10 @@ const props = defineProps({
   width: {
     type: Number,
     required: true
+  },
+  isBarChartClickable: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -59,26 +63,23 @@ const tickArray = computed(() => {
   return Array.from({ length: 5 }, (_, index) => index * distance)
 })
 
-const editChildScheduledProcess = ref<HTMLElement | null>(null)
 const flowControls = ref<FlowConfigs[]>(props.flowControlProcesses)
 const isCreateNewProcessDialogVisible = ref(false)
 const index = ref(-1)
 function onProcessClick(outArrayIndex: number) {
+  if (!props.isBarChartClickable) return
   index.value = outArrayIndex
   isCreateNewProcessDialogVisible.value = true
 }
 
-watch(index, () => {
-  if (!editChildScheduledProcess.value) return
-})
 </script>
 
 <template>
-  <EditChildScheduledProcess
+  <CreateEditScheduledProcessDialog
     v-model:isCreateNewProcessDialogVisible="isCreateNewProcessDialogVisible"
     v-model:flowControlProcesses="flowControls"
     :index="index"
-    ref="editChildScheduledProcess"
+    :isCreateNewProcessMode="false"
   />
   <div class="chart">
     <div class="bar">

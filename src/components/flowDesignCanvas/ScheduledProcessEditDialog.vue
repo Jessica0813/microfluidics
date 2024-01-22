@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import type { FlowConfigs } from '@/types/flowControl'
 import RangeBarChart from './RangeBarChart.vue'
-import NewChildScheduledProcessDialog from './NewChildScheduledProcessDialog.vue'
+import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue';
 
 const props = defineProps({
   totalDuration: {
@@ -40,9 +40,10 @@ watch(
 
 <template>
   <div>
-    <NewChildScheduledProcessDialog
+    <CreateEditScheduledProcessDialog
       v-model:isCreateNewProcessDialogVisible="isCreateNewProcessDialogVisible"
       v-model:flowControlProcesses="flowControls"
+      :index="-1"
     />
     <v-icon size="small" color="grey-darken-3" @click="onButtonClick"> mdi-dots-vertical</v-icon>
     <v-dialog v-model="scheduledProcessDialog" width="80%" persistent>
@@ -77,6 +78,7 @@ watch(
           :flowControlProcesses="flowControls"
           :totalDuration="duration"
           :width="1078"
+          :is-bar-chart-clickable="true"
         />
         <div class="d-flex px-2 pt-2">
           <v-spacer></v-spacer>

@@ -9,7 +9,7 @@ defineEmits(['onFlowDesignClick', 'onSensorPlacementClick'])
 </script>
 
 <template>
-  <div class="tab-bar elevation-1">
+  <div class="tab-bar">
     <button
       class="tab-button"
       :style="{

@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import type { FlowConfigs } from '@/types/flowControl'
 import RangeBarChart from './RangeBarChart.vue'
-import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue';
+import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue'
 
 const props = defineProps({
   totalDuration: {

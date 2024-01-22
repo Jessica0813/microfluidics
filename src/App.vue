@@ -5,6 +5,7 @@ import CanvasSwitch from './components/layout/CanvasSwitch.vue'
 import RightSideBar from './components/layout/RightSideBar.vue'
 import { ref } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
+import UploadDownLoadControls from './components/layout/UploadDownloadControls.vue'
 
 // to keep the state of flow design canvas and sensor
 // need to figure out how it achieved
@@ -45,6 +46,8 @@ function onSensorPlacementClick() {
 }
 
 .switch {
+  display: flex;
+  flex-direction: row;
   position: absolute;
   top: 10px;
   right: 10px;

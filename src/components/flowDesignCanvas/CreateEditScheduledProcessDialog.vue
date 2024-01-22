@@ -102,11 +102,17 @@ function OnDeleteButtonClick() {
   >
     <div class="dialog-div">
       <div class="d-flex pb-2 align-center">
-        <p class="text-subtitle-2">{{ isCreateNewProcessMode ? 'Add New Process' : 'Edit Process' }}</p>
+        <p class="text-subtitle-2">
+          {{ isCreateNewProcessMode ? 'Add New Process' : 'Edit Process' }}
+        </p>
         <v-spacer></v-spacer>
         <button class="button mr-2" @click="onCancelButtonClick">Cancel</button>
-        <button  class="button mr-2" v-if="!isCreateNewProcessMode" @click="OnDeleteButtonClick">Delete</button>
-        <button class="button" @click="onAddOrEditButtonClick()">{{ isCreateNewProcessMode ? 'Add' : 'Edit' }}</button>
+        <button class="button mr-2" v-if="!isCreateNewProcessMode" @click="OnDeleteButtonClick">
+          Delete
+        </button>
+        <button class="button" @click="onAddOrEditButtonClick()">
+          {{ isCreateNewProcessMode ? 'Add' : 'Edit' }}
+        </button>
       </div>
 
       <v-divider thickness="2"></v-divider>

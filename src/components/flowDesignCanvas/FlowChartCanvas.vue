@@ -9,6 +9,7 @@ import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
 import ScheduledProcessNode from './ScheduledProcessNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
+import ZoomSlider from './ZoomSlider.vue'
 
 let processNodeId = 0
 let conditionNodeId = 0
@@ -130,6 +131,7 @@ function onDrop(event: any) {
       <NodePanel />
     </div>
     <div class="icon-button-group">
+      <ZoomSlider class="pr-6" />
       <UploadDownLoadControls />
     </div>
     <!-- <div class="design-canvas elevation-5"></div> -->
@@ -139,6 +141,8 @@ function onDrop(event: any) {
       :default-viewport="{ zoom: 1 }"
       :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
       :zoom-on-double-click="false"
+      :max-zoom="2"
+      :min-zoom="0.2"
       @edge-update="onEdgeUpdate"
     >
       <Background style="background-color: #faf9f7" pattern-color="black" />
@@ -169,9 +173,11 @@ function onDrop(event: any) {
 }
 
 .icon-button-group {
+  display: flex;
+  flex-direction: row;
   position: absolute;
   top: 10px;
-  left: 10%;
+  left: 10px;
   z-index: 5;
 }
 

@@ -16,7 +16,7 @@
     "@types/d3": "^7.4.3",
     "@vue-flow/background": "^1.2.0",
     "@vue-flow/controls": "^1.1.0",
-    "@vue-flow/core": "^1.27.1",
+    "@vue-flow/core": "^1.29.0",
     "@vue-flow/node-toolbar": "^1.1.0",
     "d3": "^7.8.5",
     "pinia": "^2.1.7",

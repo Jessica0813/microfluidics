@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FlowConfigs } from '@/types/flowControl'
 import { computed, ref } from 'vue'
-import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue';
+import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue'
 
 // const rangeBar = ref<HTMLElement | null>(null)
 // let width = 0;
@@ -71,7 +71,6 @@ function onProcessClick(outArrayIndex: number) {
   index.value = outArrayIndex
   isCreateNewProcessDialogVisible.value = true
 }
-
 </script>
 
 <template>

@@ -2,7 +2,7 @@
 import type { Sensor } from '@/types/sensor'
 import SensorPanel from './SensorPanel.vue'
 import { useSensorStore } from '@/stores/useSensor'
-import DesignViewPort from './DesignViewPort.vue'
+import SensorPlacementCanvas from './SensorPlacementCanvas.vue';
 
 let id = 0
 
@@ -23,14 +23,10 @@ function onDragOver(event: any) {
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/desgin')
-  console.log(type)
-
-  //   if (viewPort.value === null) return
-  //   const { left, top } = viewPort.value.getBoundingClientRect()
 
   const position = {
-    x: event.clientX - 25,
-    y: event.clientY - 25
+    x: event.clientX - 7.5,
+    y: event.clientY - 15
   }
 
   const sensorId = getSensorId()
@@ -40,11 +36,11 @@ function onDrop(event: any) {
     position,
     name: sensorId,
     dimension: {
-      width: 50,
-      height: 50
+      width: 15,
+      height: 30
     }
   }
-
+  
   addSensor(newSensor)
 }
 </script>
@@ -52,13 +48,9 @@ function onDrop(event: any) {
 <template>
   <div class="design-canvas">
     <SensorPanel class="side-panel" />
-    <DesignViewPort @dragover="onDragOver" @drop="onDrop" />
+    <SensorPlacementCanvas @dragover="onDragOver" @drop="onDrop" />
   </div>
 </template>
-
-<!-- <div style="width: 200px; position: absolute; z-index: 1">
-      <v-slider v-model="scale" min="0.2" :max="2"></v-slider>
-    </div> -->
 
 <style scoped>
 .design-canvas {

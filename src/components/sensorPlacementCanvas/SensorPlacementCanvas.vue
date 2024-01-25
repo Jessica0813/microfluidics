@@ -1,5 +1,8 @@
 <template>
   <div style="width: 100%; height: 100%; overflow: clip; background-color: #faf9f7">
+    <div class="slider">
+      <ZoomSlider :zoom="transform.k" :d3-zoom="d3Zoom" :d3-selection="d3Selection"/>
+    </div>
     <svg ref="svg" width="100%" height="100%">
       <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -30,6 +33,14 @@ import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
 import type { Sensor } from '@/types/sensor'
 import ZoomSlider from './ZoomSlider.vue'
+import type { ZoomBehavior } from 'd3-zoom'
+import type { Selection } from 'd3-selection'
+
+export type D3Zoom = ZoomBehavior<HTMLElement, unknown>
+export type D3Selection = Selection<HTMLElement, any, any, any>
+
+const d3Zoom = ref<D3Zoom>()
+const d3Selection = ref<D3Selection>()
 
 const { sensors, editSensor } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
@@ -56,12 +67,12 @@ d3Drag.on('end', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
 
 onMounted(() => {
   if (!svg.value) return
-  const d3Selection = select(svg.value)
-  const patternGrid = d3Selection.select('#grid')
-  const patternInnerGrid = d3Selection.select('#smallGrid')
-  const canvas = d3Selection.select('#canvas')
+  d3Selection.value = select(svg.value)
+  const patternGrid = d3Selection.value.select('#grid')
+  const patternInnerGrid = d3Selection.value.select('#smallGrid')
+  const canvas = d3Selection.value.select('#canvas')
 
-  const d3Zoom = zoom<HTMLElement, any>()
+  d3Zoom.value = zoom<HTMLElement, any>()
     .scaleExtent([0.2, 2])
     .on('zoom', (event) => {
       transform.value = event.transform
@@ -84,7 +95,7 @@ onMounted(() => {
       return true
     })
 
-  d3Selection.call(d3Zoom).on('wheel.zoom')
+  d3Selection.value.call(d3Zoom.value).on('wheel.zoom')
 
   // Function to update rectangles
   const updateRectangles = () => {
@@ -118,3 +129,15 @@ onMounted(() => {
 })
 
 </script>
+
+
+<style scoped>
+.slider {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+}
+</style>

@@ -22,17 +22,27 @@
   import { toRef } from 'vue'
   import IconZoomIn from '../icons/IconZoomIn.vue'
   import IconZoomOut from '../icons/IconZoomOut.vue'
+  import type { D3Zoom, D3Selection } from './SensorPlacementCanvas.vue'
   
   const zoom = defineModel<number>('zoom', { default: 1 })
+  const d3Zoom = defineModel<D3Zoom>('d3Zoom')
+  const d3Selection = defineModel<D3Selection>('d3Selection')
   
   const minZoomReached = toRef(() => zoom.value <= 0.2)
   const maxZoomReached = toRef(() => zoom.value >= 2)
+
+  function zoomTo(value: number) {
+    if (d3Zoom.value && d3Selection.value) {
+     d3Zoom.value.scaleTo(d3Selection.value, value)
+    }
+  }
   
   function zoomIn() {
     zoom.value = zoom.value + 0.1
     if (zoom.value > 2) {
       zoom.value = 2
     }
+    zoomTo(zoom.value)
   }
   
   function zoomOut() {
@@ -40,9 +50,11 @@
     if (zoom.value < 0.2) {
       zoom.value = 0.2
     }
+    zoomTo(zoom.value)
   }
   
   function zoomBySlider() {
+    zoomTo(zoom.value)
   }
   </script>
   

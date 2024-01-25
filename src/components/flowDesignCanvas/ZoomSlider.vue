@@ -26,8 +26,8 @@
     <button class="icon-button with-right-border" title="reset the view" @click="resetView">
       <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
     </button>
-    <button class="icon-button" title="delete" @click="deleteSelectedElements">
-      <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
+    <button class="icon-button" :class="hasSelectedElements? '' : 'disable-hover'" title="delete" @click="deleteSelectedElements" :disabled="!hasSelectedElements">
+      <v-icon size="small" :color="hasSelectedElements? '#66615b' : '#c2c2be'">mdi-trash-can-outline</v-icon>
     </button>
   </div>
 </template>
@@ -43,6 +43,8 @@ const zoom = ref(1)
 
 const minZoomReached = toRef(() => viewport.value.zoom <= 0.2)
 const maxZoomReached = toRef(() => viewport.value.zoom >= 2)
+
+const hasSelectedElements = toRef(() => getSelectedElements.value.length > 0)
 
 watch(
   () => viewport.value,

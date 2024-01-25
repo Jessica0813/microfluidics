@@ -4,18 +4,18 @@ import UploadMenu from './UploadMenu.vue'
 
 <template>
   <div class="d-flex ga-2">
-    <div class="d-flex button-group">
-      <!-- <button class="icon-button with-right-border" title="undo">
+    <!-- <div class="d-flex button-group">
+      <button class="icon-button with-right-border" title="undo">
         <v-icon size="small" color="#66615b">mdi-undo</v-icon>
       </button>
       <button class="icon-button with-right-border" title="redo">
         <v-icon size="small" color="#66615b">mdi-redo</v-icon>
-      </button> -->
+      </button>
       <button class="icon-button" title="redo">
         <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
       </button>
-    </div>
-    <div class="d-flex button-group">
+    </div> -->
+    <div class="d-flex button-group ml-2">
       <v-menu offset="1" z-index="5">
         <template v-slot:activator="{ props }">
           <button class="icon-button with-right-border" v-bind="props">

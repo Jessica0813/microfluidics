@@ -16,6 +16,20 @@
       <IconZoomIn :color="maxZoomReached ? '#BDBDBD' : ''" />
     </button>
   </div>
+  <div class="d-flex button-group ml-4">
+    <!-- <button class="icon-button with-right-border" title="undo">
+        <v-icon size="small" color="#66615b">mdi-undo</v-icon>
+      </button>
+      <button class="icon-button with-right-border" title="redo">
+        <v-icon size="small" color="#66615b">mdi-redo</v-icon>
+      </button> -->
+    <button class="icon-button with-right-border" title="reset the view" @click="resetView">
+      <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
+    </button>
+    <button class="icon-button" title="delete" @click="deleteSelectedElements">
+      <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -24,7 +38,7 @@ import { useVueFlow } from '@vue-flow/core'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 
-const { zoomTo, viewport } = useVueFlow()
+const { zoomTo, viewport, getSelectedElements, removeEdges, removeNodes, setViewport} = useVueFlow()
 const zoom = ref(1)
 
 const minZoomReached = toRef(() => viewport.value.zoom <= 0.2)
@@ -56,6 +70,21 @@ function zoomOut() {
 function zoomBySlider() {
   zoomTo(zoom.value)
 }
+
+function deleteSelectedElements() {
+  getSelectedElements.value.forEach((element) => {
+    if (element.type === 'custom') {
+      removeEdges([element.id])
+    } else if (element.type === 'condition' || element.type === 'process' || element.type === 'schedule'){
+      removeNodes([element.id])
+    }
+  })
+}
+
+function resetView() {
+  setViewport({ zoom: 1, x: 0, y: 0 })
+}
+
 </script>
 
 <style scoped>
@@ -63,5 +92,12 @@ function zoomBySlider() {
   display: flex;
   align-items: center;
   padding: 5px, 0px;
+}
+
+.button-group {
+  background-color: #efeeea;
+  border: 1px solid #dfdfdf;
+  border-radius: 4px;
+  width: fit-content;
 }
 </style>

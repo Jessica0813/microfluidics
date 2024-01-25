@@ -2,7 +2,7 @@
 import type { Sensor } from '@/types/sensor'
 import SensorPanel from './SensorPanel.vue'
 import { useSensorStore } from '@/stores/useSensor'
-import SensorPlacementCanvas from './SensorPlacementCanvas.vue';
+import SensorPlacementCanvas from './SensorPlacementCanvas.vue'
 
 let id = 0
 
@@ -40,7 +40,7 @@ function onDrop(event: any) {
       height: 30
     }
   }
-  
+
   addSensor(newSensor)
 }
 </script>

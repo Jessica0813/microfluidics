@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%; height: 100%; overflow: clip; background-color: #faf9f7">
     <div class="slider">
-      <ZoomSlider :zoom="transform.k" :d3-zoom="d3Zoom" :d3-selection="d3Selection"/>
+      <ZoomSlider :zoom="transform.k" :d3-zoom="d3Zoom" :d3-selection="d3Selection" />
     </div>
     <svg ref="svg" width="100%" height="100%">
       <defs>
@@ -54,7 +54,9 @@ d3Drag.on('start', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
   startOffsetY = event.y - event.subject.position.y
 })
 d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
-  select(`#sensor-${event.subject.id}`).attr('x', event.x - startOffsetX).attr('y', event.y - startOffsetY)
+  select(`#sensor-${event.subject.id}`)
+    .attr('x', event.x - startOffsetX)
+    .attr('y', event.y - startOffsetY)
 })
 d3Drag.on('end', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
   editSensor(event.subject.id, {
@@ -127,9 +129,7 @@ onMounted(() => {
     canvas.selectAll('.sensor').data(sensors).remove()
   })
 })
-
 </script>
-
 
 <style scoped>
 .slider {

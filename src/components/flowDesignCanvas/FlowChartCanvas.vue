@@ -131,7 +131,7 @@ function onDrop(event: any) {
       <NodePanel />
     </div>
     <div class="icon-button-group">
-      <ZoomSlider class="pr-6" />
+      <ZoomSlider/>
       <UploadDownLoadControls />
     </div>
     <!-- <div class="design-canvas elevation-5"></div> -->
@@ -191,9 +191,5 @@ function onDrop(event: any) {
   bottom: 15px;
   right: 15px;
   z-index: 5;
-}
-
-.vue-flow__controls {
-  display: flex;
 }
 </style>

@@ -26,8 +26,16 @@
     <button class="icon-button with-right-border" title="reset the view" @click="resetView">
       <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
     </button>
-    <button class="icon-button" title="delete">
-      <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
+    <button
+      class="icon-button"
+      title="delete"
+      :class="hasSelectedElements ? '' : 'disable-hover'"
+      :disabled="!hasSelectedElements"
+      @click="deleteSelectedSensor"
+    >
+      <v-icon size="small" :color="hasSelectedElements ? '#66615b' : '#c2c2be'"
+        >mdi-trash-can-outline</v-icon
+      >
     </button>
   </div>
 </template>
@@ -38,6 +46,9 @@ import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 import type { D3Zoom, D3Selection } from './SensorPlacementCanvas.vue'
 import { zoomIdentity } from 'd3-zoom'
+import { useSensorStore } from '@/stores/useSensor'
+
+const { selectedSensor, deleteSelectedSensor } = useSensorStore()
 
 const zoom = defineModel<number>('zoom', { default: 1 })
 const props = defineProps<{
@@ -47,6 +58,7 @@ const props = defineProps<{
 
 const minZoomReached = toRef(() => zoom.value <= 0.2)
 const maxZoomReached = toRef(() => zoom.value >= 2)
+const hasSelectedElements = toRef(() => selectedSensor.length > 0)
 
 function zoomTo(value: number) {
   if (props.d3Zoom && props.d3Selection) {

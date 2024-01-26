@@ -40,7 +40,8 @@ function onDrop(event: any) {
     dimension: {
       width: 15,
       height: 30
-    }
+    },
+    selected: false
   }
 
   addSensor(newSensor)

@@ -4,6 +4,7 @@ export interface Sensor {
   name: string
   position: { x: number; y: number }
   dimension: { width: number; height: number }
+  selected: boolean
 }
 
 export interface Transform {

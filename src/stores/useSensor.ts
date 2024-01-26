@@ -9,23 +9,33 @@ export const useSensorStore = defineStore('sensor', () => {
       type: 'temperature',
       name: 'Temperature Sensor',
       position: { x: 100, y: 100 },
-      dimension: { width: 100, height: 100 }
+      dimension: { width: 15, height: 30 },
+      selected: false
     },
     {
       id: '2',
       type: 'speed',
       name: 'Speed Sensor',
       position: { x: 200, y: 200 },
-      dimension: { width: 100, height: 100 }
+      dimension: { width: 15, height: 30 },
+      selected: false
     }
   ])
+
+  const selectedSensor = ref<Sensor[]>([])
 
   function addSensor(sensor: Sensor) {
     sensors.value.push(sensor)
   }
 
-  function removeSensor(id: string) {
-    sensors.value = sensors.value.filter((sensor) => sensor.id !== id)
+  function deleteSelectedSensor() {
+    selectedSensor.value.forEach((sensor) => {
+      const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
+      if (sensorIndex !== -1) {
+        sensors.value.splice(sensorIndex, 1)
+      }
+    })
+    selectedSensor.value = []
   }
 
   function editSensor(id: string, updatedSensor: Partial<Sensor>) {
@@ -41,5 +51,37 @@ export const useSensorStore = defineStore('sensor', () => {
     return sensors.value.find((sensor) => sensor.id === id)
   }
 
-  return { sensors, addSensor, removeSensor, editSensor, findSensor }
+  function onSelectSensor(id: string) {
+    if (selectedSensor.value.length !== 0) {
+      removeAllSelectedSensors()
+    }
+    const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id)
+
+    if (sensorIndex !== -1) {
+      sensors.value[sensorIndex].selected = true
+      selectedSensor.value.push(sensors.value[sensorIndex])
+    }
+  }
+
+  function removeAllSelectedSensors() {
+    // loop throught all the sensors in selectedSensor and set selected in the sesnor array to false
+    selectedSensor.value.forEach((sensor) => {
+      const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
+      if (sensorIndex !== -1) {
+        sensors.value[sensorIndex].selected = false
+      }
+    })
+    selectedSensor.value = []
+  }
+
+  return {
+    sensors,
+    selectedSensor,
+    addSensor,
+    deleteSelectedSensor,
+    editSensor,
+    findSensor,
+    onSelectSensor,
+    removeAllSelectedSensors
+  }
 })

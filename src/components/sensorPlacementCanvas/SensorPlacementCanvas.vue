@@ -1,5 +1,8 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: clip; background-color: #faf9f7">
+  <div
+    style="width: 100%; height: 100%; overflow: clip; background-color: #faf9f7"
+    @click="removeAllSelectedSensors"
+  >
     <div class="slider">
       <ZoomSlider :zoom="transform.k" :d3-zoom="d3Zoom" :d3-selection="d3Selection" />
     </div>
@@ -43,7 +46,7 @@ export type D3Selection = Selection<HTMLElement, any, any, any>
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
 
-const { sensors, editSensor } = useSensorStore()
+const { sensors, editSensor, onSelectSensor, removeAllSelectedSensors } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 // const transform = ref({ x: 0, y: 0, k: 1 })
 const transform = defineModel('transform', { default: { x: 0, y: 0, k: 1 } })
@@ -115,9 +118,28 @@ onMounted(() => {
       .attr('y', (sensor) => sensor.position.y)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('fill', 'grey')
+      .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
       .attr('id', (sensor) => `sensor-${sensor.id}`)
       .call(d3Drag)
+      .on('click', (event, sensor) => {
+        event.stopPropagation()
+        onSelectSensor(sensor.id)
+      })
+
+    // Handle updating elements
+    sensorRectangles
+      .attr('x', (sensor) => sensor.position.x)
+      .attr('y', (sensor) => sensor.position.y)
+      .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
+
+    // Handle exiting elements
+    sensorRectangles.exit().remove()
+
+    // Apply D3 drag behavior
+    sensorRectangles.call(d3Drag).on('click', (event, sensor) => {
+      event.stopPropagation()
+      onSelectSensor(sensor.id)
+    })
   }
 
   // Watch for changes in the sensors array and update the visualization

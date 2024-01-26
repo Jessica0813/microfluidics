@@ -3,6 +3,9 @@ import type { Sensor } from '@/types/sensor'
 import SensorPanel from './SensorPanel.vue'
 import { useSensorStore } from '@/stores/useSensor'
 import SensorPlacementCanvas from './SensorPlacementCanvas.vue'
+import { ref } from 'vue'
+
+const transform = ref({ x: 0, y: 0, k: 1 })
 
 let id = 0
 
@@ -18,15 +21,14 @@ function onDragOver(event: any) {
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'move'
   }
-  console.log(111)
 }
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/desgin')
 
   const position = {
-    x: event.clientX - 7.5,
-    y: event.clientY - 15
+    x: (event.clientX - 7.5 - transform.value.x) / transform.value.k,
+    y: (event.clientY - 15 - transform.value.y) / transform.value.k
   }
 
   const sensorId = getSensorId()
@@ -48,7 +50,7 @@ function onDrop(event: any) {
 <template>
   <div class="design-canvas">
     <SensorPanel class="side-panel" />
-    <SensorPlacementCanvas @dragover="onDragOver" @drop="onDrop" />
+    <SensorPlacementCanvas @dragover="onDragOver" @drop="onDrop" v-model:transform="transform" />
   </div>
 </template>
 

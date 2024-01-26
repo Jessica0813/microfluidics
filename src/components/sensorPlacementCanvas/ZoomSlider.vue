@@ -40,15 +40,17 @@ import type { D3Zoom, D3Selection } from './SensorPlacementCanvas.vue'
 import { zoomIdentity } from 'd3-zoom'
 
 const zoom = defineModel<number>('zoom', { default: 1 })
-const d3Zoom = defineModel<D3Zoom>('d3Zoom')
-const d3Selection = defineModel<D3Selection>('d3Selection')
+const props = defineProps<{
+  d3Zoom: D3Zoom | undefined
+  d3Selection: D3Selection | undefined
+}>()
 
 const minZoomReached = toRef(() => zoom.value <= 0.2)
 const maxZoomReached = toRef(() => zoom.value >= 2)
 
 function zoomTo(value: number) {
-  if (d3Zoom.value && d3Selection.value) {
-    d3Zoom.value.scaleTo(d3Selection.value, value)
+  if (props.d3Zoom && props.d3Selection) {
+    props.d3Zoom.scaleTo(props.d3Selection, value)
   }
 }
 
@@ -73,8 +75,8 @@ function zoomBySlider() {
 }
 
 function resetView() {
-  if (d3Zoom.value && d3Selection.value) {
-    d3Zoom.value.transform(d3Selection.value, zoomIdentity)
+  if (props.d3Zoom && props.d3Selection) {
+    props.d3Zoom.transform(props.d3Selection, zoomIdentity)
   }
 }
 </script>

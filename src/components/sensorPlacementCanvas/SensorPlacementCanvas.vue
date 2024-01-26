@@ -35,6 +35,7 @@ import type { Sensor } from '@/types/sensor'
 import ZoomSlider from './ZoomSlider.vue'
 import type { ZoomBehavior } from 'd3-zoom'
 import type { Selection } from 'd3-selection'
+import { zoomIdentity } from 'd3-zoom'
 
 export type D3Zoom = ZoomBehavior<HTMLElement, unknown>
 export type D3Selection = Selection<HTMLElement, any, any, any>
@@ -44,7 +45,8 @@ const d3Selection = ref<D3Selection>()
 
 const { sensors, editSensor } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
-const transform = ref({ x: 0, y: 0, k: 1 })
+// const transform = ref({ x: 0, y: 0, k: 1 })
+const transform = defineModel('transform', { default: { x: 0, y: 0, k: 1 } })
 
 const d3Drag = drag<SVGRectElement, Sensor, any>()
 let startOffsetX: number = 1
@@ -127,6 +129,9 @@ onMounted(() => {
   onBeforeUnmount(() => {
     canvas.selectAll('.sensor').on('.drag', null)
     canvas.selectAll('.sensor').data(sensors).remove()
+    if (d3Zoom.value && d3Selection.value) {
+      d3Zoom.value.transform(d3Selection.value, zoomIdentity)
+    }
   })
 })
 </script>

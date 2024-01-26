@@ -131,7 +131,7 @@ function onDrop(event: any) {
       <NodePanel />
     </div>
     <div class="icon-button-group">
-      <ZoomSlider/>
+      <ZoomSlider />
       <UploadDownLoadControls />
     </div>
     <!-- <div class="design-canvas elevation-5"></div> -->

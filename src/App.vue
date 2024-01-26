@@ -9,7 +9,7 @@ import UploadDownLoadControls from './components/layout/UploadDownloadControls.v
 
 // to keep the state of flow design canvas and sensor
 // need to figure out how it achieved
-// const { getNodes } = useVueFlow()
+const { getNodes } = useVueFlow()
 
 const isFlowDesignCanvasOpen = ref(true)
 function onFlowDesignClick() {

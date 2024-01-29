@@ -29,11 +29,11 @@
     <button
       class="icon-button"
       title="delete"
-      :class="hasSelectedElements ? '' : 'disable-hover'"
-      :disabled="!hasSelectedElements"
+      :class="selectedSensor.length > 0 ? '' : 'disable-hover'"
+      :disabled="selectedSensor.length === 0"
       @click="deleteSelectedSensor"
     >
-      <v-icon size="small" :color="hasSelectedElements ? '#66615b' : '#c2c2be'"
+      <v-icon size="small" :color="selectedSensor.length > 0 ? '#66615b' : '#c2c2be'"
         >mdi-trash-can-outline</v-icon
       >
     </button>
@@ -58,7 +58,6 @@ const props = defineProps<{
 
 const minZoomReached = toRef(() => zoom.value <= 0.2)
 const maxZoomReached = toRef(() => zoom.value >= 2)
-const hasSelectedElements = toRef(() => selectedSensor.length > 0)
 
 function zoomTo(value: number) {
   if (props.d3Zoom && props.d3Selection) {

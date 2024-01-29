@@ -6,6 +6,7 @@ import SensorPlacementCanvas from './SensorPlacementCanvas.vue'
 import { ref } from 'vue'
 
 const transform = ref({ x: 0, y: 0, k: 1 })
+const isSensorMode = ref(false)
 
 let id = 0
 
@@ -50,8 +51,13 @@ function onDrop(event: any) {
 
 <template>
   <div class="design-canvas">
-    <SensorPanel class="side-panel" />
-    <SensorPlacementCanvas @dragover="onDragOver" @drop="onDrop" v-model:transform="transform" />
+    <SensorPanel class="side-panel" v-model:isSensorMode="isSensorMode" />
+    <SensorPlacementCanvas
+      @dragover="onDragOver"
+      @drop="onDrop"
+      v-model:transform="transform"
+      :is-sensor-mode="isSensorMode"
+    />
   </div>
 </template>
 

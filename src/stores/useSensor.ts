@@ -4,22 +4,22 @@ import type { Sensor } from '@/types/sensor.ts'
 
 export const useSensorStore = defineStore('sensor', () => {
   const sensors = ref<Sensor[]>([
-    {
-      id: '1',
-      type: 'temperature',
-      name: 'Temperature Sensor',
-      position: { x: 100, y: 100 },
-      dimension: { width: 15, height: 30 },
-      selected: false
-    },
-    {
-      id: '2',
-      type: 'speed',
-      name: 'Speed Sensor',
-      position: { x: 200, y: 200 },
-      dimension: { width: 15, height: 30 },
-      selected: false
-    }
+    // {
+    //   id: '1',
+    //   type: 'temperature',
+    //   name: 'Temperature Sensor',
+    //   position: { x: 100, y: 100 },
+    //   dimension: { width: 15, height: 30 },
+    //   selected: false
+    // },
+    // {
+    //   id: '2',
+    //   type: 'speed',
+    //   name: 'Speed Sensor',
+    //   position: { x: 200, y: 200 },
+    //   dimension: { width: 15, height: 30 },
+    //   selected: false
+    // }
   ])
 
   const selectedSensor = ref<Sensor[]>([])

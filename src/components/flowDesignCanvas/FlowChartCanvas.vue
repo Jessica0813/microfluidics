@@ -158,7 +158,7 @@ function onDrop(event: any) {
       <template #edge-custom="props">
         <CustomEdge v-bind="props" />
       </template>
-      <Controls />
+      <!-- <Controls /> -->
     </VueFlow>
   </div>
 </template>

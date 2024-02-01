@@ -51,19 +51,19 @@ const { sensors, editSensor, onSelectSensor, removeAllSelectedSensors, addSensor
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 
-const d3Drag = drag<SVGRectElement, Sensor, any>()
+const d3Drag = drag<SVGCircleElement, Sensor, any>()
 let startOffsetX: number = 1
 let startOffsetY: number = 1
-d3Drag.on('start', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
+d3Drag.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
   startOffsetX = event.x - event.subject.position.x
   startOffsetY = event.y - event.subject.position.y
 })
-d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
+d3Drag.on('drag', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
   select(`#sensor-${event.subject.id}`)
-    .attr('x', event.x - startOffsetX)
-    .attr('y', event.y - startOffsetY)
+    .attr('cx', event.x - startOffsetX)
+    .attr('cy', event.y - startOffsetY)
 })
-d3Drag.on('end', (event: D3DragEvent<SVGRectElement, Sensor, any>) => {
+d3Drag.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
   editSensor(event.subject.id, {
     position: {
       x: event.x - startOffsetX,
@@ -90,7 +90,6 @@ onMounted(() => {
   const patternGrid = d3Selection.value.select('#grid')
   const patternInnerGrid = d3Selection.value.select('#smallGrid')
   const canvas = d3Selection.value.select('#canvas')
-  const sensorSample = d3Selection.value.select('#sensor-sample')
 
   d3Zoom.value = zoom<HTMLElement, any>()
     .scaleExtent([0.2, 2])
@@ -107,7 +106,6 @@ onMounted(() => {
       patternInnerGrid.attr('width', transform10).attr('height', transform10)
 
       canvas.attr('transform', event.transform)
-      sensorSample.attr('transform', event.transform)
     })
     .filter((event) => {
       if (event.type === 'dblclick') {
@@ -119,19 +117,16 @@ onMounted(() => {
   d3Selection.value.call(d3Zoom.value).on('wheel.zoom')
 
   // Function to update rectangles
-  const updateRectangles = () => {
-    const sensorRectangles = canvas.selectAll<SVGRectElement, null>('.sensor').data(sensors)
+  const updateCircles = () => {
+    const sensorCircles = canvas.selectAll<SVGCircleElement, null>('.sensor').data(sensors)
 
-    sensorRectangles
+    sensorCircles
       .enter()
-      .append('rect')
+      .append('circle') // Change from rect to circle
       .attr('class', 'sensor')
-      .attr('width', 15)
-      .attr('height', 30)
-      .attr('x', (sensor) => sensor.position.x)
-      .attr('y', (sensor) => sensor.position.y)
-      .attr('rx', 4)
-      .attr('ry', 4)
+      .attr('r', 20) // Radius instead of width and height
+      .attr('cx', (sensor) => sensor.position.x)
+      .attr('cy', (sensor) => sensor.position.y)
       .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
       .attr('id', (sensor) => `sensor-${sensor.id}`)
       .call(d3Drag)
@@ -141,26 +136,26 @@ onMounted(() => {
       })
 
     // Handle updating elements
-    sensorRectangles
-      .attr('x', (sensor) => sensor.position.x)
-      .attr('y', (sensor) => sensor.position.y)
+    sensorCircles
+      .attr('cx', (sensor) => sensor.position.x)
+      .attr('cy', (sensor) => sensor.position.y)
       .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
 
     // Handle exiting elements
-    sensorRectangles.exit().remove()
+    sensorCircles.exit().remove()
 
     // Apply D3 drag behavior
-    sensorRectangles.call(d3Drag).on('click', (event, sensor) => {
+    sensorCircles.call(d3Drag).on('click', (event, sensor) => {
       event.stopPropagation()
       onSelectSensor(sensor.id)
     })
   }
 
   // Watch for changes in the sensors array and update the visualization
-  watch(() => sensors, updateRectangles, { deep: true })
+  watch(() => sensors, updateCircles, { deep: true })
 
   // Initial update
-  updateRectangles()
+  updateCircles()
 
   onBeforeUnmount(() => {
     canvas.selectAll('.sensor').on('.drag', null)

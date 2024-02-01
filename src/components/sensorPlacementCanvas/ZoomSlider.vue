@@ -106,4 +106,3 @@ function resetView() {
   width: fit-content;
 }
 </style>
-@/stores/useSensorStore

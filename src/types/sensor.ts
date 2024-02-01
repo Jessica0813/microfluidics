@@ -3,7 +3,7 @@ export interface Sensor {
   type: 'temperature' | 'speed'
   name: string
   position: { x: number; y: number }
-  dimension: { width: number; height: number }
+  radius: number
   selected: boolean
 }
 

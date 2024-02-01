@@ -23,6 +23,11 @@ export const useSensorStore = defineStore('sensor', () => {
   ])
 
   const selectedSensor = ref<Sensor[]>([])
+  let sensorId = 0
+
+  function getSensorId() {
+    return `sensor_${sensorId++}`
+  }
 
   function addSensor(sensor: Sensor) {
     sensors.value.push(sensor)
@@ -77,6 +82,7 @@ export const useSensorStore = defineStore('sensor', () => {
   return {
     sensors,
     selectedSensor,
+    getSensorId,
     addSensor,
     deleteSelectedSensor,
     editSensor,

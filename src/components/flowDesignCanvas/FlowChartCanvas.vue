@@ -130,7 +130,7 @@ function onDrop(event: any) {
     <div class="side-panel">
       <NodePanel />
     </div>
-    <div class="icon-button-group">
+    <div class="top-bar">
       <ZoomSlider />
       <UploadDownLoadControls />
     </div>
@@ -164,23 +164,6 @@ function onDrop(event: any) {
 </template>
 
 <style scoped>
-.side-panel {
-  position: absolute;
-  top: 25%;
-  left: 10px;
-  z-index: 5;
-  cursor: pointer;
-}
-
-.icon-button-group {
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 5;
-}
-
 .design-canvas {
   position: absolute;
   border: 1px solid #e0e0e0;

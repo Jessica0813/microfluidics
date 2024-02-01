@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { type Fluid } from '@/types/fluid'
-import { useFluidStore } from '@/stores/fluid'
 import { ref } from 'vue'
 import CustomizedButton from './CustomizedButton.vue'
 import DeleteConfirmationDialog from './DeleteConfirmationDialog.vue'
 import ItemCreateEditDialog from './ItemCreateEditDialog.vue'
-import { defineModel } from 'vue'
+import { useFluidStore } from '@/stores/useFluidStore'
 
 const fluidStore = useFluidStore()
 
@@ -157,3 +156,4 @@ function handleEditFluid(index: number, fluid: Fluid) {
     </v-card>
   </v-dialog>
 </template>
+@/stores/usefluidStore

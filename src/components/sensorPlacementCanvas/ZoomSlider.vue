@@ -44,9 +44,9 @@
 import { toRef } from 'vue'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
-import type { D3Zoom, D3Selection } from './SensorPlacementCanvas.vue'
+import type { D3Zoom, D3Selection } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
-import { useSensorStore } from '@/stores/useSensor'
+import { useSensorStore } from '@/stores/useSensorStore'
 
 const { selectedSensor, deleteSelectedSensor } = useSensorStore()
 
@@ -106,3 +106,4 @@ function resetView() {
   width: fit-content;
 }
 </style>
+@/stores/useSensorStore

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineModel } from 'vue'
 import CustomizedButton from './CustomizedButton.vue'
-import { useFluidStore } from '@/stores/fluid'
+import { useFluidStore } from '@/stores/useFluidStore'
 import ColorPicker from './ColorPicker.vue'
 import type { Fluid } from '@/types/fluid'
 
@@ -98,3 +98,4 @@ const isNameExisted = computed(() => {
     </v-card>
   </v-dialog>
 </template>
+@/stores/usefluidStore

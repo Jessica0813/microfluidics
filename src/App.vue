@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
-import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 import CanvasSwitch from './components/layout/CanvasSwitch.vue'
 import RightSideBar from './components/layout/RightSideBar.vue'
 import { ref } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
 import UploadDownLoadControls from './components/layout/UploadDownloadControls.vue'
+import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 
 // to keep the state of flow design canvas and sensor
 // need to figure out how it achieved

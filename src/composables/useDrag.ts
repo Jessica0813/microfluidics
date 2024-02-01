@@ -2,7 +2,7 @@ import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
 import { select } from 'd3-selection'
 import type { Ref } from 'vue'
-import { useSensorStore } from './useSensor'
+import { useSensorStore } from '../stores/useSensorStore'
 
 interface UseDragParams {
   id: string

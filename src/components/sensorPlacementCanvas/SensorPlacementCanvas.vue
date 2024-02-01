@@ -6,7 +6,7 @@
     <div class="slider">
       <ZoomSlider :zoom="transform.k" :d3-zoom="d3Zoom" :d3-selection="d3Selection" />
     </div>
-    <svg ref="svg" width="100%" height="100%" @click="createSensor" @mousemove="updateRecPosition">
+    <svg ref="svg" width="100%" height="100%">
       <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
           <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />
@@ -22,18 +22,6 @@
         </pattern>
       </defs>
       <rect width="100%" height="100%" x="0" y="0" fill="url(#grid)" />
-      <g id="sensor-sample">
-        <rect
-          width="15"
-          height="30"
-          :x="recPosition.x"
-          :y="recPosition.y"
-          rx="4"
-          ry="4"
-          fill="grey"
-          v-if="isSensorMode"
-        />
-      </g>
       <g id="canvas"></g>
     </svg>
   </div>
@@ -55,57 +43,13 @@ import { zoomIdentity } from 'd3-zoom'
 export type D3Zoom = ZoomBehavior<HTMLElement, unknown>
 export type D3Selection = Selection<HTMLElement, any, any, any>
 
-// define a prop with a variable called isSensorMode
-const props = defineProps({
-  isSensorMode: Boolean
-})
-
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
 
-const { sensors, editSensor, onSelectSensor, removeAllSelectedSensors, addSensor } =
-  useSensorStore()
+const { sensors, editSensor, onSelectSensor, removeAllSelectedSensors } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 // const transform = ref({ x: 0, y: 0, k: 1 })
 const transform = defineModel('transform', { default: { x: 0, y: 0, k: 1 } })
-
-const recPosition = ref({ x: 38, y: 140 })
-
-function updateRecPosition(event: MouseEvent) {
-  if (!props.isSensorMode) return
-  recPosition.value = {
-    x: (event.clientX - 7.5 - transform.value.x) / transform.value.k,
-    y: (event.clientY - 15 - transform.value.y) / transform.value.k
-  }
-}
-
-let id = 0
-function getSensorId() {
-  return `sensor_${id++}`
-}
-
-function createSensor(event: MouseEvent) {
-  if (!props.isSensorMode) return
-  const position = {
-    x: (event.clientX - 7.5 - transform.value.x) / transform.value.k,
-    y: (event.clientY - 15 - transform.value.y) / transform.value.k
-  }
-
-  const sensorId = getSensorId()
-  const newSensor: Sensor = {
-    id: sensorId,
-    type: 'temperature',
-    position,
-    name: sensorId,
-    dimension: {
-      width: 15,
-      height: 30
-    },
-    selected: false
-  }
-
-  addSensor(newSensor)
-}
 
 const d3Drag = drag<SVGRectElement, Sensor, any>()
 let startOffsetX: number = 1
@@ -164,7 +108,7 @@ onMounted(() => {
 
   // Function to update rectangles
   const updateRectangles = () => {
-    const sensorRectangles = canvas.selectAll('.sensor').data(sensors)
+    const sensorRectangles = canvas.selectAll<SVGRectElement, null>('.sensor').data(sensors)
 
     sensorRectangles
       .enter()

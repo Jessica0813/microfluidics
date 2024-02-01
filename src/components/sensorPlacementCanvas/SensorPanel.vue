@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const isSensorMode = defineModel('isSensorMode', { default: false })
-
 function onDragStart(event: DragEvent, sensorType: string) {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/desgin', sensorType)
@@ -16,7 +14,6 @@ function onDragStart(event: DragEvent, sensorType: string) {
       class="icon-padding"
       :draggable="true"
       @dragstart="onDragStart($event, 'temperature')"
-      @click="isSensorMode = !isSensorMode"
     >
       <v-icon size="small" color="#515a6e"> mdi-rectangle-outline </v-icon>
     </div>

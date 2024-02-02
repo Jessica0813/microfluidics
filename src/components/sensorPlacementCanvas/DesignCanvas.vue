@@ -12,6 +12,7 @@
         :d3-zoom="d3Zoom"
         :d3-selection="d3Selection"
         v-model:hasSensorSelected="hasSensorSelected"
+        :selected-sensor-id="selectedSensorId"
       />
     </div>
     <svg ref="svg" width="100%" height="100%">
@@ -48,13 +49,21 @@ import { useDrop } from '@/composables/useDrop'
 import SensorPanel from './SensorPanel.vue'
 import type { D3Zoom, D3Selection } from '@/types/d3'
 
-const { sensors, editSensor, onSelectSensor, removeAllSelectedSensors, addSensor, getSensorId } =
-  useSensorStore()
+const {
+  sensors,
+  selectedSensor,
+  editSensor,
+  onSelectSensor,
+  removeAllSelectedSensors,
+  addSensor,
+  getSensorId
+} = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-const hasSensorSelected = ref(false)
+const hasSensorSelected = ref(selectedSensor.length > 0)
+const selectedSensorId = ref(selectedSensor[0]?.id || '')
 
 const d3Drag = drag<SVGGElement, Sensor, any>()
 let startOffsetX: number = 0
@@ -97,6 +106,7 @@ function onDrop(event: any) {
 function removeSelectedSensor() {
   removeAllSelectedSensors()
   hasSensorSelected.value = false
+  selectedSensorId.value = ''
 }
 
 onMounted(() => {
@@ -143,7 +153,7 @@ onMounted(() => {
     sensorEnter
       .append('circle')
       .attr('class', 'sensor')
-      .attr('r', 20)
+      .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
       .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
@@ -154,7 +164,7 @@ onMounted(() => {
       .attr('class', 'sensor-label')
       .attr('x', (sensor) => sensor.position.x)
       .attr('y', (sensor) => sensor.position.y)
-      .attr('dy', -25) // Adjust the text position based on your preference
+      .attr('dy', (sensor) => -sensor.radius - 5) // Adjust the text position based on your preference
       .attr('text-anchor', 'middle') // Center the text on the circle
       .style('font-size', 12)
       .text((sensor) => sensor.name)
@@ -166,10 +176,12 @@ onMounted(() => {
         event.stopPropagation()
         hasSensorSelected.value = true
         onSelectSensor(sensor.id)
+        selectedSensorId.value = sensor.id
       })
 
     // Update
     sensor
+      .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
       .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
@@ -177,6 +189,7 @@ onMounted(() => {
     sensorText
       .attr('x', (sensor) => sensor.position.x)
       .attr('y', (sensor) => sensor.position.y)
+      .attr('dy', (sensor) => -sensor.radius - 5)
       .text((sensor) => sensor.name)
 
     // Exit

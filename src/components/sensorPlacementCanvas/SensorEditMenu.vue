@@ -1,0 +1,100 @@
+<template>
+  <div>
+    <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
+      <template v-slot:activator="{ props }">
+        <button
+          class="icon-button with-right-border"
+          title="edit the sensor"
+          :class="hasSensorSelected ? '' : 'disable-hover'"
+          :disabled="!hasSensorSelected"
+          v-bind="props"
+        >
+          <v-icon size="small" :color="hasSensorSelected ? '#66615b' : '#c2c2be'"
+            >mdi-circle-edit-outline</v-icon
+          >
+        </button>
+      </template>
+
+      <div class="menu">
+        <div class="pb-4">
+          <v-text-field
+            v-model="sensorName"
+            label="Name"
+            variant="outlined"
+            density="compact"
+            color="blue-darken-3"
+            :hide-details="true"
+          >
+          </v-text-field>
+        </div>
+        <div>
+          <v-text-field
+            v-model="sensorRadius"
+            type="number"
+            label="Radius"
+            variant="outlined"
+            density="compact"
+            color="blue-darken-3"
+            :hide-details="true"
+          >
+          </v-text-field>
+        </div>
+      </div>
+    </v-menu>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch, watchEffect } from 'vue'
+import { useSensorStore } from '@/stores/useSensorStore'
+
+const { findSensor, editSensor } = useSensorStore()
+const props = defineProps<{
+  hasSensorSelected: boolean
+  selectedSensorId: string
+}>()
+
+const menu = defineModel<boolean>('menu', { default: false })
+const sensorName = ref(findSensor(props.selectedSensorId)?.name || '')
+const sensorRadius = ref(findSensor(props.selectedSensorId)?.radius || 0)
+
+watch(
+  () => props.selectedSensorId,
+  (newVal) => {
+    sensorName.value = findSensor(newVal)?.name || ''
+    sensorRadius.value = findSensor(newVal)?.radius || 0
+  }
+)
+
+watchEffect(() => {
+  if (menu.value) {
+    const currentName = sensorName.value
+    const currentRadius = sensorRadius.value
+
+    const originalSensor = findSensor(props.selectedSensorId)
+
+    if (
+      originalSensor &&
+      (originalSensor.name !== currentName || originalSensor.radius !== currentRadius)
+    ) {
+      // Changes detected, update the sensor using editSensor mutation
+      editSensor(props.selectedSensorId, {
+        name: currentName,
+        radius: currentRadius
+      })
+    }
+  }
+})
+</script>
+
+<style scoped>
+.menu {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 16px;
+  height: fit-content;
+  width: 200px;
+}
+</style>

@@ -17,17 +17,11 @@
     </button>
   </div>
   <div class="d-flex button-group ml-4">
-    <!-- <button class="icon-button with-right-border" title="undo">
-        <v-icon size="small" color="#66615b">mdi-undo</v-icon>
-      </button>
-      <button class="icon-button with-right-border" title="redo">
-        <v-icon size="small" color="#66615b">mdi-redo</v-icon>
-      </button> -->
     <button class="icon-button with-right-border" title="reset the view" @click="resetView">
       <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
     </button>
     <button
-      class="icon-button"
+      class="icon-button with-right-border"
       title="delete"
       :class="hasSensorSelected ? '' : 'disable-hover'"
       :disabled="!hasSensorSelected"
@@ -37,16 +31,28 @@
         >mdi-trash-can-outline</v-icon
       >
     </button>
+    <SensorEditMenu
+      :hasSensorSelected="hasSensorSelected"
+      v-model="menu"
+      :selected-sensor-id="selectedSensorId"
+    />
+    <button class="icon-button with-right-border" title="undo">
+      <v-icon size="small" color="#66615b">mdi-undo</v-icon>
+    </button>
+    <button class="icon-button" title="redo">
+      <v-icon size="small" color="#66615b">mdi-redo</v-icon>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue'
+import { toRef, ref } from 'vue'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 import type { D3Zoom, D3Selection } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
 import { useSensorStore } from '@/stores/useSensorStore'
+import SensorEditMenu from './SensorEditMenu.vue'
 
 const { deleteSelectedSensor } = useSensorStore()
 
@@ -55,7 +61,10 @@ const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: f
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
+  selectedSensorId: string
 }>()
+
+const menu = ref(false)
 
 const minZoomReached = toRef(() => zoom.value <= 0.2)
 const maxZoomReached = toRef(() => zoom.value >= 2)

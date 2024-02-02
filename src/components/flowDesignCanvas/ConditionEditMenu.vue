@@ -60,6 +60,7 @@ watch(sensor, (newSensor, oldSensor) => {
             :items="items"
             color="blue-darken-3"
             label="sensor"
+            :hide-details="true"
           >
           </v-select>
         </v-col>
@@ -73,6 +74,7 @@ watch(sensor, (newSensor, oldSensor) => {
             :items="dynamicOperators"
             color="blue-darken-3"
             label="operators"
+            :hide-details="true"
           >
           </v-select>
         </v-col>
@@ -84,6 +86,7 @@ watch(sensor, (newSensor, oldSensor) => {
             variant="outlined"
             density="compact"
             color="blue-darken-3"
+            :hide-details="true"
           >
           </v-text-field>
           <v-text-field
@@ -95,6 +98,7 @@ watch(sensor, (newSensor, oldSensor) => {
             density="compact"
             suffix="cp"
             color="blue-darken-3"
+            :hide-details="true"
           >
           </v-text-field>
         </v-col>

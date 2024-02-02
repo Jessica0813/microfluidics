@@ -24,7 +24,7 @@ const pressure = defineModel('pressure', { default: 0 })
       :rounded="true"
       color="grey-lighten-4"
       width="360"
-      height="270"
+      height="220"
     >
       <div class="d-flex align-center justify-center mb-4">
         <p class="text-subtitle-1">Inlet Configuration</p>
@@ -39,6 +39,7 @@ const pressure = defineModel('pressure', { default: 0 })
             density="compact"
             suffix="s"
             color="blue-darken-3"
+            :hide-details="true"
           >
           </v-text-field>
         </v-col>
@@ -52,6 +53,7 @@ const pressure = defineModel('pressure', { default: 0 })
             :items="inlets"
             color="blue-darken-3"
             label="inlet"
+            :hide-details="true"
           >
           </v-select>
         </v-col>
@@ -63,6 +65,7 @@ const pressure = defineModel('pressure', { default: 0 })
             :items="injections"
             color="blue-darken-3"
             label="injection"
+            :hide-details="true"
           >
           </v-select>
         </v-col>
@@ -78,6 +81,7 @@ const pressure = defineModel('pressure', { default: 0 })
             color="blue-darken-3"
             label="fluid"
             class="custom-v-field"
+            :hide-details="true"
           >
           </v-select>
         </v-col>
@@ -90,6 +94,7 @@ const pressure = defineModel('pressure', { default: 0 })
             density="compact"
             suffix="Pa"
             color="blue-darken-3"
+            :hide-details="true"
           >
           </v-text-field>
         </v-col>

@@ -29,11 +29,11 @@
     <button
       class="icon-button"
       title="delete"
-      :class="selectedSensor.length > 0 ? '' : 'disable-hover'"
-      :disabled="selectedSensor.length === 0"
-      @click="deleteSelectedSensor"
+      :class="hasSensorSelected ? '' : 'disable-hover'"
+      :disabled="!hasSensorSelected"
+      @click="onDeleteSelectedSensor"
     >
-      <v-icon size="small" :color="selectedSensor.length > 0 ? '#66615b' : '#c2c2be'"
+      <v-icon size="small" :color="hasSensorSelected ? '#66615b' : '#c2c2be'"
         >mdi-trash-can-outline</v-icon
       >
     </button>
@@ -48,9 +48,10 @@ import type { D3Zoom, D3Selection } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
 import { useSensorStore } from '@/stores/useSensorStore'
 
-const { selectedSensor, deleteSelectedSensor } = useSensorStore()
+const { deleteSelectedSensor } = useSensorStore()
 
 const zoom = defineModel<number>('zoom', { default: 1 })
+const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
@@ -89,6 +90,11 @@ function resetView() {
   if (props.d3Zoom && props.d3Selection) {
     props.d3Zoom.transform(props.d3Selection, zoomIdentity)
   }
+}
+
+function onDeleteSelectedSensor() {
+  hasSensorSelected.value = false
+  deleteSelectedSensor()
 }
 </script>
 

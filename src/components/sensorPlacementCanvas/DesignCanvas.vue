@@ -1,13 +1,18 @@
 <template>
   <div
     style="width: 100%; height: 100%; overflow: clip; background-color: #faf9f7"
-    @click="removeAllSelectedSensors"
+    @click="removeSelectedSensor"
     @dragover="onDragOver"
     @drop="onDrop"
   >
     <SensorPanel class="side-panel" />
     <div class="top-bar">
-      <ZoomSlider :zoom="transform.k" :d3-zoom="d3Zoom" :d3-selection="d3Selection" />
+      <ZoomSlider
+        v-model:zoom="transform.k"
+        :d3-zoom="d3Zoom"
+        :d3-selection="d3Selection"
+        v-model:hasSensorSelected="hasSensorSelected"
+      />
     </div>
     <svg ref="svg" width="100%" height="100%">
       <defs>
@@ -43,27 +48,32 @@ import { useDrop } from '@/composables/useDrop'
 import SensorPanel from './SensorPanel.vue'
 import type { D3Zoom, D3Selection } from '@/types/d3'
 
-const d3Zoom = ref<D3Zoom>()
-const d3Selection = ref<D3Selection>()
-
 const { sensors, editSensor, onSelectSensor, removeAllSelectedSensors, addSensor, getSensorId } =
   useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
+const d3Zoom = ref<D3Zoom>()
+const d3Selection = ref<D3Selection>()
+const hasSensorSelected = ref(false)
 
-const d3Drag = drag<SVGCircleElement, Sensor, any>()
-let startOffsetX: number = 1
-let startOffsetY: number = 1
-d3Drag.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+const d3Drag = drag<SVGGElement, Sensor, any>()
+let startOffsetX: number = 0
+let startOffsetY: number = 0
+d3Drag.on('start', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
   startOffsetX = event.x - event.subject.position.x
   startOffsetY = event.y - event.subject.position.y
 })
-d3Drag.on('drag', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+d3Drag.on('drag', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
   select(`#sensor-${event.subject.id}`)
+    .select('.sensor')
     .attr('cx', event.x - startOffsetX)
     .attr('cy', event.y - startOffsetY)
+  select(`#sensor-${event.subject.id}`)
+    .select('.sensor-label')
+    .attr('x', event.x - startOffsetX)
+    .attr('y', event.y - startOffsetY)
 })
-d3Drag.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
   editSensor(event.subject.id, {
     position: {
       x: event.x - startOffsetX,
@@ -82,6 +92,11 @@ function onDragOver(event: any) {
 
 function onDrop(event: any) {
   useDrop(event, transform.value, getSensorId(), addSensor)
+}
+
+function removeSelectedSensor() {
+  removeAllSelectedSensors()
+  hasSensorSelected.value = false
 }
 
 onMounted(() => {
@@ -116,54 +131,76 @@ onMounted(() => {
 
   d3Selection.value.call(d3Zoom.value).on('wheel.zoom')
 
-  // Function to update rectangles
-  const updateCircles = () => {
-    const sensorCircles = canvas.selectAll<SVGCircleElement, null>('.sensor').data(sensors)
+  const updateCirclesWithText = () => {
+    const sensorGroup = canvas.selectAll<SVGGElement, null>('.sensor-group').data(sensors)
+    const sensor = sensorGroup.selectAll('.sensor').data((d) => [d])
+    const sensorText = sensorGroup.selectAll('.sensor-label').data((d) => [d])
 
-    sensorCircles
-      .enter()
-      .append('circle') // Change from rect to circle
+    // Enter
+    const sensorEnter = sensorGroup.enter().append('g').attr('class', 'sensor-group')
+
+    // Append Circle
+    sensorEnter
+      .append('circle')
       .attr('class', 'sensor')
-      .attr('r', 20) // Radius instead of width and height
+      .attr('r', 20)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
       .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
+
+    // Append Text
+    sensorEnter
+      .append('text')
+      .attr('class', 'sensor-label')
+      .attr('x', (sensor) => sensor.position.x)
+      .attr('y', (sensor) => sensor.position.y)
+      .attr('dy', -25) // Adjust the text position based on your preference
+      .attr('text-anchor', 'middle') // Center the text on the circle
+      .style('font-size', 12)
+      .text((sensor) => sensor.name)
+
+    sensorEnter
       .attr('id', (sensor) => `sensor-${sensor.id}`)
       .call(d3Drag)
       .on('click', (event, sensor) => {
         event.stopPropagation()
+        hasSensorSelected.value = true
         onSelectSensor(sensor.id)
       })
 
-    // Handle updating elements
-    sensorCircles
+    // Update
+    sensor
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
       .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
 
-    // Handle exiting elements
-    sensorCircles.exit().remove()
+    sensorText
+      .attr('x', (sensor) => sensor.position.x)
+      .attr('y', (sensor) => sensor.position.y)
+      .text((sensor) => sensor.name)
 
-    // Apply D3 drag behavior
-    sensorCircles.call(d3Drag).on('click', (event, sensor) => {
-      event.stopPropagation()
-      onSelectSensor(sensor.id)
-    })
+    // Exit
+    sensorGroup.exit().remove()
+
+    // // Apply D3 drag behavior
+    // sensorGroup.call(d3Drag).on('click', (event, sensor) => {
+    //   event.stopPropagation()
+    //   onSelectSensor(sensor.id)
+    // })
   }
 
   // Watch for changes in the sensors array and update the visualization
-  watch(() => sensors, updateCircles, { deep: true })
+  watch(() => sensors, updateCirclesWithText, { deep: true })
 
   // Initial update
-  updateCircles()
+  updateCirclesWithText()
 
   onBeforeUnmount(() => {
-    canvas.selectAll('.sensor').on('.drag', null)
-    canvas.selectAll('.sensor').data(sensors).remove()
+    canvas.selectAll('.sensor-group').on('.drag', null)
+    canvas.selectAll('.sensor-group').data(sensors).remove()
     if (d3Zoom.value && d3Selection.value) {
       d3Zoom.value.transform(d3Selection.value, zoomIdentity)
     }
   })
 })
 </script>
-@/stores/useSensorStore

@@ -4,7 +4,7 @@
       <IconZoomOut :color="minZoomReached ? '#BDBDBD' : ''" />
     </button>
     <v-slider
-      v-model="zoom"
+      v-model="transform.k"
       min="0.2"
       max="2"
       color="#BDBDBD"
@@ -49,14 +49,14 @@
 import { toRef, ref } from 'vue'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
-import type { D3Zoom, D3Selection } from '@/types/d3'
+import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
 import { useSensorStore } from '@/stores/useSensorStore'
 import SensorEditMenu from './SensorEditMenu.vue'
 
 const { deleteSelectedSensor } = useSensorStore()
 
-const zoom = defineModel<number>('zoom', { default: 1 })
+const transform = defineModel<Transform>('transform', { default: {x:0, y:0, k:1} })
 const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
@@ -66,8 +66,8 @@ const props = defineProps<{
 
 const menu = ref(false)
 
-const minZoomReached = toRef(() => zoom.value <= 0.2)
-const maxZoomReached = toRef(() => zoom.value >= 2)
+const minZoomReached = toRef(() => transform.value.k <= 0.2)
+const maxZoomReached = toRef(() => transform.value.k >= 2)
 
 function zoomTo(value: number) {
   if (props.d3Zoom && props.d3Selection) {
@@ -76,23 +76,23 @@ function zoomTo(value: number) {
 }
 
 function zoomIn() {
-  zoom.value = zoom.value + 0.1
-  if (zoom.value > 2) {
-    zoom.value = 2
+  transform.value.k += 0.1
+  if (transform.value.k > 2) {
+    transform.value.k = 2
   }
-  zoomTo(zoom.value)
+  zoomTo(transform.value.k)
 }
 
 function zoomOut() {
-  zoom.value = zoom.value - 0.1
-  if (zoom.value < 0.2) {
-    zoom.value = 0.2
+  transform.value.k -= 0.1
+  if (transform.value.k < 0.2) {
+    transform.value.k = 0.2
   }
-  zoomTo(zoom.value)
+  zoomTo(transform.value.k)
 }
 
 function zoomBySlider() {
-  zoomTo(zoom.value)
+  zoomTo(transform.value.k)
 }
 
 function resetView() {

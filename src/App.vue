@@ -3,13 +3,12 @@ import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
 import CanvasSwitch from './components/layout/CanvasSwitch.vue'
 import RightSideBar from './components/layout/RightSideBar.vue'
 import { ref } from 'vue'
-import { useVueFlow } from '@vue-flow/core'
-import UploadDownLoadControls from './components/layout/UploadDownloadControls.vue'
+// import { useVueFlow } from '@vue-flow/core'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 
 // to keep the state of flow design canvas and sensor
 // need to figure out how it achieved
-const { getNodes } = useVueFlow()
+// const { getNodes } = useVueFlow()
 
 const isFlowDesignCanvasOpen = ref(true)
 function onFlowDesignClick() {
@@ -33,8 +32,8 @@ function onSensorPlacementClick() {
       <div class="right-side-bar">
         <RightSideBar />
       </div>
-      <FlowChartCanvas v-if="isFlowDesignCanvasOpen" />
-      <DesignCanvas v-else />
+      <FlowChartCanvas v-show="isFlowDesignCanvasOpen" />
+      <DesignCanvas v-show="!isFlowDesignCanvasOpen" />
     </div>
   </div>
 </template>

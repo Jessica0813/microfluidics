@@ -134,7 +134,6 @@ function onDrop(event: any) {
       <ZoomSlider />
       <UploadDownLoadControls />
     </div>
-    <!-- <div class="design-canvas elevation-5"></div> -->
     <VueFlow
       @dragover="onDragOver"
       fit-view-on-init

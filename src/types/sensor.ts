@@ -6,9 +6,3 @@ export interface Sensor {
   radius: number
   selected: boolean
 }
-
-export interface Transform {
-  x: number
-  y: number
-  k: number
-}

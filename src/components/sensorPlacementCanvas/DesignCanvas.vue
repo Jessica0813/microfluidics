@@ -8,7 +8,7 @@
     <SensorPanel class="side-panel" />
     <div class="top-bar">
       <ZoomSlider
-        v-model:zoom="transform.k"
+        v-model:transform="transform"
         :d3-zoom="d3Zoom"
         :d3-selection="d3Selection"
         v-model:hasSensorSelected="hasSensorSelected"
@@ -208,12 +208,12 @@ onMounted(() => {
   // Initial update
   updateCirclesWithText()
 
-  onBeforeUnmount(() => {
-    canvas.selectAll('.sensor-group').on('.drag', null)
-    canvas.selectAll('.sensor-group').data(sensors).remove()
-    if (d3Zoom.value && d3Selection.value) {
-      d3Zoom.value.transform(d3Selection.value, zoomIdentity)
-    }
-  })
+  // onBeforeUnmount(() => {
+  //   canvas.selectAll('.sensor-group').on('.drag', null)
+  //   canvas.selectAll('.sensor-group').data(sensors).remove()
+  //   if (d3Zoom.value && d3Selection.value) {
+  //     d3Zoom.value.transform(d3Selection.value, zoomIdentity)
+  //   }
+  // })
 })
 </script>

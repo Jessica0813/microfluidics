@@ -1,6 +1,7 @@
-@import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.27.1/dist/style.css';
-@import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.27.1/dist/theme-default.css';
-@import 'https://cdn.jsdelivr.net/npm/@vue-flow/controls@latest/dist/style.css';
+@import '@vue-flow/core/dist/style.css';
+@import '@vue-flow/core/dist/theme-default.css';
+@import '@vue-flow/controls/dist/style.css';
+@import '@vue-flow/node-resizer/dist/style.css';
 
 #app {
   display: flex;

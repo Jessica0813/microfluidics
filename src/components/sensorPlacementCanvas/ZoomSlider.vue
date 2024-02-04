@@ -56,7 +56,7 @@ import SensorEditMenu from './SensorEditMenu.vue'
 
 const { deleteSelectedSensor } = useSensorStore()
 
-const transform = defineModel<Transform>('transform', { default: {x:0, y:0, k:1} })
+const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined

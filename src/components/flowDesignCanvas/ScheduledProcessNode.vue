@@ -4,9 +4,13 @@ import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import type { FlowConfigs } from '@/types/flowControl'
 import RangeBarChart from './RangeBarChart.vue'
 import ScheduledProcessEditDialog from './ScheduledProcessEditDialog.vue'
+import RangBar from './RangeBar.vue'
+import { NodeResizer } from '@vue-flow/node-resizer'
+import { NodeRef } from 'node_modules/@vue-flow/core/dist/context'
 
 const { selected } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
+const nodeRef = ref<HTMLDivElement | null>(null)
 
 const data1: FlowConfigs = {
   startTime: 0,
@@ -94,7 +98,9 @@ addFlowConfigs(data2)
           ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
           : ''
     }"
+    ref="nodeRef"
   >
+    <NodeResizer :minWidth="400" :minHeight="120" />
     <Handle
       type="source"
       :position="Position.Top"
@@ -115,10 +121,7 @@ addFlowConfigs(data2)
       :position="Position.Left"
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
-    <div
-      class="flex align-center justify-center"
-      style="width: 400px; height: auto; background-color: #eeeeee; border-radius: 4px"
-    >
+    <div style="background-color: #eeeeee; border-radius: 4px">
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-chart-gantt</v-icon>
         <p class="text-subtitle-2">
@@ -131,11 +134,14 @@ addFlowConfigs(data2)
         />
       </div>
       <v-divider thickness="2" />
-      <RangeBarChart
+      <!-- <RangeBarChart
         :flowControlProcesses="flowControlProcesses"
         :totalDuration="totalDuration"
         :width="368"
-      />
+      /> -->
+      <div class="d-flex pa-3">
+        <RangBar />
+      </div>
     </div>
   </div>
 </template>

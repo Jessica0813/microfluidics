@@ -3,4 +3,4 @@ import type { Selection } from 'd3-selection'
 
 export type D3Zoom = ZoomBehavior<HTMLElement, unknown>
 export type D3Selection = Selection<HTMLElement, any, any, any>
-export type Transform = {x: number, y: number, k: number}
+export type Transform = { x: number; y: number; k: number }

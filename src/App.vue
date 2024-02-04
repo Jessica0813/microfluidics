@@ -32,8 +32,8 @@ function onSensorPlacementClick() {
       <div class="right-side-bar">
         <RightSideBar />
       </div>
-      <FlowChartCanvas v-show="isFlowDesignCanvasOpen" />
-      <DesignCanvas v-show="!isFlowDesignCanvasOpen" />
+      <FlowChartCanvas v-if="isFlowDesignCanvasOpen" />
+      <DesignCanvas v-else />
     </div>
   </div>
 </template>

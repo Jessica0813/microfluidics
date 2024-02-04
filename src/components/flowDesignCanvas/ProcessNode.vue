@@ -98,7 +98,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  top: -17px;
 }
 
 .top-handle {
@@ -112,7 +111,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  right: -17px;
 }
 
 .right-handle {
@@ -126,7 +124,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  bottom: -17px;
 }
 
 .bottom-handle {
@@ -140,7 +137,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
   height: 30px;
   width: 30px;
   background-color: rgba(0, 100, 255, 0.1);
-  left: -17px;
 }
 
 .left-handle {

@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto">
+  <div style="overflow: auto; max-width: 100%; max-height: 100%">
     <svg ref="chart"></svg>
   </div>
 </template>
@@ -53,16 +53,6 @@ const flowControlProcesses: FlowControlProcess[] = [
     fluid: 'oil',
     pressure: 25
   },
-  {
-    id: '5',
-    startTime: 39,
-    endTime: 40,
-    duration: 10,
-    inlet: 'Inlet 2',
-    injection: 'Injection Type B',
-    fluid: 'oil',
-    pressure: 25
-  }
 ]
 
 const marginX = 10
@@ -75,8 +65,8 @@ const x = scaleLinear()
   .range([marginX, width - marginX])
 
 const y = scaleBand()
-  .domain(['1', '2', '3', '4', '5'])
-  .rangeRound([marginTop, height])
+  .domain(['1', '2', '3', '4'])
+  .range([marginTop, height - 5 ])
   .padding(0.15)
 
 const chart = ref<SVGAElement | null>(null)

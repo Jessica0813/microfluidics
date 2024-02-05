@@ -6,9 +6,11 @@ import RangeBarChart from './RangeBarChart.vue'
 import ScheduledProcessEditDialog from './ScheduledProcessEditDialog.vue'
 import RangBar from './RangeBar.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
-import { NodeRef } from 'node_modules/@vue-flow/core/dist/context'
+import { watch } from 'vue'
+import { onMounted } from 'vue'
+import { useVueFlow } from '@vue-flow/core'
 
-const { selected } = defineProps<NodeProps>()
+const { selected, dimensions} = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 const nodeRef = ref<HTMLDivElement | null>(null)
 
@@ -93,6 +95,7 @@ addFlowConfigs(data2)
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{
+      height: '100%',
       boxShadow:
         selected || nodeIsHovered
           ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
@@ -100,7 +103,7 @@ addFlowConfigs(data2)
     }"
     ref="nodeRef"
   >
-    <NodeResizer :minWidth="400" :minHeight="120" />
+    <NodeResizer :minWidth="400" :minHeight="150" />
     <Handle
       type="source"
       :position="Position.Top"
@@ -121,7 +124,7 @@ addFlowConfigs(data2)
       :position="Position.Left"
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
-    <div style="background-color: #eeeeee; border-radius: 4px">
+    <div style="background-color: #eeeeee; border-radius: 4px; height: 100%;">
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-chart-gantt</v-icon>
         <p class="text-subtitle-2">
@@ -139,8 +142,8 @@ addFlowConfigs(data2)
         :totalDuration="totalDuration"
         :width="368"
       /> -->
-      <div class="d-flex pa-3">
-        <RangBar />
+      <div :style="{paddingTop: '10px', paddingBottom: '20px',  paddingLeft:'10px', paddingRight:'10px', height: '80%'}">
+        <RangBar/>
       </div>
     </div>
   </div>

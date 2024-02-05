@@ -3,6 +3,7 @@ import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
 import CanvasSwitch from './components/layout/CanvasSwitch.vue'
 import RightSideBar from './components/layout/RightSideBar.vue'
 import { ref } from 'vue'
+import RangeBar  from './components/flowDesignCanvas/RangeBar.vue'
 // import { useVueFlow } from '@vue-flow/core'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 

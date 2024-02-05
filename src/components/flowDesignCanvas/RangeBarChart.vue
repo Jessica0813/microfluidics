@@ -1,186 +1,100 @@
-<script setup lang="ts">
-import type { FlowConfigs } from '@/types/flowControl'
-import { computed, ref } from 'vue'
-import CreateEditScheduledProcessDialog from './CreateEditScheduledProcessDialog.vue'
-
-// const rangeBar = ref<HTMLElement | null>(null)
-// let width = 0;
-// let timeSlotWidth = 0;
-// onMounted(() => {
-//   if (!rangeBar.value) return
-//   width = rangeBar.value.getBoundingClientRect().width - 32
-//   timeSlotWidth = width / 5
-// })
-
-// onUpdated(() => {
-//   if (!rangeBar.value) return
-//   width = rangeBar.value.getBoundingClientRect().width - 32
-//   timeSlotWidth = width / 5
-//   console.log(width)
-// })
-const props = defineProps({
-  totalDuration: {
-    type: Number,
-    required: true
-  },
-  flowControlProcesses: {
-    type: Array as () => FlowConfigs[],
-    required: true
-  },
-  width: {
-    type: Number,
-    required: true
-  },
-  isBarChartClickable: {
-    type: Boolean,
-    default: false
-  }
-})
-
-const timeSlotWidth = computed(() => {
-  return props.width / 5
-})
-
-function calculateLeft(startTime: number, index: number, flowControlList: FlowConfigs[]): number {
-  // Calculate the left position based on the startTime
-  if (index === 0) {
-    return (startTime / props.totalDuration) * props.width
-  } else {
-    const previousItem = flowControlList[index - 1]
-    return ((startTime - previousItem.endTime) / props.totalDuration) * props.width
-  }
-}
-
-function calculateWidth(duration: number): number {
-  // Calculate the width of the rectangle based on the duration
-  return (duration / props.totalDuration) * props.width // Assuming 20s as the total width
-}
-
-const tickArray = computed(() => {
-  // distance must be a integer
-  const distance = Math.floor(props.totalDuration / 5)
-  // Array is 5 numbers which starts from 0, and the distance variable is the interval
-  return Array.from({ length: 5 }, (_, index) => index * distance)
-})
-
-const flowControls = ref<FlowConfigs[]>(props.flowControlProcesses)
-const isCreateNewProcessDialogVisible = ref(false)
-const index = ref(-1)
-function onProcessClick(outArrayIndex: number) {
-  if (!props.isBarChartClickable) return
-  index.value = outArrayIndex
-  isCreateNewProcessDialogVisible.value = true
-}
-</script>
-
 <template>
-  <CreateEditScheduledProcessDialog
-    v-model:isCreateNewProcessDialogVisible="isCreateNewProcessDialogVisible"
-    v-model:flowControlProcesses="flowControls"
-    :index="index"
-    :isCreateNewProcessMode="false"
-  />
-  <div class="chart">
-    <div class="bar">
-      <div
-        v-for="(flowControlConfigs, idx) in flowControlProcesses"
-        :key="idx"
-        :style="{
-          marginLeft: calculateLeft(flowControlConfigs.startTime, idx, flowControlProcesses) + 'px',
-          width: calculateWidth(flowControlConfigs.duration) + 'px'
-        }"
-        class="rectangle-div"
-      >
-        <div
-          v-for="(flowControl, index) in flowControlConfigs.flowControlList"
-          :key="index"
-          class="rectangle"
-          @click="onProcessClick(idx)"
-        >
-          <v-tooltip activator="parent" offset="0">
-            <div>
-              <p>Inlet: {{ flowControl.inlet }}</p>
-              <p>Fluid: {{ flowControl.fluid }}</p>
-              <p>Pressure: {{ flowControl.pressure }}</p>
-              <p>Injection: {{ flowControl.injection }}</p>
-              <p>Start Time: {{ flowControlConfigs.startTime }}</p>
-              <p>Duration: {{ flowControlConfigs.duration }}</p>
-              <p>End Time: {{ flowControlConfigs.endTime }}</p>
-            </div>
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
-    <div class="d-flex">
-      <div class="wrap" v-for="(tickNumber, idx) in tickArray" :key="idx">
-        <div class="timeslot" :style="{ width: timeSlotWidth + 'px' }"></div>
-        <p class="tick">{{ tickNumber }}</p>
-      </div>
-      <div class="wrap">
-        <div class="last-timeslot"></div>
-      </div>
-    </div>
+  <div style="overflow: auto; max-width: 100%; max-height: 100%">
+    <svg ref="chart"></svg>
   </div>
 </template>
 
-<style scoped>
-.chart {
-  width: 100%;
-  height: fit-content;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 4px;
-}
+<script setup lang="ts">
+import { select } from 'd3-selection'
+import { scaleLinear, scaleBand, axisTop } from 'd3'
+import { onMounted, ref } from 'vue'
+import type { FlowControlProcess } from '@/types/flowControl'
 
-.bar {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 4px;
-}
+const totolDuration = ref(45)
 
-.rectangle-div {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 4px;
-}
+const flowControlProcesses: FlowControlProcess[] = [
+  {
+    id: '1',
+    startTime: 0,
+    endTime: 20,
+    duration: 20,
+    inlet: 'Inlet 1',
+    injection: 'Injection Type A',
+    fluid: 'water',
+    pressure: 20
+  },
+  {
+    id: '2',
+    startTime: 0,
+    endTime: 20,
+    duration: 20,
+    inlet: 'Inlet 2',
+    injection: 'Injection Type B',
+    fluid: 'oil',
+    pressure: 25
+  },
+  {
+    id: '3',
+    startTime: 10,
+    endTime: 25,
+    duration: 15,
+    inlet: 'Inlet 2',
+    injection: 'Injection Type B',
+    fluid: 'oil',
+    pressure: 25
+  },
+  {
+    id: '4',
+    startTime: 30,
+    endTime: 40,
+    duration: 10,
+    inlet: 'Inlet 2',
+    injection: 'Injection Type B',
+    fluid: 'oil',
+    pressure: 25
+  }
+]
 
-.rectangle {
-  cursor: pointer;
-  height: 20px;
-  background-color: #bdbdbd; /* Rectangle color */
-  box-sizing: border-box;
-  margin-bottom: 4px; /* Adjust the margin between rectangles */
-  border-radius: 4px;
-}
+const marginX = 10
+const marginTop = 25
+const barHeight = 20
+const width = Math.ceil(totolDuration.value / 10 + 1) * 80
+const height = barHeight * flowControlProcesses.length + marginTop
+const x = scaleLinear()
+  .domain([0, totolDuration.value])
+  .range([marginX, width - marginX])
 
-.wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-}
+const y = scaleBand()
+  .domain(['1', '2', '3', '4'])
+  .range([marginTop, height - 5])
+  .padding(0.15)
 
-.tick {
-  margin-left: -4px;
-  font-size: 12px;
-}
+const chart = ref<SVGAElement | null>(null)
 
-.timeslot {
-  height: 5px;
-  display: flex;
-  border-left: 1px solid #424242;
-  border-bottom: 1px solid #424242;
-}
+onMounted(() => {
+  if (!chart.value) return
+  const svgChart = select(chart.value)
+  svgChart
+    .attr('width', width)
+    .attr('height', height)
+    .attr('style', 'max-width: auto; max-height: auto; font: 10px sans-serif;')
 
-.last-timeslot {
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid #424242;
-  rotate: 90deg;
-  margin-left: -2px;
-  margin-top: 2px;
-}
-</style>
+  svgChart
+    .append('g')
+    .attr('fill', 'steelblue')
+    .selectAll()
+    .data(flowControlProcesses)
+    .join('rect')
+    .attr('x', (d) => x(d.startTime))
+    .attr('y', (d) => y(d.id)!)
+    .attr('width', (d) => x(d.endTime) - x(d.startTime))
+    .attr('height', y.bandwidth())
+
+  svgChart
+    .append('g')
+    .attr('transform', `translate(0,${marginTop})`)
+    .call(axisTop(x).ticks(width / 80))
+
+  svgChart.node()
+})
+</script>

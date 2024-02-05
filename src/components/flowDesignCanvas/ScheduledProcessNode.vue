@@ -4,12 +4,17 @@ import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import type { FlowConfigs } from '@/types/flowControl'
 import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
+import { useVueFlow } from '@vue-flow/core'
 
-const { selected } = defineProps<NodeProps>()
+const { selected, id } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 const nodeRef = ref<HTMLDivElement | null>(null)
 
 const totalDuration = ref<number>(20)
+
+const { findNode } = useVueFlow()
+
+console.log(findNode(id))
 </script>
 
 <template>

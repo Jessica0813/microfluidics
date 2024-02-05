@@ -136,7 +136,6 @@ function onDrop(event: any) {
     </div>
     <VueFlow
       @dragover="onDragOver"
-      fit-view-on-init
       :default-viewport="{ zoom: 1 }"
       :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
       :zoom-on-double-click="false"
@@ -161,17 +160,3 @@ function onDrop(event: any) {
     </VueFlow>
   </div>
 </template>
-
-<style scoped>
-.design-canvas {
-  position: absolute;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #ffffff;
-  width: 30%;
-  height: 30%;
-  bottom: 15px;
-  right: 15px;
-  z-index: 5;
-}
-</style>

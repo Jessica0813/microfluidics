@@ -94,8 +94,57 @@ d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) 
     x = end
   }
   selection.attr('x', x)
+  select(`#start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
+  select(`#end-line-${event.subject.id}`).attr('x1', x + Number(selection.attr('width'))).attr('x2', x + Number(selection.attr('width')))
 })
 d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
+  console.log('end', event)
+})
+
+const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
+d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+  console.log('start', event)
+})
+d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+  let x = event.x
+  const minimumDistance = Number(select(`#start-line-${event.subject.id}`).attr('x1')) + 10
+  const end = width - marginX 
+  if (event.x >= end) {
+    x = end
+  }
+  if (x <= minimumDistance) {
+    x = minimumDistance
+  }
+  select(`#end-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
+  select(`#process-${event.subject.id}`).attr(
+    'width',
+    x - Number(select(`#start-line-${event.subject.id}`).attr('x1'))
+  )
+})
+d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+  console.log('end', event)
+})
+
+const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
+d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+  console.log('start', event)
+})
+d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+  let x = event.x
+  const minimumDistance = Number(select(`#end-line-${event.subject.id}`).attr('x1')) - 10
+  const start = 10 
+  if (event.x <= start) {
+    x = start
+  }
+  if (x >= minimumDistance) {
+    x = minimumDistance
+  }
+  select(`#start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
+  select(`#process-${event.subject.id}`)
+    .attr('x', x)
+    .attr('width', Number(select(`#end-line-${event.subject.id}`).attr('x1')) - x)
+})
+d3LeftResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   console.log('end', event)
 })
 
@@ -124,6 +173,32 @@ onMounted(() => {
     .attr('id', (d) => `process-${d.id}`)
     .attr('fill', '#BDBDBD')
     .call(d3Drag)
+
+  contentGroup
+    .enter()
+    .append('line')
+    .attr('x1', (d) => x(d.startTime)) // x-coordinate of the start line
+    .attr('y1', (d) => y(d.id)!) // y-coordinate of the start line
+    .attr('x2', (d) => x(d.startTime)) // x-coordinate of the end line (same as start for a vertical line)
+    .attr('y2', (d) => y(d.id)! + y.bandwidth()) // y-coordinate of the end line (bottom of the rectangle)
+    .attr('stroke-width', 5)
+    .attr('stroke', 'transparent') // Color of the line
+    .attr('id', (d) => `start-line-${d.id}`) // id related to d.id
+    .style('cursor', 'ew-resize')
+    .call(d3LeftResize)
+
+  contentGroup
+    .enter()
+    .append('line')
+    .attr('x1', (d) => x(d.endTime)) // x-coordinate of the start line
+    .attr('y1', (d) => y(d.id)!) // y-coordinate of the start line
+    .attr('x2', (d) => x(d.endTime)) // x-coordinate of the end line (same as start for a vertical line)
+    .attr('y2', (d) => y(d.id)! + y.bandwidth()) // y-coordinate of the end line (bottom of the rectangle)
+    .attr('stroke-width', 5)
+    .attr('stroke', 'transparent') // Color of the line
+    .attr('id', (d) => `end-line-${d.id}`)
+    .style('cursor', 'ew-resize')
+    .call(d3RightResize)
 
   xAxis.attr('transform', `translate(0,${marginTop})`).call(axisTop(x).ticks(width / 100))
 

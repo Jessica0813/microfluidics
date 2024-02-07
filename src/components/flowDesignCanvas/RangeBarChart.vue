@@ -12,16 +12,16 @@ import { select } from 'd3-selection'
 import { scaleLinear, scaleBand, axisTop } from 'd3'
 import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { FlowControlProcess } from '@/types/flowControl'
-
-const totolDuration = ref(45)
+import tippy from 'tippy.js'
+import type { Instance } from 'tippy.js'
 
 const flowControlProcesses: FlowControlProcess[] = [
   {
     id: '1',
-    startTime: 0,
-    endTime: 20,
+    startTime: 0.0,
+    endTime: 20.0,
     duration: 20,
     inlet: 'Inlet 1',
     injection: 'Injection Type A',
@@ -30,8 +30,8 @@ const flowControlProcesses: FlowControlProcess[] = [
   },
   {
     id: '2',
-    startTime: 0,
-    endTime: 20,
+    startTime: 0.0,
+    endTime: 20.0,
     duration: 20,
     inlet: 'Inlet 2',
     injection: 'Injection Type B',
@@ -40,8 +40,8 @@ const flowControlProcesses: FlowControlProcess[] = [
   },
   {
     id: '3',
-    startTime: 10,
-    endTime: 25,
+    startTime: 10.0,
+    endTime: 25.0,
     duration: 15,
     inlet: 'Inlet 2',
     injection: 'Injection Type B',
@@ -50,8 +50,8 @@ const flowControlProcesses: FlowControlProcess[] = [
   },
   {
     id: '4',
-    startTime: 30,
-    endTime: 40,
+    startTime: 30.0,
+    endTime: 40.0,
     duration: 10,
     inlet: 'Inlet 2',
     injection: 'Injection Type B',
@@ -59,6 +59,11 @@ const flowControlProcesses: FlowControlProcess[] = [
     pressure: 25
   }
 ]
+
+const totolDuration = ref(45)
+const chart = ref<SVGAElement | null>(null)
+const isDraggingOrResizing = ref(false)
+let instance: Instance | null = null
 
 const marginX = 10
 const marginTop = 25
@@ -74,11 +79,11 @@ const y = scaleBand()
   .range([marginTop, height - 5])
   .padding(0.15)
 
-const chart = ref<SVGAElement | null>(null)
-
 const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 let startOffsetX: number = 0
 d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
+  isDraggingOrResizing.value = true
+  createTippy(event)
   const x = select(`#process-${event.subject.id}`).attr('x')
   startOffsetX = event.x - Number(x)
 })
@@ -95,20 +100,30 @@ d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) 
   }
   selection.attr('x', x)
   select(`#start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
-  select(`#end-line-${event.subject.id}`).attr('x1', x + Number(selection.attr('width'))).attr('x2', x + Number(selection.attr('width')))
+  select(`#end-line-${event.subject.id}`)
+    .attr('x1', x + Number(selection.attr('width')))
+    .attr('x2', x + Number(selection.attr('width')))
+
+  const startTime = ((x - 10) / 10).toFixed(1)
+  const endTime = ((x - 10 + Number(selection.attr('width'))) / 10).toFixed(1)
+  if (instance) {
+    instance.setContent(`<div style="font-size: 10px;">${startTime} - ${endTime}</div>`)
+  }
 })
 d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
-  console.log('end', event)
+  isDraggingOrResizing.value = false
+  destroyTippy()
 })
 
 const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  console.log('start', event)
+  createTippy(event)
+  isDraggingOrResizing.value = true
 })
 d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
   const minimumDistance = Number(select(`#start-line-${event.subject.id}`).attr('x1')) + 10
-  const end = width - marginX 
+  const end = width - marginX
   if (event.x >= end) {
     x = end
   }
@@ -120,19 +135,25 @@ d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess,
     'width',
     x - Number(select(`#start-line-${event.subject.id}`).attr('x1'))
   )
+  const endTime = ((x - 10) / 10).toFixed(1)
+  if (instance) {
+    instance.setContent(`<div style="font-size: 10px;">${event.subject.startTime} - ${endTime}</div>`)
+  }
 })
 d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  console.log('end', event)
+  isDraggingOrResizing.value = false
+  destroyTippy()
 })
 
 const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  console.log('start', event)
+  isDraggingOrResizing.value = true
+  createTippy(event)
 })
 d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
   const minimumDistance = Number(select(`#end-line-${event.subject.id}`).attr('x1')) - 10
-  const start = 10 
+  const start = 10
   if (event.x <= start) {
     x = start
   }
@@ -143,10 +164,43 @@ d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, 
   select(`#process-${event.subject.id}`)
     .attr('x', x)
     .attr('width', Number(select(`#end-line-${event.subject.id}`).attr('x1')) - x)
+
+  const startTime = ((x - 10) / 10).toFixed(1)
+  if (instance) {
+    instance.setContent(`<div style="font-size: 10px;">${startTime} - ${event.subject.endTime}</div>`)
+  }
 })
 d3LeftResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  console.log('end', event)
+  isDraggingOrResizing.value = false
+  destroyTippy()
 })
+
+function createTippy(
+  event:
+    | D3DragEvent<SVGRectElement, FlowControlProcess, any>
+    | D3DragEvent<SVGLineElement, FlowControlProcess, any>
+) {
+  const targetElement = document.getElementById(`process-${event.subject.id}`)
+  if (targetElement && !instance) {
+    instance = tippy(targetElement, {
+      allowHTML: true,
+      content: `<div style="font-size: 10px;">${event.subject.startTime} - ${event.subject.endTime}</div>`,
+      arrow: true,
+      theme: 'light',
+      trigger: 'manual',
+      offset: [5, 5]
+    })
+    instance.show()
+  }
+  isDraggingOrResizing.value = true
+}
+
+function destroyTippy() {
+  if (instance) {
+    instance.destroy()
+    instance = null
+  }
+}
 
 onMounted(() => {
   if (!chart.value) return
@@ -173,6 +227,28 @@ onMounted(() => {
     .attr('id', (d) => `process-${d.id}`)
     .attr('fill', '#BDBDBD')
     .call(d3Drag)
+    .attr(
+      'data-tippy-content',
+      (d) => `
+      <div style="font-size: 10px;">
+      Duration: ${d.startTime}-${d.endTime}<br>
+      Inlet: ${d.inlet}<br>
+      Injection: ${d.injection}<br>
+      Fluid: ${d.fluid}<br>
+      Pressure: ${d.pressure}
+      </div>
+      `
+    )
+    .call((s) =>
+      tippy(s.nodes(), {
+        allowHTML: true,
+        arrow: true,
+        theme: 'light',
+        trigger: 'mouseenter',
+        placement: 'bottom',
+        offset: [5, 5]
+      })
+    )
 
   contentGroup
     .enter()

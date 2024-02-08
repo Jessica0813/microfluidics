@@ -87,6 +87,7 @@ d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>)
   instance?.show()
   const x = select(`#process-${event.subject.id}`).attr('x')
   startOffsetX = event.x - Number(x)
+  select(`#delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
   const selection = select(`#process-${event.subject.id}`)
@@ -118,6 +119,7 @@ d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess
   instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
   instance?.setProps({ trigger: 'manual'})
   instance?.show()
+  select(`#delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
@@ -148,6 +150,7 @@ d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess,
   instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
   instance?.setProps({ trigger: 'manual'})
   instance?.show()
+  select(`#delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
@@ -188,6 +191,8 @@ function updateContent(
   instance?.setProps({ trigger: 'mouseenter'})
   instance = undefined
 }
+
+
 onMounted(() => {
   if (!chart.value) return
   const svgChart = select(chart.value)
@@ -199,12 +204,35 @@ onMounted(() => {
     .attr('height', height)
     .attr('style', 'max-width: auto; max-height: auto; font: 10px sans-serif;')
 
+  // const contentGroup = chartContent
+  //   .selectAll<SVGRectElement, FlowControlProcess>('.rect')
+  //   .data(flowControlProcesses)
+
   const contentGroup = chartContent
-    .selectAll<SVGRectElement, FlowControlProcess>('.rect')
+    .selectAll<SVGGElement, FlowControlProcess>('.process-group')
     .data(flowControlProcesses)
 
-  contentGroup
+  // Enter selection for creating new process groups
+  const enterSelection = contentGroup
     .enter()
+    .append('g')
+    .attr('id', (d) => `process-group-${d.id}`)
+    .on('mouseenter', (event, d) => {
+      select(`#delete-icon-${d.id}`).style('display', 'block')
+    })
+    .on('mouseleave', (event, d) => {
+      select(`#delete-icon-${d.id}`).style('display', 'none')
+    })
+
+  enterSelection 
+    .append('rect')
+    .attr('x', x(0))
+    .attr('y', (d) => y(d.id)!)
+    .attr('width', width-2*marginX)
+    .attr('height', y.bandwidth())
+    .style('visibility', 'hidden'); 
+
+  enterSelection 
     .append('rect')
     .attr('class', 'rect')
     .attr('x', (d) => x(d.startTime))
@@ -214,28 +242,6 @@ onMounted(() => {
     .attr('id', (d) => `process-${d.id}`)
     .attr('fill', '#BDBDBD')
     .call(d3Drag)
-  // .attr(
-  //   'data-tippy-content',
-  //   (d) => `
-  //   <div style="font-size: 10px;">
-  //   Duration: ${d.startTime}-${d.endTime}<br>
-  //   Inlet: ${d.inlet}<br>
-  //   Injection: ${d.injection}<br>
-  //   Fluid: ${d.fluid}<br>
-  //   Pressure: ${d.pressure}
-  //   </div>
-  //   `
-  // )
-  // .call((s) =>
-  //   tippy(s.nodes(), {
-  //     allowHTML: true,
-  //     arrow: true,
-  //     theme: 'light',
-  //     trigger: 'mouseenter',
-  //     placement: 'bottom',
-  //     offset: [5, 5]
-  //   })
-  // )
 
   instances = tippy('.rect', {
     allowHTML: true,
@@ -262,8 +268,7 @@ onMounted(() => {
     }
   })
 
-  contentGroup
-    .enter()
+  enterSelection 
     .append('line')
     .attr('x1', (d) => x(d.startTime)) // x-coordinate of the start line
     .attr('y1', (d) => y(d.id)!) // y-coordinate of the start line
@@ -275,8 +280,7 @@ onMounted(() => {
     .style('cursor', 'ew-resize')
     .call(d3LeftResize)
 
-  contentGroup
-    .enter()
+  enterSelection 
     .append('line')
     .attr('x1', (d) => x(d.endTime)) // x-coordinate of the start line
     .attr('y1', (d) => y(d.id)!) // y-coordinate of the start line
@@ -288,6 +292,33 @@ onMounted(() => {
     .style('cursor', 'ew-resize')
     .call(d3RightResize)
 
+  const deleteIcon = enterSelection
+    .append('g')
+    .attr('id', (d) => `delete-icon-${d.id}`)
+    .style('cursor', 'pointer')
+    .style('display', 'none')
+    .on('click', (event, d) => {
+      console.log('delete', d.id)
+    })
+
+  deleteIcon
+    .append('line')
+    .attr('x1', (d) => x(d.endTime) + 6)
+    .attr('y1', (d) => y(d.id)! + y.bandwidth() / 2)
+    .attr('x2', (d) => x(d.endTime) + 14)
+    .attr('y2', (d) => y(d.id)! + y.bandwidth() / 2)
+    .attr('stroke-width', 2)
+    .attr('stroke', 'grey')
+
+  deleteIcon
+    .append('circle')
+    .attr('cx', (d) => x(d.endTime) + 10)
+    .attr('cy', (d) => y(d.id)! + y.bandwidth() / 2)
+    .attr('r', 7)
+    .attr('stroke', 'grey')
+    .attr('fill', 'transparent')
+    .attr('stroke-width', 0.5)
+    
   xAxis.attr('transform', `translate(0,${marginTop})`).call(axisTop(x).ticks(width / 100))
 
   svgChart.node()

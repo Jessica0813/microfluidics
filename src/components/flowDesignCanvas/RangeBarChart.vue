@@ -83,6 +83,8 @@ const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 let startOffsetX: number = 0
 d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
   instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
+  instance?.setProps({ trigger: 'manual'})
+  instance?.show()
   const x = select(`#process-${event.subject.id}`).attr('x')
   startOffsetX = event.x - Number(x)
 })
@@ -114,6 +116,8 @@ d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) =
 const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
+  instance?.setProps({ trigger: 'manual'})
+  instance?.show()
 })
 d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
@@ -131,7 +135,9 @@ d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess,
     x - Number(select(`#start-line-${event.subject.id}`).attr('x1'))
   )
   const endTime = ((x - 10) / 10).toFixed(1)
-  instance?.setContent(`<div style="font-size: 10px;">${event.subject.startTime} - ${endTime}</div>`)
+  instance?.setContent(
+    `<div style="font-size: 10px;">${event.subject.startTime} - ${endTime}</div>`
+  )
 })
 d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   updateContent(event)
@@ -140,6 +146,8 @@ d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, 
 const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
+  instance?.setProps({ trigger: 'manual'})
+  instance?.show()
 })
 d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
@@ -157,20 +165,27 @@ d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, 
     .attr('width', Number(select(`#end-line-${event.subject.id}`).attr('x1')) - x)
 
   const startTime = ((x - 10) / 10).toFixed(1)
-  instance?.setContent(`<div style="font-size: 10px;">${startTime} - ${event.subject.endTime}</div>`)
+  instance?.setContent(
+    `<div style="font-size: 10px;">${startTime} - ${event.subject.endTime}</div>`
+  )
 })
 d3LeftResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   updateContent(event)
 })
 
-function updateContent(event: D3DragEvent<SVGRectElement, FlowControlProcess, any> | D3DragEvent<SVGLineElement, FlowControlProcess, any>) {
-  instance?.setContent( `<div style="font-size: 10px;">
+function updateContent(
+  event:
+    | D3DragEvent<SVGRectElement, FlowControlProcess, any>
+    | D3DragEvent<SVGLineElement, FlowControlProcess, any>
+) {
+  instance?.setContent(`<div style="font-size: 10px;">
         Duration: ${event.subject.startTime}-${event.subject.endTime}<br>
         Inlet: ${event.subject.inlet}<br>
         Injection: ${event.subject.injection}<br>
         Fluid: ${event.subject.fluid}<br>
         Pressure: ${event.subject.pressure}
         </div>`)
+  instance?.setProps({ trigger: 'mouseenter'})
   instance = undefined
 }
 onMounted(() => {
@@ -199,35 +214,34 @@ onMounted(() => {
     .attr('id', (d) => `process-${d.id}`)
     .attr('fill', '#BDBDBD')
     .call(d3Drag)
-    // .attr(
-    //   'data-tippy-content',
-    //   (d) => `
-    //   <div style="font-size: 10px;">
-    //   Duration: ${d.startTime}-${d.endTime}<br>
-    //   Inlet: ${d.inlet}<br>
-    //   Injection: ${d.injection}<br>
-    //   Fluid: ${d.fluid}<br>
-    //   Pressure: ${d.pressure}
-    //   </div>
-    //   `
-    // )
-    // .call((s) =>
-    //   tippy(s.nodes(), {
-    //     allowHTML: true,
-    //     arrow: true,
-    //     theme: 'light',
-    //     trigger: 'mouseenter',
-    //     placement: 'bottom',
-    //     offset: [5, 5]
-    //   })
-    // )
+  // .attr(
+  //   'data-tippy-content',
+  //   (d) => `
+  //   <div style="font-size: 10px;">
+  //   Duration: ${d.startTime}-${d.endTime}<br>
+  //   Inlet: ${d.inlet}<br>
+  //   Injection: ${d.injection}<br>
+  //   Fluid: ${d.fluid}<br>
+  //   Pressure: ${d.pressure}
+  //   </div>
+  //   `
+  // )
+  // .call((s) =>
+  //   tippy(s.nodes(), {
+  //     allowHTML: true,
+  //     arrow: true,
+  //     theme: 'light',
+  //     trigger: 'mouseenter',
+  //     placement: 'bottom',
+  //     offset: [5, 5]
+  //   })
+  // )
 
   instances = tippy('.rect', {
     allowHTML: true,
     arrow: true,
     theme: 'light',
     trigger: 'mouseenter',
-    hideOnClick: false,
     placement: 'bottom',
     offset: [5, 5],
     content: (reference) => {

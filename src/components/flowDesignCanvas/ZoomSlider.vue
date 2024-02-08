@@ -17,12 +17,6 @@
     </button>
   </div>
   <div class="d-flex button-group ml-4">
-    <!-- <button class="icon-button with-right-border" title="undo">
-        <v-icon size="small" color="#66615b">mdi-undo</v-icon>
-      </button>
-      <button class="icon-button with-right-border" title="redo">
-        <v-icon size="small" color="#66615b">mdi-redo</v-icon>
-      </button> -->
     <button class="icon-button with-right-border" title="reset the view" @click="resetView">
       <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
     </button>
@@ -36,6 +30,12 @@
       <v-icon size="small" :color="hasSelectedElements ? '#66615b' : '#c2c2be'"
         >mdi-trash-can-outline</v-icon
       >
+    </button>
+    <button class="icon-button with-right-border" title="undo">
+      <v-icon size="small" color="#66615b">mdi-undo</v-icon>
+    </button>
+    <button class="icon-button with-right-border" title="redo">
+      <v-icon size="small" color="#66615b">mdi-redo</v-icon>
     </button>
   </div>
 </template>

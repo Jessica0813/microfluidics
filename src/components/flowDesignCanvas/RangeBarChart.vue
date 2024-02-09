@@ -17,6 +17,10 @@ import type { FlowControlProcess } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 
+const props = defineProps({
+  id: String
+})
+
 const flowControlProcesses: FlowControlProcess[] = [
   {
     id: '1',
@@ -82,15 +86,15 @@ const y = scaleBand()
 const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 let startOffsetX: number = 0
 d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
-  instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
+  instance = instances.find((instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`)
   instance?.setProps({ trigger: 'manual'})
   instance?.show()
-  const x = select(`#process-${event.subject.id}`).attr('x')
+  const x = select(`#${props.id}-process-${event.subject.id}`).attr('x')
   startOffsetX = event.x - Number(x)
-  select(`#delete-icon-${event.subject.id}`).style('display', 'none')
+  select(`#${props.id}-delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
-  const selection = select(`#process-${event.subject.id}`)
+  const selection = select(`#${props.id}-process-${event.subject.id}`)
   let x = event.x - startOffsetX
   const start = marginX
   const end = width - marginX - Number(selection.attr('width'))
@@ -101,8 +105,8 @@ d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) 
     x = end
   }
   selection.attr('x', x)
-  select(`#start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
-  select(`#end-line-${event.subject.id}`)
+  select(`#${props.id}-start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
+  select(`#${props.id}-end-line-${event.subject.id}`)
     .attr('x1', x + Number(selection.attr('width')))
     .attr('x2', x + Number(selection.attr('width')))
 
@@ -116,14 +120,14 @@ d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) =
 
 const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
+  instance = instances.find((instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`)
   instance?.setProps({ trigger: 'manual'})
   instance?.show()
-  select(`#delete-icon-${event.subject.id}`).style('display', 'none')
+  select(`#${props.id}-delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
-  const minimumDistance = Number(select(`#start-line-${event.subject.id}`).attr('x1')) + 10
+  const minimumDistance = Number(select(`#${props.id}-start-line-${event.subject.id}`).attr('x1')) + 10
   const end = width - marginX
   if (event.x >= end) {
     x = end
@@ -131,10 +135,10 @@ d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess,
   if (x <= minimumDistance) {
     x = minimumDistance
   }
-  select(`#end-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
-  select(`#process-${event.subject.id}`).attr(
+  select(`#${props.id}-end-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
+  select(`#${props.id}-process-${event.subject.id}`).attr(
     'width',
-    x - Number(select(`#start-line-${event.subject.id}`).attr('x1'))
+    x - Number(select(`#${props.id}-start-line-${event.subject.id}`).attr('x1'))
   )
   const endTime = ((x - 10) / 10).toFixed(1)
   instance?.setContent(
@@ -147,14 +151,14 @@ d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, 
 
 const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  instance = instances.find((instance) => instance.reference.id === `process-${event.subject.id}`)
+  instance = instances.find((instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`)
   instance?.setProps({ trigger: 'manual'})
   instance?.show()
-  select(`#delete-icon-${event.subject.id}`).style('display', 'none')
+  select(`#${props.id}-delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
-  const minimumDistance = Number(select(`#end-line-${event.subject.id}`).attr('x1')) - 10
+  const minimumDistance = Number(select(`#${props.id}-end-line-${event.subject.id}`).attr('x1')) - 10
   const start = 10
   if (event.x <= start) {
     x = start
@@ -162,10 +166,10 @@ d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, 
   if (x >= minimumDistance) {
     x = minimumDistance
   }
-  select(`#start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
-  select(`#process-${event.subject.id}`)
+  select(`#${props.id}-start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
+  select(`#${props.id}-process-${event.subject.id}`)
     .attr('x', x)
-    .attr('width', Number(select(`#end-line-${event.subject.id}`).attr('x1')) - x)
+    .attr('width', Number(select(`#${props.id}-end-line-${event.subject.id}`).attr('x1')) - x)
 
   const startTime = ((x - 10) / 10).toFixed(1)
   instance?.setContent(
@@ -216,7 +220,7 @@ onMounted(() => {
   const enterSelection = contentGroup
     .enter()
     .append('g')
-    .attr('id', (d) => `process-group-${d.id}`)
+    .attr('id', (d) => `${props.id}-process-group-${d.id}`)
     .on('mouseenter', (event, d) => {
       select(`#delete-icon-${d.id}`).style('display', 'block')
     })
@@ -239,7 +243,7 @@ onMounted(() => {
     .attr('y', (d) => y(d.id)!)
     .attr('width', (d) => x(d.endTime) - x(d.startTime))
     .attr('height', y.bandwidth())
-    .attr('id', (d) => `process-${d.id}`)
+    .attr('id', (d) => `${props.id}-process-${d.id}`)
     .attr('fill', '#BDBDBD')
     .call(d3Drag)
 
@@ -252,7 +256,7 @@ onMounted(() => {
     offset: [5, 5],
     content: (reference) => {
       const id = reference.getAttribute('id')
-      const process = flowControlProcesses.find((p) => `process-${p.id}` === id)
+      const process = flowControlProcesses.find((p) => `${props.id}-process-${p.id}` === id)
       if (process) {
         return `
         <div style="font-size: 10px;">
@@ -276,7 +280,7 @@ onMounted(() => {
     .attr('y2', (d) => y(d.id)! + y.bandwidth()) // y-coordinate of the end line (bottom of the rectangle)
     .attr('stroke-width', 5)
     .attr('stroke', 'transparent') // Color of the line
-    .attr('id', (d) => `start-line-${d.id}`) // id related to d.id
+    .attr('id', (d) => `${props.id}-start-line-${d.id}`) // id related to d.id
     .style('cursor', 'ew-resize')
     .call(d3LeftResize)
 
@@ -288,13 +292,13 @@ onMounted(() => {
     .attr('y2', (d) => y(d.id)! + y.bandwidth()) // y-coordinate of the end line (bottom of the rectangle)
     .attr('stroke-width', 5)
     .attr('stroke', 'transparent') // Color of the line
-    .attr('id', (d) => `end-line-${d.id}`)
+    .attr('id', (d) => `${props.id}-end-line-${d.id}`)
     .style('cursor', 'ew-resize')
     .call(d3RightResize)
 
   const deleteIcon = enterSelection
     .append('g')
-    .attr('id', (d) => `delete-icon-${d.id}`)
+    .attr('id', (d) => `${props.id}-delete-icon-${d.id}`)
     .style('cursor', 'pointer')
     .style('display', 'none')
     .on('click', (event, d) => {

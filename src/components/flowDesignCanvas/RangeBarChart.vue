@@ -23,6 +23,7 @@ const props = defineProps({
 const flowControlProcesses: FlowControlProcess[] = [
   {
     id: '1',
+    name: '1',
     startTime: 0.0,
     endTime: 20.0,
     duration: 20,
@@ -33,6 +34,7 @@ const flowControlProcesses: FlowControlProcess[] = [
   },
   {
     id: '2',
+    name: '2',
     startTime: 0.0,
     endTime: 20.0,
     duration: 20,
@@ -43,6 +45,7 @@ const flowControlProcesses: FlowControlProcess[] = [
   },
   {
     id: '3',
+    name: '3',
     startTime: 10.0,
     endTime: 25.0,
     duration: 15,
@@ -53,6 +56,7 @@ const flowControlProcesses: FlowControlProcess[] = [
   },
   {
     id: '4',
+    name: '4',
     startTime: 30.0,
     endTime: 40.0,
     duration: 10,

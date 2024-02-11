@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import CustomizedNumberInput from './CustomizedNumberInput.vue'
+import CustomizedTextInput from './CustomizedTextInput.vue'
+import CustomizedDropdown from './CustomizedDropdown.vue'
+
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['droplet', 'Needle']
 const fluids = ['water', 'oil']
@@ -7,103 +11,43 @@ defineProps({
   id: String
 })
 const name = defineModel<string>('name', { default: '' })
-const duration = defineModel('duration', { default: 0 })
+const duration = defineModel<number>('duration', { default: 0 })
 const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
 const fluid = defineModel<string>('fluid', { default: '' })
-const pressure = defineModel('pressure', { default: 0 })
+const pressure = defineModel<number>('pressure', { default: 0 })
 </script>
 
 <template>
   <v-sheet
-    class="pt-4 px-4 align-center justify-center nodrag"
+    class="py-4 px-4 align-center justify-center nodrag"
     :rounded="true"
     width="360"
-    height="220"
+    height="auto"
   >
-    <div class="d-flex align-center justify-center mb-4">
-      <p class="text-subtitle-1">Inlet Configuration</p>
-    </div>
     <v-row dense>
       <v-col cols="6">
-        <v-text-field
-          v-model="name"
-          type="string"
-          label="name"
-          variant="outlined"
-          density="compact"
-          color="blue-darken-3"
-          :hide-details="true"
-        >
-        </v-text-field>
+        <CustomizedTextInput v-model:text="name" label="Name" />
       </v-col>
       <v-col cols="6">
-        <v-text-field
-          v-model="duration"
-          type="number"
-          label="duration"
-          variant="outlined"
-          density="compact"
-          suffix="s"
-          color="blue-darken-3"
-          :hide-details="true"
-        >
-        </v-text-field>
+        <CustomizedNumberInput v-model:number="duration" label="Duration" />
       </v-col>
     </v-row>
     <v-row dense>
       <v-col cols="6">
-        <v-select
-          v-model="inlet"
-          variant="outlined"
-          density="compact"
-          :items="inlets"
-          color="blue-darken-3"
-          label="inlet"
-          :hide-details="true"
-        >
-        </v-select>
+        <CustomizedDropdown v-model:selected="inlet" :items="inlets" label="Inlet" />
       </v-col>
       <v-col cols="6">
-        <v-select
-          v-model="injection"
-          variant="outlined"
-          density="compact"
-          :items="injections"
-          color="blue-darken-3"
-          label="injection"
-          :hide-details="true"
-        >
-        </v-select>
+        <CustomizedDropdown v-model:selected="injection" :items="injections" label="Injection" />
       </v-col>
     </v-row>
 
     <v-row dense>
       <v-col cols="6">
-        <v-select
-          v-model="fluid"
-          variant="outlined"
-          density="compact"
-          :items="fluids"
-          color="blue-darken-3"
-          label="fluid"
-          class="custom-v-field"
-          :hide-details="true"
-        >
-        </v-select>
+        <CustomizedDropdown v-model:selected="fluid" :items="fluids" label="Fluid" />
       </v-col>
       <v-col cols="6">
-        <v-text-field
-          v-model="pressure"
-          type="number"
-          label="Pressure"
-          variant="outlined"
-          density="compact"
-          suffix="Pa"
-          color="blue-darken-3"
-          :hide-details="true"
-        >
-        </v-text-field>
+        <CustomizedNumberInput v-model:number="pressure" label="Pressure" />
       </v-col>
     </v-row>
   </v-sheet>

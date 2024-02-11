@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
-import type { FlowConfigs } from '@/types/flowControl'
 import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import { useVueFlow } from '@vue-flow/core'
+import CustomizedNumberInput from './CustomizedNumberInput.vue'
 
 const { selected, id } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
@@ -52,14 +52,17 @@ console.log(findNode(id))
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
     <div style="background-color: #eeeeee; border-radius: 4px; height: 100%">
-      <div class="d-flex align-center pt-3 pb-2">
+      <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-chart-gantt</v-icon>
         <p class="text-subtitle-2">
           {{ 'Duration: ' + totalDuration }}
         </p>
         <v-spacer></v-spacer>
+        <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-plus</v-icon>
       </div>
+
       <v-divider thickness="2" />
+      <CustomizedNumberInput />
       <div
         style="
           padding-top: 5px;

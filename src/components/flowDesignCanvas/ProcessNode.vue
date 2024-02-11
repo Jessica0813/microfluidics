@@ -102,9 +102,9 @@ function onClickOutside() {
       class="flex align-center justify-center"
       style="width: 300px; height: auto; background-color: #eeeeee; border-radius: 4px"
     >
-      <div class="d-flex align-center pt-3 pb-2">
+      <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
-        <p class="text-subtitle-2">
+        <p class="text-body-2">
           {{ 'Name: ' + flowControl.name }}
         </p>
         <v-spacer></v-spacer>
@@ -113,7 +113,7 @@ function onClickOutside() {
         </div>
       </div>
       <v-divider thickness="2" />
-      <div class="flex pa-3">
+      <div class="flex px-3 pt-3 pb-1">
         <v-chip class="mr-1 mb-2" size="small">{{
           'duration: ' + flowControl.duration + 's'
         }}</v-chip>

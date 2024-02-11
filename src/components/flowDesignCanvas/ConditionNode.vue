@@ -64,7 +64,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
       class="flex align-center justify-center"
       style="width: 300px; height: auto; background-color: #eeeeee; border-radius: 4px"
     >
-      <div class="d-flex align-center pt-3 pb-2">
+      <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" style="transform: rotate(180deg)" color="grey-darken-3">
           mdi-call-split</v-icon
         >
@@ -85,7 +85,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         </div>
       </div>
       <v-divider thickness="2" />
-      <div class="flex pa-3">
+      <div class="flex px-3 pt-3 pb-1">
         <v-chip
           class="mr-1 mb-2"
           size="small"

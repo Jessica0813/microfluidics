@@ -69,7 +69,7 @@ console.log(findNode(id))
           height: 76%;
         "
       >
-        <RangBarChart :id="id"/>
+        <RangBarChart :id="id" />
       </div>
     </div>
   </div>

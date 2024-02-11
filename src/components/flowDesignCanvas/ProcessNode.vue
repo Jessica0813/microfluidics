@@ -3,11 +3,14 @@ import { ref, watch } from 'vue'
 import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 import type { FlowControl } from '@/types/flowControl'
 import ProcessEditMenu from './ProcessEditMenu.vue'
+import { flip, shift, computePosition, offset } from '@floating-ui/vue'
 
-const { findNode } = useVueFlow()
+const { updateNodeData } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 const isMenuOpen = ref(false)
+const targetRef = ref<HTMLElement | null>(null)
+const floatingRef = ref<HTMLElement | null>(null)
 
 const flowControl = ref<FlowControl>({
   inlet: 'inlet 1',
@@ -18,19 +21,53 @@ const flowControl = ref<FlowControl>({
 })
 
 watch(isMenuOpen, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
-    const node = findNode(id)
-    if (node === undefined) {
-      return
-    }
-    node.data.flowControl = flowControl.value
-    console.log(node)
+  if (!newValue && oldValue) {
+    updateNodeData(id, (node) => {
+      node.data.flowControl = flowControl.value
+      console.log(node)
+    })
   }
 })
+
+function calculatePosition() {
+  if (!targetRef.value || !floatingRef.value) {
+    return
+  }
+
+  try {
+    computePosition(targetRef.value, floatingRef.value, {
+      placement: 'right',
+      middleware: [offset(5), flip(), shift()]
+    }).then((pos) => {
+      Object.assign(floatingRef.value!.style, {
+        left: `${pos.x}px`,
+        top: `${pos.y}px`
+      })
+      console.log('pos:', pos)
+    })
+  } catch (error) {
+    console.error('Error calculating position:', error)
+  }
+}
+
+function onTrigger() {
+  isMenuOpen.value = !isMenuOpen.value
+  if (isMenuOpen.value) {
+    calculatePosition()
+  }
+}
+
+function onClickOutside() {
+  isMenuOpen.value = false
+}
 </script>
 
 <template>
   <div
+    ref="targetRef"
+    v-click-outside="{
+      handler: onClickOutside
+    }"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{
@@ -70,16 +107,8 @@ watch(isMenuOpen, (newValue, oldValue) => {
           {{ 'Duration: ' + flowControl.duration + 's' }}
         </p>
         <v-spacer></v-spacer>
-        <div>
-          <ProcessEditMenu
-            v-model:menu="isMenuOpen"
-            v-model:duration="flowControl.duration"
-            v-model:inlet="flowControl.inlet"
-            v-model:fluid="flowControl.fluid"
-            v-model:pressure="flowControl.pressure"
-            v-model:injection="flowControl.injection"
-            :id="id"
-          />
+        <div @click="onTrigger">
+          <v-icon size="small" color="grey-darken-3"> mdi-dots-vertical</v-icon>
         </div>
       </div>
       <v-divider thickness="2" />
@@ -89,6 +118,17 @@ watch(isMenuOpen, (newValue, oldValue) => {
         <v-chip class="mr-1 mb-2">{{ 'pressure:' + flowControl.pressure }}</v-chip>
         <v-chip class="mr-1 mb-2">{{ 'injection: ' + flowControl.injection }}</v-chip>
       </div>
+    </div>
+    <div ref="floatingRef" style="position: absolute; z-index: 9999" v-show="isMenuOpen">
+      <ProcessEditMenu
+        v-model:menu="isMenuOpen"
+        v-model:duration="flowControl.duration"
+        v-model:inlet="flowControl.inlet"
+        v-model:fluid="flowControl.fluid"
+        v-model:pressure="flowControl.pressure"
+        v-model:injection="flowControl.injection"
+        :id="id"
+      />
     </div>
   </div>
 </template>

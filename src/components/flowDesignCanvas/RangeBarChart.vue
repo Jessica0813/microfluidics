@@ -86,8 +86,10 @@ const y = scaleBand()
 const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 let startOffsetX: number = 0
 d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
-  instance = instances.find((instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`)
-  instance?.setProps({ trigger: 'manual'})
+  instance = instances.find(
+    (instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`
+  )
+  instance?.setProps({ trigger: 'manual' })
   instance?.show()
   const x = select(`#${props.id}-process-${event.subject.id}`).attr('x')
   startOffsetX = event.x - Number(x)
@@ -120,14 +122,17 @@ d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) =
 
 const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  instance = instances.find((instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`)
-  instance?.setProps({ trigger: 'manual'})
+  instance = instances.find(
+    (instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`
+  )
+  instance?.setProps({ trigger: 'manual' })
   instance?.show()
   select(`#${props.id}-delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
-  const minimumDistance = Number(select(`#${props.id}-start-line-${event.subject.id}`).attr('x1')) + 10
+  const minimumDistance =
+    Number(select(`#${props.id}-start-line-${event.subject.id}`).attr('x1')) + 10
   const end = width - marginX
   if (event.x >= end) {
     x = end
@@ -151,14 +156,17 @@ d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, 
 
 const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
-  instance = instances.find((instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`)
-  instance?.setProps({ trigger: 'manual'})
+  instance = instances.find(
+    (instance) => instance.reference.id === `${props.id}-process-${event.subject.id}`
+  )
+  instance?.setProps({ trigger: 'manual' })
   instance?.show()
   select(`#${props.id}-delete-icon-${event.subject.id}`).style('display', 'none')
 })
 d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
   let x = event.x
-  const minimumDistance = Number(select(`#${props.id}-end-line-${event.subject.id}`).attr('x1')) - 10
+  const minimumDistance =
+    Number(select(`#${props.id}-end-line-${event.subject.id}`).attr('x1')) - 10
   const start = 10
   if (event.x <= start) {
     x = start
@@ -192,10 +200,9 @@ function updateContent(
         Fluid: ${event.subject.fluid}<br>
         Pressure: ${event.subject.pressure}
         </div>`)
-  instance?.setProps({ trigger: 'mouseenter'})
+  instance?.setProps({ trigger: 'mouseenter' })
   instance = undefined
 }
-
 
 onMounted(() => {
   if (!chart.value) return
@@ -228,15 +235,15 @@ onMounted(() => {
       select(`#delete-icon-${d.id}`).style('display', 'none')
     })
 
-  enterSelection 
+  enterSelection
     .append('rect')
     .attr('x', x(0))
     .attr('y', (d) => y(d.id)!)
-    .attr('width', width-2*marginX)
+    .attr('width', width - 2 * marginX)
     .attr('height', y.bandwidth())
-    .style('visibility', 'hidden'); 
+    .style('visibility', 'hidden')
 
-  enterSelection 
+  enterSelection
     .append('rect')
     .attr('class', 'rect')
     .attr('x', (d) => x(d.startTime))
@@ -272,7 +279,7 @@ onMounted(() => {
     }
   })
 
-  enterSelection 
+  enterSelection
     .append('line')
     .attr('x1', (d) => x(d.startTime)) // x-coordinate of the start line
     .attr('y1', (d) => y(d.id)!) // y-coordinate of the start line
@@ -284,7 +291,7 @@ onMounted(() => {
     .style('cursor', 'ew-resize')
     .call(d3LeftResize)
 
-  enterSelection 
+  enterSelection
     .append('line')
     .attr('x1', (d) => x(d.endTime)) // x-coordinate of the start line
     .attr('y1', (d) => y(d.id)!) // y-coordinate of the start line
@@ -322,7 +329,7 @@ onMounted(() => {
     .attr('stroke', 'grey')
     .attr('fill', 'transparent')
     .attr('stroke-width', 0.5)
-    
+
   xAxis.attr('transform', `translate(0,${marginTop})`).call(axisTop(x).ticks(width / 100))
 
   svgChart.node()

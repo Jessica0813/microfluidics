@@ -31,7 +31,7 @@ const onClickOutside = () => {
     <div
       ref="targetRef"
       class="dropdown-button"
-      :style="{ borderColor: isMenuOpen ? '#007bff' : '#515a6e' }"
+      :style="{ borderColor: isMenuOpen ? '#007bff' : 'grey' }"
       @click="isMenuOpen = !isMenuOpen"
     >
       <p>{{ selected }}</p>

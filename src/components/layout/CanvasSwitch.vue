@@ -28,7 +28,7 @@ defineEmits(['onFlowDesignClick', 'onSensorPlacementClick'])
       }"
       @click="$emit('onSensorPlacementClick')"
     >
-      Sensor Placement
+      Design Canvas
     </button>
   </div>
 </template>

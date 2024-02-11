@@ -24,7 +24,7 @@ const number = defineModel<number>('number', { default: 0 })
 .custom-input {
   width: 100%;
   padding: 2px 4px;
-  border: 1px solid #515a6e;
+  border: 1px solid grey;
   border-radius: 4px;
   font-size: 14px;
   outline: none;

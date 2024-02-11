@@ -7,8 +7,9 @@ export interface FlowControl {
   duration: number
 }
 
-export interface scheduledFlowControl {
+export interface ScheduledFlowControl {
   totalDuration: number
+  name: string
   processes: FlowControlProcess[]
 }
 

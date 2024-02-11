@@ -105,7 +105,7 @@ function onClickOutside() {
       <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
         <p class="text-body-2">
-          {{ 'Name: ' + flowControl.name }}
+          {{ flowControl.name }}
         </p>
         <v-spacer></v-spacer>
         <div @click="onTrigger">

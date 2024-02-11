@@ -62,8 +62,8 @@ const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-const hasSensorSelected = ref(selectedSensor.value && selectedSensor.value.length > 0)
-const selectedSensorId = ref((selectedSensor.value && selectedSensor.value[0]?.id) || '')
+const hasSensorSelected = ref(selectedSensor.length > 0)
+const selectedSensorId = ref((selectedSensor[0]?.id) || '')
 
 const d3Drag = drag<SVGGElement, Sensor, any>()
 let startOffsetX: number = 0

@@ -6,6 +6,7 @@ const fluids = ['water', 'oil']
 defineProps({
   id: String
 })
+const name = defineModel<string>('name', { default: '' })
 const duration = defineModel('duration', { default: 0 })
 const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
@@ -24,7 +25,19 @@ const pressure = defineModel('pressure', { default: 0 })
       <p class="text-subtitle-1">Inlet Configuration</p>
     </div>
     <v-row dense>
-      <v-col cols="12">
+      <v-col cols="6">
+        <v-text-field
+          v-model="name"
+          type="string"
+          label="name"
+          variant="outlined"
+          density="compact"
+          color="blue-darken-3"
+          :hide-details="true"
+        >
+        </v-text-field>
+      </v-col>
+      <v-col cols="6">
         <v-text-field
           v-model="duration"
           type="number"

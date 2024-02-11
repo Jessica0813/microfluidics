@@ -13,6 +13,7 @@ const targetRef = ref<HTMLElement | null>(null)
 const floatingRef = ref<HTMLElement | null>(null)
 
 const flowControl = ref<FlowControl>({
+  name: 'process',
   inlet: 'inlet 1',
   injection: 'droplet',
   fluid: 'water',
@@ -104,7 +105,7 @@ function onClickOutside() {
       <div class="d-flex align-center pt-3 pb-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
         <p class="text-subtitle-2">
-          {{ 'Duration: ' + flowControl.duration + 's' }}
+          {{ 'Name: ' + flowControl.name }}
         </p>
         <v-spacer></v-spacer>
         <div @click="onTrigger">
@@ -113,14 +114,18 @@ function onClickOutside() {
       </div>
       <v-divider thickness="2" />
       <div class="flex pa-3">
-        <v-chip class="mr-1 mb-2">{{ 'inlet: ' + flowControl.inlet }}</v-chip>
-        <v-chip class="mr-1 mb-2">{{ 'fluid: ' + flowControl.fluid }}</v-chip>
-        <v-chip class="mr-1 mb-2">{{ 'pressure:' + flowControl.pressure }}</v-chip>
-        <v-chip class="mr-1 mb-2">{{ 'injection: ' + flowControl.injection }}</v-chip>
+        <v-chip class="mr-1 mb-2" size="small">{{
+          'duration: ' + flowControl.duration + 's'
+        }}</v-chip>
+        <v-chip class="mr-1 mb-2" size="small">{{ 'inlet: ' + flowControl.inlet }}</v-chip>
+        <v-chip class="mr-1 mb-2" size="small">{{ 'fluid: ' + flowControl.fluid }}</v-chip>
+        <v-chip class="mr-1 mb-2" size="small">{{ 'pressure:' + flowControl.pressure }}</v-chip>
+        <v-chip class="mr-1 mb-2" size="small">{{ 'injection: ' + flowControl.injection }}</v-chip>
       </div>
     </div>
     <div ref="floatingRef" style="position: absolute; z-index: 9999" v-show="isMenuOpen">
       <ProcessEditMenu
+        v-model:name="flowControl.name"
         v-model:menu="isMenuOpen"
         v-model:duration="flowControl.duration"
         v-model:inlet="flowControl.inlet"

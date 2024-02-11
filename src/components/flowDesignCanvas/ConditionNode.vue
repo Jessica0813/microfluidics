@@ -10,6 +10,7 @@ const { id, selected } = defineProps<NodeProps>()
 const isMenuOpen = ref<boolean>(false)
 const nodeIsHovered = ref<boolean>(false)
 const condition = ref<Condition>({
+  name: 'condition',
   sensor: 'color sensor',
   operator: '=',
   color: '#FFFFFF',
@@ -68,12 +69,13 @@ watch(isMenuOpen, (newValue, oldValue) => {
           mdi-call-split</v-icon
         >
         <p class="text-subtitle-2">
-          {{ condition.sensor }}
+          {{ condition.name }}
         </p>
         <v-spacer></v-spacer>
         <div>
           <ConditionEditMenu
             :id="id"
+            v-model:name="condition.name"
             v-model:menu="isMenuOpen"
             v-model:sensor="condition.sensor"
             v-model:operator="condition.operator"
@@ -86,6 +88,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
       <div class="flex pa-3">
         <v-chip
           class="mr-1 mb-2"
+          size="small"
           v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
           >{{ 'color ' + condition.operator + ' ' + condition.color }}</v-chip
         >

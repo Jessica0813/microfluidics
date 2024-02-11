@@ -1,4 +1,5 @@
 export interface FlowControl {
+  name: string
   inlet: string
   injection: string
   fluid: string

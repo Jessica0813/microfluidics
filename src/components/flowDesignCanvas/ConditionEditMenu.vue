@@ -6,6 +6,7 @@ defineProps({
 })
 
 const items = ['color sensor', 'viscosity sensor']
+const name = defineModel<string>('name', { default: '' })
 const menu = defineModel<boolean>('menu', { default: false })
 const sensor = defineModel<string>('sensor', { default: '' })
 const operator = defineModel<string>('operator', { default: '' })
@@ -41,18 +42,25 @@ watch(sensor, (newSensor, oldSensor) => {
     <template v-slot:activator="{ props }">
       <v-icon size="small" color="grey-darken-3" v-bind="props"> mdi-dots-vertical</v-icon>
     </template>
-    <v-sheet
-      class="pa-3 align-center justify-center"
-      width="300"
-      color="grey-lighten-4"
-      :rounded="true"
-    >
+    <v-sheet class="pa-3 align-center justify-center" width="300" :rounded="true">
       <div class="d-flex align-center justify-center mb-4">
         <p class="text-subtitle-1">Coniditon</p>
       </div>
 
       <v-row dense>
-        <v-col cols="12">
+        <v-col cols="6">
+          <v-text-field
+            v-model="name"
+            type="string"
+            label="name"
+            variant="outlined"
+            density="compact"
+            color="blue-darken-3"
+            :hide-details="true"
+          >
+          </v-text-field>
+        </v-col>
+        <v-col cols="6">
           <v-select
             v-model="sensor"
             variant="outlined"

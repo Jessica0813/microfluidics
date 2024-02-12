@@ -150,8 +150,8 @@ function onDrop(event: any) {
       <template #node-condition="conditionNodeProps">
         <ConditionNode v-bind="conditionNodeProps" />
       </template>
-      <template #node-schedule="ScheduleNodeProps">
-        <ScheduledProcessNode v-bind="ScheduleNodeProps" />
+      <template #node-schedule="scheduleNodeProps">
+        <ScheduledProcessNode v-bind="scheduleNodeProps" />
       </template>
       <template #edge-custom="props">
         <CustomEdge v-bind="props" />

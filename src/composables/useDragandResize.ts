@@ -52,8 +52,8 @@ export function useDrag(id: string, instances: Instance[], width: number, margin
       .attr('x1', x + Number(selection.attr('width')))
       .attr('x2', x + Number(selection.attr('width')))
 
-    const startTime = ((x - 10) / 10).toFixed(1)
-    const endTime = ((x - 10 + Number(selection.attr('width'))) / 10).toFixed(1)
+    const startTime = ((x - marginX) / 10).toFixed(1)
+    const endTime = ((x - marginX + Number(selection.attr('width'))) / 10).toFixed(1)
     instance?.setContent(`<div style="font-size: 10px;">${startTime} - ${endTime}</div>`)
   })
   d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
@@ -87,7 +87,7 @@ export function useRightResize(id: string, instances: Instance[], width: number,
       'width',
       x - Number(select(`#${id}-start-line-${event.subject.id}`).attr('x1'))
     )
-    const endTime = ((x - 10) / 10).toFixed(1)
+    const endTime = ((x - marginX) / marginX).toFixed(1)
     instance?.setContent(
       `<div style="font-size: 10px;">${event.subject.startTime} - ${endTime}</div>`
     )
@@ -98,7 +98,7 @@ export function useRightResize(id: string, instances: Instance[], width: number,
   return d3RightResize
 }
 
-export function useLeftResize(id: string, instances: Instance[]) {
+export function useLeftResize(id: string, instances: Instance[], marginX: number) {
   const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
   d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
     instance = instances.find(
@@ -111,7 +111,7 @@ export function useLeftResize(id: string, instances: Instance[]) {
   d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
     let x = event.x
     const minimumDistance = Number(select(`#${id}-end-line-${event.subject.id}`).attr('x1')) - 10
-    const start = 10
+    const start = 17
     if (event.x <= start) {
       x = start
     }
@@ -123,7 +123,7 @@ export function useLeftResize(id: string, instances: Instance[]) {
       .attr('x', x)
       .attr('width', Number(select(`#${id}-end-line-${event.subject.id}`).attr('x1')) - x)
 
-    const startTime = ((x - 10) / 10).toFixed(1)
+    const startTime = ((x - marginX) / 10).toFixed(1)
     instance?.setContent(
       `<div style="font-size: 10px;">${startTime} - ${event.subject.endTime}</div>`
     )

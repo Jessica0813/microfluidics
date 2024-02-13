@@ -21,56 +21,12 @@ const props = defineProps({
   totalDuration: Number
 })
 
-// const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProcesses', {
-//   default: []
-// })
-
-const flowControlProcesses = ref<FlowControlProcess[]>([
-  {
-    id: '1',
-    name: '1',
-    startTime: 0.0,
-    endTime: 20.0,
-    duration: 20,
-    inlet: 'Inlet 1',
-    injection: 'Injection Type A',
-    fluid: 'water',
-    pressure: 20
-  },
-  {
-    id: '2',
-    name: '2',
-    startTime: 0.0,
-    endTime: 20.0,
-    duration: 20,
-    inlet: 'Inlet 2',
-    injection: 'Injection Type B',
-    fluid: 'oil',
-    pressure: 25
-  },
-  {
-    id: '3',
-    name: '3',
-    startTime: 10.0,
-    endTime: 15.0,
-    duration: 5,
-    inlet: 'Inlet 2',
-    injection: 'Injection Type B',
-    fluid: 'oil',
-    pressure: 25
-  },
-  {
-    id: '4',
-    name: '4',
-    startTime: 14.0,
-    endTime: 16.0,
-    duration: 2,
-    inlet: 'Inlet 2',
-    injection: 'Injection Type B',
-    fluid: 'oil',
-    pressure: 25
-  }
-])
+const isMenuOpen = defineModel<boolean>('isMenuOpen', { default: false })
+const isEditingProcess = defineModel<boolean>('isEditingProcess', { default: false })
+const editedProcess = defineModel<FlowControlProcess>('editedProcess')
+const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProcesses', {
+  default: []
+})
 
 const chart = ref<SVGAElement | null>(null)
 let instances: Instance[] = []
@@ -78,21 +34,6 @@ let instances: Instance[] = []
 const marginX = 17
 const marginTop = 20
 const barHeight = 20
-// const width = computed(() => (props.totalDuration! / 10) * 100 + marginX * 2)
-// const height = computed(() => barHeight * flowControlProcesses.value.length + marginTop)
-
-// const x = computed(() =>
-//   scaleLinear()
-//     .domain([0, props.totalDuration!])
-//     .range([marginX, width.value - marginX])
-// )
-
-// const y = computed(() =>
-//   scaleBand()
-//     .domain(flowControlProcesses.value.map((p) => p.id))
-//     .range([marginTop, height.value])
-//     .padding(0.15)
-// )
 
 onMounted(() => {
   if (!chart.value) return
@@ -165,12 +106,26 @@ onMounted(() => {
       .append('rect')
       .attr('class', `${props.id}-process`)
       .attr('id', (d) => `${props.id}-process-${d.id}`)
-      .attr('fill', '#BDBDBD')
       .attr('x', (d) => x(d.startTime))
       .attr('y', (d) => y(d.id)!)
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
       .attr('height', y.bandwidth())
+      .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
       .call(useDrag(props.id!, instances, width, marginX))
+      .on('click', (event, d) => {
+        isEditingProcess.value = true
+        //update relative process with selected is true
+        flowControlProcesses.value = flowControlProcesses.value.map((p) => {
+          if (p.id === d.id) {
+            p.selected = true
+          } else {
+            p.selected = false
+          }
+          return p
+        })
+        editedProcess.value = flowControlProcesses.value.find((p) => p.id === d.id)!
+        isMenuOpen.value = true
+      })
 
     for (const process of flowControlProcesses.value) {
       const isInstanceExisted = instances.some(
@@ -206,31 +161,6 @@ onMounted(() => {
         instances.push(instance[0])
       }
     }
-
-    // instances = tippy(`.${props.id}-process`, {
-    //   allowHTML: true,
-    //   arrow: true,
-    //   theme: 'light',
-    //   trigger: 'mouseenter',
-    //   placement: 'bottom',
-    //   offset: [5, 5],
-    //   content: (reference) => {
-    //     const id = reference.getAttribute('id')
-    //     const process = flowControlProcesses.value.find((p) => `${props.id}-process-${p.id}` === id)
-    //     if (process) {
-    //       return `
-    //     <div style="font-size: 10px;">
-    //     Duration: ${process.startTime}-${process.endTime}<br>
-    //     Inlet: ${process.inlet}<br>
-    //     Injection: ${process.injection}<br>
-    //     Fluid: ${process.fluid}<br>
-    //     Pressure: ${process.pressure}
-    //     </div>
-    //     `
-    //     }
-    //     return ''
-    //   }
-    // })
 
     processRect.call(useDrag(props.id!, instances, width, marginX))
 
@@ -315,6 +245,7 @@ onMounted(() => {
       .attr('y', (d) => y(d.id)!)
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
       .attr('height', y.bandwidth())
+      .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
       .call(useDrag(props.id!, instances, width, marginX))
 
     startLine
@@ -354,7 +285,13 @@ onMounted(() => {
 
   updateProcess()
 
-  watch(() => flowControlProcesses, updateProcess, { deep: true })
+  watch(
+    () => [flowControlProcesses, props.totalDuration],
+    () => {
+      updateProcess()
+    },
+    { deep: true }
+  )
 
   svgChart.node()
 })

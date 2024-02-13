@@ -39,7 +39,7 @@ const onClickOutside = () => {
         size="16px"
         color="grey-darken-3"
         :style="{ transform: isMenuOpen ? 'rotate(180deg)' : '' }"
-        >mdi-chevron-up</v-icon
+        >mdi-chevron-down</v-icon
       >
     </div>
     <div

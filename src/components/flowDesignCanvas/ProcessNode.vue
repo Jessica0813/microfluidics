@@ -123,7 +123,7 @@ function onClickOutside() {
         <v-chip class="mr-1 mb-2" size="small">{{ 'injection: ' + flowControl.injection }}</v-chip>
       </div>
     </div>
-    <div ref="floatingRef" style="position: absolute; z-index: 9999" v-show="isMenuOpen">
+    <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
       <ProcessEditMenu
         v-model:name="flowControl.name"
         v-model:menu="isMenuOpen"

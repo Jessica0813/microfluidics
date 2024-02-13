@@ -6,6 +6,13 @@ import type { Instance } from 'tippy.js'
 
 let instance: Instance | undefined
 
+function updateProcess(  event:
+  | D3DragEvent<SVGRectElement, FlowControlProcess, any>
+  | D3DragEvent<SVGLineElement, FlowControlProcess, any>,
+  id: string) {
+    
+  }
+
 function updateContent(
   event:
     | D3DragEvent<SVGRectElement, FlowControlProcess, any>

@@ -16,6 +16,7 @@ export interface ScheduledFlowControl {
 export interface FlowControlProcess {
   id: string
   name: string
+  selected: boolean
   startTime: number
   endTime: number
   duration: number

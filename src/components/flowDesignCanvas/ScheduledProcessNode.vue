@@ -1,58 +1,59 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import { useVueFlow } from '@vue-flow/core'
 import type { ScheduledFlowControl, FlowControlProcess } from '@/types/flowControl'
+import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
+import { flip, shift, computePosition, offset } from '@floating-ui/vue'
 
+let processId = 1
+function getProcessId() {
+  return `${processId++}`
+}
 const { selected, id } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-const nodeRef = ref<HTMLDivElement | null>(null)
+const isMenuOpen = ref(false)
+const targetRef = ref<HTMLDivElement | null>(null)
+const floatingRef = ref<HTMLElement | null>(null)
+const isEditingProcess = ref(false)
+const editedProcess = ref<FlowControlProcess>({
+  id: '',
+  name: '',
+  selected: false,
+  startTime: 0,
+  endTime: 0,
+  duration: 0,
+  inlet: '',
+  injection: '',
+  fluid: '',
+  pressure: 0
+})
 
 const scheduledFlowControl = ref<ScheduledFlowControl>({
   totalDuration: 20,
   name: 'scheduled process',
   processes: [
     {
-      id: '1',
+      id: '-1',
       name: '1',
+      selected: false,
       startTime: 0.0,
-      endTime: 20.0,
-      duration: 20,
+      endTime: 10.0,
+      duration: 10.0,
       inlet: 'Inlet 1',
       injection: 'Injection Type A',
       fluid: 'water',
       pressure: 20
     },
     {
-      id: '2',
-      name: '2',
-      startTime: 0.0,
-      endTime: 20.0,
-      duration: 20,
-      inlet: 'Inlet 2',
-      injection: 'Injection Type B',
-      fluid: 'oil',
-      pressure: 25
-    },
-    {
-      id: '3',
+      id: '-2',
       name: '3',
+      selected: false,
       startTime: 10.0,
       endTime: 15.0,
       duration: 5,
-      inlet: 'Inlet 2',
-      injection: 'Injection Type B',
-      fluid: 'oil',
-      pressure: 25
-    },
-    {
-      id: '4',
-      name: '4',
-      startTime: 14.0,
-      endTime: 16.0,
-      duration: 2,
       inlet: 'Inlet 2',
       injection: 'Injection Type B',
       fluid: 'oil',
@@ -61,13 +62,86 @@ const scheduledFlowControl = ref<ScheduledFlowControl>({
   ]
 })
 
-const { findNode } = useVueFlow()
+function calculatePosition() {
+  if (!targetRef.value || !floatingRef.value) {
+    return
+  }
 
-console.log(findNode(id))
+  try {
+    computePosition(targetRef.value, floatingRef.value, {
+      placement: 'right',
+      middleware: [offset(5), flip(), shift()]
+    }).then((pos) => {
+      Object.assign(floatingRef.value!.style, {
+        left: `${pos.x}px`,
+        top: `${pos.y}px`
+      })
+    })
+  } catch (error) {
+    console.error('Error calculating position:', error)
+  }
+}
+
+watch(isEditingProcess, () => {
+  if (isEditingProcess.value) {
+    calculatePosition()
+  }
+})
+
+function onTrigger() {
+  if (isEditingProcess.value) {
+    isMenuOpen.value = true
+    isEditingProcess.value = false
+    updateProcess()
+  } else {
+    isMenuOpen.value = !isMenuOpen.value
+  }
+
+  if (isMenuOpen.value) {
+    calculatePosition()
+  }
+}
+
+function onClickOutside() {
+  isMenuOpen.value = false
+  isEditingProcess.value = false
+  updateProcess()
+}
+
+function updateProcess() {
+  if (editedProcess.value.id) {
+    editedProcess.value.selected = false
+    // replace the process in the array with the same id with editiedProcess
+    const index = scheduledFlowControl.value.processes.findIndex(
+      (process) => process.id === editedProcess.value.id
+    )
+    if (index !== -1) {
+      scheduledFlowControl.value.processes.splice(index, 1, editedProcess.value)
+    }
+  }
+}
+function addProcess() {
+  const id = getProcessId()
+  scheduledFlowControl.value.processes.push({
+    id: id,
+    name: id,
+    selected: false,
+    startTime: 0.0,
+    endTime: 1.0,
+    duration: 1.0,
+    inlet: 'Inlet 1',
+    injection: 'Injection Type A',
+    fluid: 'water',
+    pressure: 0
+  })
+}
 </script>
 
 <template>
   <div
+    v-click-outside="{
+      handler: onClickOutside
+    }"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{
@@ -77,7 +151,7 @@ console.log(findNode(id))
           ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
           : ''
     }"
-    ref="nodeRef"
+    ref="targetRef"
   >
     <NodeResizer :minWidth="300" :minHeight="150" :color="'transparent'" />
     <Handle
@@ -107,7 +181,9 @@ console.log(findNode(id))
           {{ scheduledFlowControl.name }}
         </p>
         <v-spacer></v-spacer>
-        <v-icon size="small" color="grey-darken-3"> mdi-dots-vertical</v-icon>
+        <div @click="onTrigger">
+          <v-icon size="small" color="grey-darken-3"> mdi-dots-vertical</v-icon>
+        </div>
       </div>
       <v-divider thickness="2" />
       <div class="d-flex align-center py-2 px-5">
@@ -115,7 +191,7 @@ console.log(findNode(id))
           {{ 'Total Duration: ' + scheduledFlowControl.totalDuration + 's' }}
         </p>
         <v-spacer></v-spacer>
-        <v-icon size="small" color="grey-darken-3"> mdi-plus</v-icon>
+        <v-icon size="small" color="grey-darken-3" @click="addProcess"> mdi-plus</v-icon>
       </div>
       <div
         style="
@@ -126,8 +202,30 @@ console.log(findNode(id))
           height: 62%;
         "
       >
-        <RangBarChart :id="id" :totalDuration="scheduledFlowControl.totalDuration" />
+        <RangBarChart
+          :id="id"
+          :totalDuration="scheduledFlowControl.totalDuration"
+          v-model:isMenuOpen="isMenuOpen"
+          v-model:isEditingProcess="isEditingProcess"
+          v-model:editedProcess="editedProcess"
+          v-model:flowControlProcesses="scheduledFlowControl.processes"
+        />
       </div>
+    </div>
+    <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
+      <ScheduledProcessEditMenu
+        :id="id"
+        :isEditingProcess="isEditingProcess"
+        v-model:nodeName="scheduledFlowControl.name"
+        v-model:totalDuration="scheduledFlowControl.totalDuration"
+        v-model:processName="editedProcess.name"
+        v-model:inlet="editedProcess.inlet"
+        v-model:injection="editedProcess.injection"
+        v-model:fluid="editedProcess.fluid"
+        v-model:pressure="editedProcess.pressure"
+        v-model:startTime="editedProcess.startTime"
+        v-model:endTime="editedProcess.endTime"
+      />
     </div>
   </div>
 </template>

@@ -96,10 +96,46 @@ function onDrop(event: any) {
   } else if (type === 'schedule') {
     nodeId = getProcessScheduleNodeId()
   }
-  const newNode = {
+
+  let newNode = {
     id: nodeId,
     type,
-    position
+    position,
+    data: {}
+  }
+
+  if (type === 'schedule') {
+    const nodeData = {
+      totalDuration: 20,
+      name: nodeId,
+      processes: [
+        {
+          id: '-1',
+          name: '1',
+          selected: false,
+          startTime: 0.0,
+          endTime: 10.0,
+          duration: 10.0,
+          inlet: 'Inlet 1',
+          injection: 'Injection Type A',
+          fluid: 'water',
+          pressure: 20
+        },
+        {
+          id: '-2',
+          name: '3',
+          selected: false,
+          startTime: 10.0,
+          endTime: 15.0,
+          duration: 5,
+          inlet: 'Inlet 2',
+          injection: 'Injection Type B',
+          fluid: 'oil',
+          pressure: 25
+        }
+      ]
+    }
+    newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
   }
 
   addNodes([newNode])

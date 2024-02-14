@@ -15,7 +15,9 @@ import type { FlowControlProcess } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
+import { useVueFlow } from '@vue-flow/core'
 
+const { findNode } = useVueFlow()
 const props = defineProps({
   id: String,
   totalDuration: Number
@@ -146,14 +148,14 @@ onMounted(() => {
             )
             if (process) {
               return `
-        <div style="font-size: 10px;">
-        Duration: ${process.startTime}-${process.endTime}<br>
-        Inlet: ${process.inlet}<br>
-        Injection: ${process.injection}<br>
-        Fluid: ${process.fluid}<br>
-        Pressure: ${process.pressure}
-        </div>
-        `
+                <div style="font-size: 10px;">
+                Duration: ${process.startTime}-${process.endTime}<br>
+                Inlet: ${process.inlet}<br>
+                Injection: ${process.injection}<br>
+                Fluid: ${process.fluid}<br>
+                Pressure: ${process.pressure}
+                </div>
+                `
             }
             return ''
           }
@@ -289,6 +291,35 @@ onMounted(() => {
     () => [flowControlProcesses, props.totalDuration],
     () => {
       updateProcess()
+    },
+    { deep: true }
+  )
+
+  watch(
+    editedProcess,
+    (newValue, oldValue) => {
+      if (!editedProcess.value) return
+      if (editedProcess.value.id) {
+        if (
+          newValue?.startTime !== oldValue?.startTime ||
+          newValue?.endTime !== oldValue?.endTime
+        ) {
+          editedProcess.value.duration = editedProcess.value.endTime - editedProcess.value.startTime
+        }
+        console.log('editedProcess:', findNode(props.id))
+        const instance = instances.find(
+          (i) => `${props.id}-process-${editedProcess.value!.id}` === i.reference.getAttribute('id')
+        )
+        instance?.setContent(`
+          <div style="font-size: 10px;">
+          Duration: ${editedProcess.value.startTime}-${editedProcess.value.endTime}<br>
+          Inlet: ${editedProcess.value.inlet}<br>
+          Injection: ${editedProcess.value.injection}<br>
+          Fluid: ${editedProcess.value.fluid}<br>
+          Pressure: ${editedProcess.value.pressure}
+          </div>
+        `)
+      }
     },
     { deep: true }
   )

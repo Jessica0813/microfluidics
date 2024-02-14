@@ -12,7 +12,7 @@ let processId = 1
 function getProcessId() {
   return `${processId++}`
 }
-const { selected, id } = defineProps<NodeProps>()
+const { selected, id, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 const isMenuOpen = ref(false)
 const targetRef = ref<HTMLDivElement | null>(null)
@@ -31,36 +31,7 @@ const editedProcess = ref<FlowControlProcess>({
   pressure: 0
 })
 
-const scheduledFlowControl = ref<ScheduledFlowControl>({
-  totalDuration: 20,
-  name: 'scheduled process',
-  processes: [
-    {
-      id: '-1',
-      name: '1',
-      selected: false,
-      startTime: 0.0,
-      endTime: 10.0,
-      duration: 10.0,
-      inlet: 'Inlet 1',
-      injection: 'Injection Type A',
-      fluid: 'water',
-      pressure: 20
-    },
-    {
-      id: '-2',
-      name: '3',
-      selected: false,
-      startTime: 10.0,
-      endTime: 15.0,
-      duration: 5,
-      inlet: 'Inlet 2',
-      injection: 'Injection Type B',
-      fluid: 'oil',
-      pressure: 25
-    }
-  ]
-})
+const scheduledFlowControl = ref<ScheduledFlowControl>(data.scheduledFlowControl)
 
 function calculatePosition() {
   if (!targetRef.value || !floatingRef.value) {
@@ -111,15 +82,9 @@ function onClickOutside() {
 function updateProcess() {
   if (editedProcess.value.id) {
     editedProcess.value.selected = false
-    // replace the process in the array with the same id with editiedProcess
-    const index = scheduledFlowControl.value.processes.findIndex(
-      (process) => process.id === editedProcess.value.id
-    )
-    if (index !== -1) {
-      scheduledFlowControl.value.processes.splice(index, 1, editedProcess.value)
-    }
   }
 }
+
 function addProcess() {
   const id = getProcessId()
   scheduledFlowControl.value.processes.push({

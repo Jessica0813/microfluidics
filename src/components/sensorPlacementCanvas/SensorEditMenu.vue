@@ -16,28 +16,11 @@
       </template>
 
       <div class="menu">
-        <div class="pb-4">
-          <v-text-field
-            v-model="sensorName"
-            label="Name"
-            variant="outlined"
-            density="compact"
-            color="blue-darken-3"
-            :hide-details="true"
-          >
-          </v-text-field>
+        <div class="pb-1">
+          <CustomizedTextInput label="Name" v-model:text="sensorName" />
         </div>
         <div>
-          <v-text-field
-            v-model="sensorRadius"
-            type="number"
-            label="Radius"
-            variant="outlined"
-            density="compact"
-            color="blue-darken-3"
-            :hide-details="true"
-          >
-          </v-text-field>
+          <CustomizedNumberInput label="Radius" v-model:number="sensorRadius" />
         </div>
       </div>
     </v-menu>
@@ -47,6 +30,8 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import { useSensorStore } from '@/stores/useSensorStore'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 
 const { findSensor, editSensor } = useSensorStore()
 const props = defineProps<{

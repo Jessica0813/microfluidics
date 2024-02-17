@@ -4,11 +4,14 @@ import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import type { Condition } from '@/types/condition'
 import { useVueFlow } from '@vue-flow/core'
 import ConditionEditMenu from './ConditionEditMenu.vue'
+import { flip, shift, computePosition, offset } from '@floating-ui/vue'
 
 const { findNode } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
 const isMenuOpen = ref<boolean>(false)
 const nodeIsHovered = ref<boolean>(false)
+const targetRef = ref<HTMLElement | null>(null)
+const floatingRef = ref<HTMLElement | null>(null)
 const condition = ref<Condition>({
   name: 'condition',
   sensor: 'color sensor',
@@ -16,6 +19,37 @@ const condition = ref<Condition>({
   color: '#FFFFFF',
   viscosity: 0
 })
+
+function calculatePosition() {
+  if (!targetRef.value || !floatingRef.value) {
+    return
+  }
+
+  try {
+    computePosition(targetRef.value, floatingRef.value, {
+      placement: 'right',
+      middleware: [offset(5), flip(), shift()]
+    }).then((pos) => {
+      Object.assign(floatingRef.value!.style, {
+        left: `${pos.x}px`,
+        top: `${pos.y}px`
+      })
+    })
+  } catch (error) {
+    console.error('Error calculating position:', error)
+  }
+}
+
+function onTrigger() {
+  isMenuOpen.value = !isMenuOpen.value
+  if (isMenuOpen.value) {
+    calculatePosition()
+  }
+}
+
+function onClickOutside() {
+  isMenuOpen.value = false
+}
 
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
@@ -31,6 +65,10 @@ watch(isMenuOpen, (newValue, oldValue) => {
 
 <template>
   <div
+    ref="targetRef"
+    v-click-outside="{
+      handler: onClickOutside
+    }"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{
@@ -72,16 +110,8 @@ watch(isMenuOpen, (newValue, oldValue) => {
           {{ condition.name }}
         </p>
         <v-spacer></v-spacer>
-        <div>
-          <ConditionEditMenu
-            :id="id"
-            v-model:name="condition.name"
-            v-model:menu="isMenuOpen"
-            v-model:sensor="condition.sensor"
-            v-model:operator="condition.operator"
-            v-model:color="condition.color"
-            v-model:viscosity="condition.viscosity"
-          />
+        <div @click="onTrigger">
+          <v-icon size="small" color="grey-darken-3"> mdi-dots-vertical</v-icon>
         </div>
       </div>
       <v-divider thickness="2" />
@@ -96,6 +126,17 @@ watch(isMenuOpen, (newValue, oldValue) => {
           'viscosity ' + condition.operator + ' ' + condition.viscosity
         }}</v-chip>
       </div>
+    </div>
+    <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
+      <ConditionEditMenu
+        v-model:name="condition.name"
+        v-model:menu="isMenuOpen"
+        v-model:sensor="condition.sensor"
+        v-model:operator="condition.operator"
+        v-model:viscosity="condition.viscosity"
+        v-model:color="condition.color"
+        :id="id"
+      />
     </div>
   </div>
 </template>

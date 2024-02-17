@@ -15,9 +15,7 @@ import type { FlowControlProcess } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
-import { useVueFlow } from '@vue-flow/core'
 
-const { findNode } = useVueFlow()
 const props = defineProps({
   id: String,
   totalDuration: Number
@@ -306,7 +304,6 @@ onMounted(() => {
         ) {
           editedProcess.value.duration = editedProcess.value.endTime - editedProcess.value.startTime
         }
-        console.log('editedProcess:', findNode(props.id))
         const instance = instances.find(
           (i) => `${props.id}-process-${editedProcess.value!.id}` === i.reference.getAttribute('id')
         )

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import CustomizedNumberInput from './CustomizedNumberInput.vue'
-import CustomizedTextInput from './CustomizedTextInput.vue'
-import CustomizedDropdown from './CustomizedDropdown.vue'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedTextInput from '../general/CustomizedTextInput.vue'
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['droplet', 'Needle']

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedTextInput from '../general/CustomizedTextInput.vue'
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 
 defineProps({
   id: String
@@ -38,79 +41,35 @@ watch(sensor, (newSensor, oldSensor) => {
 </script>
 
 <template>
-  <v-menu v-model="menu" :close-on-content-click="false" location="end">
-    <template v-slot:activator="{ props }">
-      <v-icon size="small" color="grey-darken-3" v-bind="props"> mdi-dots-vertical</v-icon>
-    </template>
-    <v-sheet class="pa-3 align-center justify-center" width="300" :rounded="true">
-      <div class="d-flex align-center justify-center mb-4">
-        <p class="text-subtitle-1">Coniditon</p>
-      </div>
-
-      <v-row dense>
-        <v-col cols="6">
-          <v-text-field
-            v-model="name"
-            type="string"
-            label="name"
-            variant="outlined"
-            density="compact"
-            color="blue-darken-3"
-            :hide-details="true"
-          >
-          </v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-select
-            v-model="sensor"
-            variant="outlined"
-            density="compact"
-            :items="items"
-            color="blue-darken-3"
-            label="sensor"
-            :hide-details="true"
-          >
-          </v-select>
-        </v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols="6">
-          <v-select
-            v-model="operator"
-            variant="outlined"
-            density="compact"
-            :items="dynamicOperators"
-            color="blue-darken-3"
-            label="operators"
-            :hide-details="true"
-          >
-          </v-select>
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-if="sensor === '' || sensor === 'color sensor'"
-            v-model="color"
-            label="value"
-            variant="outlined"
-            density="compact"
-            color="blue-darken-3"
-            :hide-details="true"
-          >
-          </v-text-field>
-          <v-text-field
-            v-else-if="sensor === 'viscosity sensor'"
-            v-model="viscosity"
-            type="number"
-            label="value"
-            variant="outlined"
-            density="compact"
-            suffix="cp"
-            color="blue-darken-3"
-            :hide-details="true"
-          >
-          </v-text-field>
-        </v-col>
-      </v-row>
-    </v-sheet>
-  </v-menu>
+  <v-sheet class="pa-3 align-center justify-center" width="300" :rounded="true">
+    <v-row dense>
+      <v-col cols="6">
+        <CustomizedTextInput v-model:text="name" label="Name" />
+      </v-col>
+      <v-col cols="6">
+        <CustomizedDropdown v-model:selected="sensor" :items="items" label="Sensor" />
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col cols="6">
+        <CustomizedDropdown
+          v-model:selected="operator"
+          :items="dynamicOperators"
+          label="Operator"
+        />
+      </v-col>
+      <v-col cols="6">
+        <CustomizedTextInput
+          v-if="sensor === '' || sensor === 'color sensor'"
+          v-model="color"
+          label="Value"
+        />
+        <CustomizedNumberInput
+          v-else-if="sensor === 'viscosity sensor'"
+          v-model:number="viscosity"
+          label="Value"
+        />
+      </v-col>
+    </v-row>
+  </v-sheet>
 </template>

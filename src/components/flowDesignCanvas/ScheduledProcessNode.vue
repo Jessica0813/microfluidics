@@ -5,10 +5,10 @@ import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import type { ScheduledFlowControl, FlowControlProcess } from '@/types/flowControl'
 import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
-import { flip, shift, computePosition, offset } from '@floating-ui/vue'
 import { useVueFlow } from '@vue-flow/core'
+import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
 
-const { updateNodeData, findNode } = useVueFlow()
+const { findNode } = useVueFlow()
 
 let processId = 1
 function getProcessId() {
@@ -67,29 +67,9 @@ const scheduledFlowControl = ref<ScheduledFlowControl>({
   ]
 })
 
-function calculatePosition() {
-  if (!targetRef.value || !floatingRef.value) {
-    return
-  }
-
-  try {
-    computePosition(targetRef.value, floatingRef.value, {
-      placement: 'right',
-      middleware: [offset(5), flip(), shift()]
-    }).then((pos) => {
-      Object.assign(floatingRef.value!.style, {
-        left: `${pos.x}px`,
-        top: `${pos.y}px`
-      })
-    })
-  } catch (error) {
-    console.error('Error calculating position:', error)
-  }
-}
-
 watch(isEditingProcess, () => {
   if (isEditingProcess.value) {
-    calculatePosition()
+    useMenuPositionCalculator(targetRef, floatingRef)
   }
 })
 
@@ -103,7 +83,7 @@ function onTrigger() {
   }
 
   if (isMenuOpen.value) {
-    calculatePosition()
+    useMenuPositionCalculator(targetRef, floatingRef)
   }
 }
 

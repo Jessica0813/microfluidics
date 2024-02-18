@@ -40,7 +40,7 @@ watch(sensor, (newSensor, oldSensor) => {
 </script>
 
 <template>
-  <v-sheet class="pa-3 align-center justify-center" width="300" :rounded="true">
+  <v-sheet class="pa-3 align-center justify-center nodrag" width="320" :rounded="true">
     <v-row dense>
       <v-col cols="6">
         <CustomizedTextInput v-model:text="name" label="Name" />
@@ -60,7 +60,7 @@ watch(sensor, (newSensor, oldSensor) => {
       <v-col cols="6">
         <CustomizedTextInput
           v-if="sensor === '' || sensor === 'color sensor'"
-          v-model="color"
+          v-model:text="color"
           label="Value"
         />
         <CustomizedNumberInput

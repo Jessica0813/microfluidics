@@ -4,7 +4,7 @@ import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import type { Condition } from '@/types/condition'
 import { useVueFlow } from '@vue-flow/core'
 import ConditionEditMenu from './ConditionEditMenu.vue'
-import { flip, shift, computePosition, offset } from '@floating-ui/vue'
+import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
 
 const { findNode } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
@@ -20,30 +20,10 @@ const condition = ref<Condition>({
   viscosity: 0
 })
 
-function calculatePosition() {
-  if (!targetRef.value || !floatingRef.value) {
-    return
-  }
-
-  try {
-    computePosition(targetRef.value, floatingRef.value, {
-      placement: 'right',
-      middleware: [offset(5), flip(), shift()]
-    }).then((pos) => {
-      Object.assign(floatingRef.value!.style, {
-        left: `${pos.x}px`,
-        top: `${pos.y}px`
-      })
-    })
-  } catch (error) {
-    console.error('Error calculating position:', error)
-  }
-}
-
 function onTrigger() {
   isMenuOpen.value = !isMenuOpen.value
   if (isMenuOpen.value) {
-    calculatePosition()
+    useMenuPositionCalculator(targetRef, floatingRef)
   }
 }
 
@@ -57,7 +37,9 @@ watch(isMenuOpen, (newValue, oldValue) => {
     if (node === undefined) {
       return
     }
-    node.data.condition = condition.value
+    if (node.data === undefined || node.data.condition !== condition.value) {
+      node.data.condition = condition.value
+    }
     console.log(node)
   }
 })

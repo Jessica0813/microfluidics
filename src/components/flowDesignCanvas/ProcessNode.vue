@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 import type { FlowControl } from '@/types/flowControl'
 import ProcessEditMenu from './ProcessEditMenu.vue'
-import { flip, shift, computePosition, offset } from '@floating-ui/vue'
+import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
 
 const { updateNodeData } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
@@ -25,37 +25,18 @@ const flowControl = ref<FlowControl>({
 watch(isMenuOpen, (newValue, oldValue) => {
   if (!newValue && oldValue) {
     updateNodeData(id, (node) => {
-      node.data.flowControl = flowControl.value
+      if (node.data === undefined || node.data.flowControl !== flowControl.value) {
+        node.data.flowControl = flowControl.value
+      }
       console.log(node)
     })
   }
 })
 
-function calculatePosition() {
-  if (!targetRef.value || !floatingRef.value) {
-    return
-  }
-
-  try {
-    computePosition(targetRef.value, floatingRef.value, {
-      placement: 'right',
-      middleware: [offset(5), flip(), shift()]
-    }).then((pos) => {
-      Object.assign(floatingRef.value!.style, {
-        left: `${pos.x}px`,
-        top: `${pos.y}px`
-      })
-      console.log('pos:', pos)
-    })
-  } catch (error) {
-    console.error('Error calculating position:', error)
-  }
-}
-
 function onTrigger() {
   isMenuOpen.value = !isMenuOpen.value
   if (isMenuOpen.value) {
-    calculatePosition()
+    useMenuPositionCalculator(targetRef, floatingRef)
   }
 }
 

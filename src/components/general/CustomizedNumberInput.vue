@@ -12,26 +12,5 @@ defineProps({
   },
   max: Number
 })
-const number = defineModel<number>('number', { default: 0 })
+const number = defineModel('number', { default: 0 })
 </script>
-
-<style scoped>
-.custom-label {
-  font-size: 12px;
-  color: #515a6e;
-  margin-bottom: 2px;
-}
-.custom-input {
-  width: 100%;
-  padding: 2px 4px;
-  border: 1px solid grey;
-  border-radius: 4px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.custom-input:focus {
-  border-color: #007bff;
-}
-</style>

@@ -1,11 +1,11 @@
 <template>
   <p class="custom-label">{{ label + ':' }}</p>
-  <input type="text" v-model="text" class="custom-input" />
+  <input type="color" v-model="color" class="custom-input" />
 </template>
 
 <script setup lang="ts">
 defineProps({
   label: String
 })
-const text = defineModel<string>('text', { default: '' })
+const color = defineModel<string>('color', { default: '' })
 </script>

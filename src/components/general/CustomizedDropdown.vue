@@ -69,11 +69,6 @@ const onClickOutside = () => {
 </template>
 
 <style scoped>
-.custom-label {
-  font-size: 12px;
-  color: #515a6e;
-  margin-bottom: 2px;
-}
 .dropdown-button {
   display: flex;
   flex-direction: row;

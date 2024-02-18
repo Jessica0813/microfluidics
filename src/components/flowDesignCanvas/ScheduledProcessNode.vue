@@ -37,34 +37,7 @@ const editedProcess = ref<FlowControlProcess>({
 const scheduledFlowControl = ref<ScheduledFlowControl>({
   totalDuration: 20,
   name: id,
-  processes: [
-    {
-      id: '-1',
-      name: '1',
-      selected: false,
-      startTime: 0.0,
-      endTime: 10.0,
-      duration: 10.0,
-      inlet: 'Inlet 1',
-      injection: 'Pump',
-      fluid: 'water',
-      pressure: 20,
-      flowrate: 0
-    },
-    {
-      id: '-2',
-      name: '3',
-      selected: false,
-      startTime: 10.0,
-      endTime: 15.0,
-      duration: 5,
-      inlet: 'Inlet 2',
-      injection: 'Pump',
-      fluid: 'oil',
-      pressure: 25,
-      flowrate: 0
-    }
-  ]
+  processes: []
 })
 
 watch(isEditingProcess, () => {
@@ -109,7 +82,7 @@ function addProcess() {
     endTime: 1.0,
     duration: 1.0,
     inlet: 'Inlet 1',
-    injection: '',
+    injection: 'Pump',
     fluid: 'water',
     pressure: 0,
     flowrate: 0

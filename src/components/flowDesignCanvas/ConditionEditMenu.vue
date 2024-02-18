@@ -3,6 +3,7 @@ import { computed, watch } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 
 defineProps({
   id: String
@@ -58,15 +59,15 @@ watch(sensor, (newSensor, oldSensor) => {
         />
       </v-col>
       <v-col cols="6">
-        <CustomizedTextInput
+        <CustomizedColorInput
           v-if="sensor === '' || sensor === 'color sensor'"
-          v-model:text="color"
-          label="Value"
+          v-model:color="color"
+          label="Color"
         />
         <CustomizedNumberInput
           v-else-if="sensor === 'viscosity sensor'"
           v-model:number="viscosity"
-          label="Value"
+          label="Viscosity"
         />
       </v-col>
     </v-row>

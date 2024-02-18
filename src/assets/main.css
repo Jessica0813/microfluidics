@@ -51,3 +51,22 @@ html::-webkit-scrollbar {
 .icon-button.with-right-border {
   border-right: 1px solid #dfdfdf;
 }
+
+.custom-label {
+  font-size: 12px;
+  color: #515a6e;
+  margin-bottom: 2px;
+}
+.custom-input {
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid grey;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-input:focus {
+  border-color: #007bff;
+}

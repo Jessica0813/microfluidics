@@ -12,12 +12,12 @@ defineProps({
   id: String
 })
 const name = defineModel<string>('name', { default: '' })
-const duration = defineModel<number>('duration', { default: 0 })
+const duration = defineModel('duration', { default: 0 })
 const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
 const fluid = defineModel<string>('fluid', { default: '' })
-const pressure = defineModel<number>('pressure', { default: 0 })
-const flowrate = defineModel<number>('flowrate', { default: 0 })
+const pressure = defineModel('pressure', { default: 0 })
+const flowrate = defineModel('flowrate', { default: 0 })
 
 watch(injection, (newInjection, oldInjection) => {
   if (newInjection !== oldInjection) {

@@ -14,15 +14,15 @@ defineProps({
 })
 
 const nodeName = defineModel<string>('nodeName', { default: '' })
-const totalDuration = defineModel<number>('totalDuration', { default: 0 })
+const totalDuration = defineModel('totalDuration', { default: 0 })
 const processName = defineModel<string>('processName', { default: '' })
-const startTime = defineModel<number>('startTime', { default: 0 })
-const endTime = defineModel<number>('endTime', { default: 0 })
+const startTime = defineModel('startTime', { default: 0 })
+const endTime = defineModel('endTime', { default: 0 })
 const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
 const fluid = defineModel<string>('fluid', { default: '' })
-const pressure = defineModel<number>('pressure', { default: 0 })
-const flowrate = defineModel<number>('flowrate', { default: 0 })
+const pressure = defineModel('pressure', { default: 0 })
+const flowrate = defineModel('flowrate', { default: 0 })
 
 watch(injection, (newInjection, oldInjection) => {
   if (newInjection !== oldInjection) {

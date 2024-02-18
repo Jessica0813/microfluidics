@@ -11,21 +11,21 @@ import ScheduledProcessNode from './ScheduledProcessNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 
-let processNodeId = 0
-let conditionNodeId = 0
-let processScheduleNodeId = 0
+let processNodeId = 1
+let conditionNodeId = 1
+let processScheduleNodeId = 1
 
 let edgeId = 0
 function getProcessNodeId() {
-  return `process_node_${processNodeId++}`
+  return `process_${processNodeId++}`
 }
 
 function getConditionNodeId() {
-  return `condition_node_${conditionNodeId++}`
+  return `condition_${conditionNodeId++}`
 }
 
 function getProcessScheduleNodeId() {
-  return `process_schedule_node_${processScheduleNodeId++}`
+  return `schedule_${processScheduleNodeId++}`
 }
 
 function getEdgeId() {
@@ -108,34 +108,7 @@ function onDrop(event: any) {
     const nodeData = {
       totalDuration: 20,
       name: nodeId,
-      processes: [
-        {
-          id: '-1',
-          name: '1',
-          selected: false,
-          startTime: 0.0,
-          endTime: 10.0,
-          duration: 10.0,
-          inlet: 'Inlet 1',
-          injection: 'Pump',
-          fluid: 'water',
-          pressure: 20,
-          flowrate: 0
-        },
-        {
-          id: '-2',
-          name: '3',
-          selected: false,
-          startTime: 10.0,
-          endTime: 15.0,
-          duration: 5,
-          inlet: 'Inlet 2',
-          injection: 'Pump',
-          fluid: 'oil',
-          pressure: 25,
-          flowrate: 0
-        }
-      ]
+      processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
   }

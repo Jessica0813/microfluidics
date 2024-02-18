@@ -117,7 +117,7 @@ function onDrop(event: any) {
           endTime: 10.0,
           duration: 10.0,
           inlet: 'Inlet 1',
-          injection: 'Injection Type A',
+          injection: 'Pump',
           fluid: 'water',
           pressure: 20,
           flowrate: 0
@@ -130,7 +130,7 @@ function onDrop(event: any) {
           endTime: 15.0,
           duration: 5,
           inlet: 'Inlet 2',
-          injection: 'Injection Type B',
+          injection: 'Pump',
           fluid: 'oil',
           pressure: 25,
           flowrate: 0

@@ -6,12 +6,15 @@ import { NodeResizer } from '@vue-flow/node-resizer'
 import type { ScheduledFlowControl, FlowControlProcess } from '@/types/flowControl'
 import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
 import { flip, shift, computePosition, offset } from '@floating-ui/vue'
+import { useVueFlow } from '@vue-flow/core'
+
+const { updateNodeData, findNode } = useVueFlow()
 
 let processId = 1
 function getProcessId() {
   return `${processId++}`
 }
-const { selected, id, data } = defineProps<NodeProps>()
+const { selected, id } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 const isMenuOpen = ref(false)
 const targetRef = ref<HTMLDivElement | null>(null)
@@ -31,7 +34,38 @@ const editedProcess = ref<FlowControlProcess>({
   flowrate: 0
 })
 
-const scheduledFlowControl = ref<ScheduledFlowControl>(data.scheduledFlowControl)
+const scheduledFlowControl = ref<ScheduledFlowControl>({
+  totalDuration: 20,
+  name: id,
+  processes: [
+    {
+      id: '-1',
+      name: '1',
+      selected: false,
+      startTime: 0.0,
+      endTime: 10.0,
+      duration: 10.0,
+      inlet: 'Inlet 1',
+      injection: 'Pump',
+      fluid: 'water',
+      pressure: 20,
+      flowrate: 0
+    },
+    {
+      id: '-2',
+      name: '3',
+      selected: false,
+      startTime: 10.0,
+      endTime: 15.0,
+      duration: 5,
+      inlet: 'Inlet 2',
+      injection: 'Pump',
+      fluid: 'oil',
+      pressure: 25,
+      flowrate: 0
+    }
+  ]
+})
 
 function calculatePosition() {
   if (!targetRef.value || !floatingRef.value) {
@@ -61,9 +95,9 @@ watch(isEditingProcess, () => {
 
 function onTrigger() {
   if (isEditingProcess.value) {
+    updateProcess()
     isMenuOpen.value = true
     isEditingProcess.value = false
-    updateProcess()
   } else {
     isMenuOpen.value = !isMenuOpen.value
   }
@@ -74,9 +108,9 @@ function onTrigger() {
 }
 
 function onClickOutside() {
+  updateProcess()
   isMenuOpen.value = false
   isEditingProcess.value = false
-  updateProcess()
 }
 
 function updateProcess() {
@@ -86,10 +120,10 @@ function updateProcess() {
 }
 
 function addProcess() {
-  const id = getProcessId()
+  const processId = getProcessId()
   scheduledFlowControl.value.processes.push({
-    id: id,
-    name: id,
+    id: processId,
+    name: processId,
     selected: false,
     startTime: 0.0,
     endTime: 1.0,
@@ -101,6 +135,39 @@ function addProcess() {
     flowrate: 0
   })
 }
+
+watch(
+  [isMenuOpen, () => scheduledFlowControl.value.processes],
+  ([newValue], [oldValue]) => {
+    const node = findNode(id)
+    if (node === undefined) {
+      return
+    }
+    const data = node.data
+
+    if (!newValue && oldValue) {
+      if (data.name !== scheduledFlowControl.value.name) {
+        node.data.scheduledFlowControl = scheduledFlowControl.value
+      }
+
+      if (data.totalDuration !== scheduledFlowControl.value.totalDuration) {
+        node.data.scheduledFlowControl.totalDuration = scheduledFlowControl.value.totalDuration
+      }
+
+      if (data.processes !== scheduledFlowControl.value.processes) {
+        node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
+      }
+      console.log(node.data.scheduledFlowControl)
+      return
+    }
+    if (data.processes !== scheduledFlowControl.value.processes) {
+      node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
+    }
+  },
+  {
+    deep: true
+  }
+)
 </script>
 
 <template>
@@ -191,6 +258,7 @@ function addProcess() {
         v-model:pressure="editedProcess.pressure"
         v-model:startTime="editedProcess.startTime"
         v-model:endTime="editedProcess.endTime"
+        v-model:flowrate="editedProcess.flowrate"
       />
     </div>
   </div>

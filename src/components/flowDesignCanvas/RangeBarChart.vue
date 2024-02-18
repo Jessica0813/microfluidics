@@ -307,15 +307,23 @@ onMounted(() => {
         const instance = instances.find(
           (i) => `${props.id}-process-${editedProcess.value!.id}` === i.reference.getAttribute('id')
         )
-        instance?.setContent(`
+        if (instance) {
+          let content = `
           <div style="font-size: 10px;">
           Duration: ${editedProcess.value.startTime}-${editedProcess.value.endTime}<br>
           Inlet: ${editedProcess.value.inlet}<br>
-          Injection: ${editedProcess.value.injection}<br>
           Fluid: ${editedProcess.value.fluid}<br>
-          Pressure: ${editedProcess.value.pressure}
+          Injection: ${editedProcess.value.injection}<br>`
+          if (editedProcess.value.injection === 'Pump') {
+            content += `Pressure: ${editedProcess.value.pressure}<br>`
+          } else if (editedProcess.value.injection === 'Needle') {
+            content += `Flowrate: ${editedProcess.value.flowrate}<br>`
+          }
+          content += `
           </div>
-        `)
+        `
+          instance.setContent(content)
+        }
       }
     },
     { deep: true }

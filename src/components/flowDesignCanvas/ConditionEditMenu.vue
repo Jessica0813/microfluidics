@@ -10,7 +10,6 @@ defineProps({
 
 const items = ['color sensor', 'viscosity sensor']
 const name = defineModel<string>('name', { default: '' })
-const menu = defineModel<boolean>('menu', { default: false })
 const sensor = defineModel<string>('sensor', { default: '' })
 const operator = defineModel<string>('operator', { default: '' })
 const viscosity = defineModel('viscosity', { default: 0 })

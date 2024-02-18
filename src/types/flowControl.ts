@@ -5,6 +5,7 @@ export interface FlowControl {
   fluid: string
   pressure: number
   duration: number
+  flowrate: number
 }
 
 export interface ScheduledFlowControl {
@@ -24,4 +25,5 @@ export interface FlowControlProcess {
   injection: string
   fluid: string
   pressure: number
+  flowrate: number
 }

@@ -27,7 +27,8 @@ const editedProcess = ref<FlowControlProcess>({
   inlet: '',
   injection: '',
   fluid: '',
-  pressure: 0
+  pressure: 0,
+  flowrate: 0
 })
 
 const scheduledFlowControl = ref<ScheduledFlowControl>(data.scheduledFlowControl)
@@ -94,9 +95,10 @@ function addProcess() {
     endTime: 1.0,
     duration: 1.0,
     inlet: 'Inlet 1',
-    injection: 'Injection Type A',
+    injection: '',
     fluid: 'water',
-    pressure: 0
+    pressure: 0,
+    flowrate: 0
   })
 }
 </script>

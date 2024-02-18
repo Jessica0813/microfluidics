@@ -13,12 +13,13 @@ const targetRef = ref<HTMLElement | null>(null)
 const floatingRef = ref<HTMLElement | null>(null)
 
 const flowControl = ref<FlowControl>({
-  name: 'process',
+  name: id,
   inlet: 'inlet 1',
-  injection: 'droplet',
+  injection: 'Pump',
   fluid: 'water',
-  pressure: 3000,
-  duration: 0
+  pressure: 0,
+  duration: 0,
+  flowrate: 0
 })
 
 watch(isMenuOpen, (newValue, oldValue) => {
@@ -132,6 +133,7 @@ function onClickOutside() {
         v-model:fluid="flowControl.fluid"
         v-model:pressure="flowControl.pressure"
         v-model:injection="flowControl.injection"
+        v-model:flowrate="flowControl.flowrate"
         :id="id"
       />
     </div>

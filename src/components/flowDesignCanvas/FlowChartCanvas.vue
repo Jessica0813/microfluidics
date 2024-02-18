@@ -119,7 +119,8 @@ function onDrop(event: any) {
           inlet: 'Inlet 1',
           injection: 'Injection Type A',
           fluid: 'water',
-          pressure: 20
+          pressure: 20,
+          flowrate: 0
         },
         {
           id: '-2',
@@ -131,7 +132,8 @@ function onDrop(event: any) {
           inlet: 'Inlet 2',
           injection: 'Injection Type B',
           fluid: 'oil',
-          pressure: 25
+          pressure: 25,
+          flowrate: 0
         }
       ]
     }

@@ -2,9 +2,10 @@
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import { watch } from 'vue'
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['droplet', 'Needle']
+const injections = ['Pump', 'Needle']
 const fluids = ['water', 'oil']
 
 defineProps({
@@ -16,6 +17,17 @@ const inlet = defineModel<string>('inlet', { default: '' })
 const injection = defineModel<string>('injection', { default: '' })
 const fluid = defineModel<string>('fluid', { default: '' })
 const pressure = defineModel<number>('pressure', { default: 0 })
+const flowrate = defineModel<number>('flowrate', { default: 0 })
+
+watch(injection, (newInjection, oldInjection) => {
+  if (newInjection !== oldInjection) {
+    if (newInjection === 'Pump' || newInjection === '') {
+      pressure.value = 0
+    } else if (newInjection === 'Needle') {
+      flowrate.value = 0
+    }
+  }
+})
 </script>
 
 <template>
@@ -38,16 +50,19 @@ const pressure = defineModel<number>('pressure', { default: 0 })
         <CustomizedDropdown v-model:selected="inlet" :items="inlets" label="Inlet" />
       </v-col>
       <v-col cols="6">
-        <CustomizedDropdown v-model:selected="injection" :items="injections" label="Injection" />
+        <CustomizedDropdown v-model:selected="fluid" :items="fluids" label="Fluid" />
       </v-col>
     </v-row>
 
     <v-row dense>
       <v-col cols="6">
-        <CustomizedDropdown v-model:selected="fluid" :items="fluids" label="Fluid" />
+        <CustomizedDropdown v-model:selected="injection" :items="injections" label="Injection" />
       </v-col>
-      <v-col cols="6">
+      <v-col cols="6" v-if="injection === '' || injection === 'Pump'">
         <CustomizedNumberInput v-model:number="pressure" label="Pressure" />
+      </v-col>
+      <v-col cols="6" v-else-if="injection === 'Needle'">
+        <CustomizedNumberInput v-model:number="flowrate" label="Flow rate" />
       </v-col>
     </v-row>
   </v-sheet>

@@ -13,7 +13,7 @@ const nodeIsHovered = ref<boolean>(false)
 const targetRef = ref<HTMLElement | null>(null)
 const floatingRef = ref<HTMLElement | null>(null)
 const condition = ref<Condition>({
-  name: 'condition',
+  name: id,
   sensor: 'color sensor',
   operator: '=',
   color: '#FFFFFF',
@@ -130,7 +130,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
     <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
       <ConditionEditMenu
         v-model:name="condition.name"
-        v-model:menu="isMenuOpen"
         v-model:sensor="condition.sensor"
         v-model:operator="condition.operator"
         v-model:viscosity="condition.viscosity"

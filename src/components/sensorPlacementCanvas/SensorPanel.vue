@@ -15,7 +15,7 @@ function onDragStart(event: DragEvent, sensorType: string) {
       :draggable="true"
       @dragstart="onDragStart($event, 'temperature')"
     >
-      <v-icon size="small" color="#515a6e"> mdi-rectangle-outline </v-icon>
+      <v-icon size="small" color="#515a6e"> mdi-circle-outline </v-icon>
     </div>
   </div>
 </template>

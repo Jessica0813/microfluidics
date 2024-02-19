@@ -40,21 +40,25 @@ const props = defineProps<{
 }>()
 
 const menu = defineModel<boolean>('menu', { default: false })
-const sensorName = ref(findSensor(props.selectedSensorId)?.name || '')
-const sensorRadius = ref(findSensor(props.selectedSensorId)?.radius || 0)
+const sensorName = ref('')
+const sensorRadius = ref(0)
 
 watch(
   () => props.selectedSensorId,
   (newVal) => {
-    sensorName.value = findSensor(newVal)?.name || ''
-    sensorRadius.value = findSensor(newVal)?.radius || 0
+    const sensor = findSensor(newVal)
+    if (!sensor) {
+      return
+    }
+    sensorName.value = sensor.name
+    sensorRadius.value = sensor.radius
   }
 )
 
 watchEffect(() => {
   if (menu.value) {
     const currentName = sensorName.value
-    const currentRadius = sensorRadius.value
+    const currentRadius = sensorRadius.value || 1
 
     const originalSensor = findSensor(props.selectedSensorId)
 

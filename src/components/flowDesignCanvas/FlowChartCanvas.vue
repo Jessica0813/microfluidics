@@ -15,7 +15,7 @@ let processNodeId = 1
 let conditionNodeId = 1
 let processScheduleNodeId = 1
 
-let edgeId = 0
+let edgeId = 1
 function getProcessNodeId() {
   return `process_${processNodeId++}`
 }
@@ -48,9 +48,9 @@ onConnect((params) => {
     return
   }
   // look through edges to check if any edge is connected to the source node
-  if (params.source.includes('process_node') || params.source.includes('process_schedule_node')) {
+  if (params.source.includes('process_') || params.source.includes('schedule_')) {
     addEdges([{ ...params, type: 'custom', id: getEdgeId() }])
-  } else if (params.source.includes('condition_node')) {
+  } else if (params.source.includes('condition_')) {
     let isTrueEdgeExist: boolean = false
     let isFalseEdgeExist: boolean = false
     getEdges.value.forEach((edge) => {

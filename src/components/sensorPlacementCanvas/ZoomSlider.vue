@@ -36,12 +36,6 @@
       v-model="menu"
       :selected-sensor-id="selectedSensorId"
     />
-    <button class="icon-button with-right-border" title="undo">
-      <v-icon size="small" color="#66615b">mdi-undo</v-icon>
-    </button>
-    <button class="icon-button" title="redo">
-      <v-icon size="small" color="#66615b">mdi-redo</v-icon>
-    </button>
   </div>
 </template>
 

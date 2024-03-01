@@ -11,7 +11,7 @@ function onButtonClick() {
 
 <template>
   <div>
-    <button @click="onButtonClick" class="icon-button with-bottom-border">
+    <button @click="onButtonClick" class="icon-button with-right-border">
       <v-icon size="small" color="#66615b">mdi-table</v-icon>
     </button>
     <CustomizedTable v-model:isTableVisible="tableDialog" />

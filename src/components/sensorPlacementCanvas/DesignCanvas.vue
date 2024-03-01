@@ -5,7 +5,7 @@
     @dragover="onDragOver"
     @drop="onDrop"
   >
-    <SensorPanel class="side-panel" />
+    <SensorPanel class="sensor-panel" />
     <div class="top-bar">
       <ZoomSlider
         v-model:transform="transform"
@@ -100,7 +100,10 @@ function onDragOver(event: any) {
 }
 
 function onDrop(event: any) {
-  useDrop(event, transform.value, getSensorId(), addSensor)
+  if (!svg.value) return
+  const left = svg.value.getBoundingClientRect().left
+  const top = svg.value.getBoundingClientRect().top
+  useDrop(left, top, event, transform.value, getSensorId(), addSensor)
 }
 
 function removeSelectedSensor() {
@@ -217,3 +220,13 @@ onMounted(() => {
   // })
 })
 </script>
+
+<style scoped>
+.sensor-panel {
+  position: absolute;
+  top: 35%;
+  left: 10px;
+  z-index: 5;
+  cursor: pointer;
+}
+</style>

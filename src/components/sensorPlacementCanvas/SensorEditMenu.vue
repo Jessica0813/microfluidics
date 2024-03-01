@@ -3,7 +3,7 @@
     <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
       <template v-slot:activator="{ props }">
         <button
-          class="icon-button with-right-border"
+          class="icon-button"
           title="edit the sensor"
           :class="hasSensorSelected ? '' : 'disable-hover'"
           :disabled="!hasSensorSelected"

@@ -6,11 +6,18 @@ interface Transform {
   k: number
 }
 
-export function useDrop(event: any, transform: Transform, sensorId: string, addSensor: Function) {
+export function useDrop(
+  left: number,
+  top: number,
+  event: any,
+  transform: Transform,
+  sensorId: string,
+  addSensor: Function
+) {
   const type = event.dataTransfer?.getData('application/desgin')
   const position = {
-    x: (event.clientX - transform.x) / transform.k,
-    y: (event.clientY - transform.y) / transform.k
+    x: (event.clientX - left - transform.x) / transform.k,
+    y: (event.clientY - top - transform.y) / transform.k
   }
   const newSensor: Sensor = {
     id: sensorId,

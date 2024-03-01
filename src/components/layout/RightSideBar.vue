@@ -5,7 +5,7 @@ import TableConfigureButton from './TableConfigureButton.vue'
 <template>
   <div class="vertical-button-group elevation-1">
     <TableConfigureButton title="fluid table" />
-    <button class="icon-button with-bottom-border" title="DRC">
+    <button class="icon-button with-right-border" title="DRC">
       <v-icon size="small" color="#66615b">mdi-text-box-check-outline</v-icon>
     </button>
     <button class="icon-button" title="run">
@@ -17,7 +17,6 @@ import TableConfigureButton from './TableConfigureButton.vue'
 <style scoped>
 .vertical-button-group {
   display: flex;
-  flex-direction: column;
   background-color: #efeeea;
   border: 1px solid #dfdfdf;
   border-radius: 4px;

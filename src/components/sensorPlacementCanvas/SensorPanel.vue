@@ -7,11 +7,14 @@ const { designCanvasSize, toggleDesignCanvasSize } =
   inject<DesignCanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
 
 function onDragStart(event: DragEvent, sensorType: string) {
-  setTimeout(() => {
-    if (designCanvasSize.value === 'small') {
-      toggleDesignCanvasSize()
+  if (designCanvasSize.value === 'small') {
+    if (event.dataTransfer) {
+      event.dataTransfer.setData('isCanvasSizeChanged', 'true')
     }
-  }, 300)
+    setTimeout(() => {
+      toggleDesignCanvasSize()
+    }, 300)
+  }
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/desgin', sensorType)
     event.dataTransfer.effectAllowed = 'move'
@@ -22,7 +25,7 @@ function onDragStart(event: DragEvent, sensorType: string) {
 <template>
   <div class="panel text-center flex-column elevation-1">
     <div
-      title="Pressure Sensor"
+      title="temperature Sensor"
       class="icon-padding"
       :draggable="true"
       @dragstart="onDragStart($event, 'temperature')"

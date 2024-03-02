@@ -118,12 +118,13 @@ function onDrop(event: any) {
   const top = svg.value.getBoundingClientRect().top
   useDrop(left, top, event, transform.value, getSensorId(), addSensor)
 
-  //wait 1 second
-  setTimeout(() => {
-    if (designCanvasSize.value === 'large') {
-      toggleDesignCanvasSize()
-    }
-  }, 1000)
+  if (event.dataTransfer && event.dataTransfer.getData('isCanvasSizeChanged') === 'true') {
+    setTimeout(() => {
+      if (designCanvasSize.value === 'large') {
+        toggleDesignCanvasSize()
+      }
+    }, 1000)
+  }
 }
 
 function removeSelectedSensor() {

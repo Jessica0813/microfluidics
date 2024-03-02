@@ -1,5 +1,6 @@
 <template>
   <div class="vertical-button-group elevation-1">
+    <deletable-drop-down :items="layer" v-model:selected="selected" />
     <button
       class="icon-button with-right-border"
       :title="
@@ -24,9 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import type { DesignCanvasControl } from '@/types/designCanvasControl'
 import { defaultDesignCanvasControl } from '@/types/designCanvasControl'
+import DeletableDropDown from '../general/DeletableDropDown.vue'
 
 const {
   isDesignCanvasVisible,
@@ -34,6 +36,9 @@ const {
   toggleDesignCanvasSize,
   toggleDesignCanvasVisibility
 } = inject<DesignCanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
+
+const selected = ref('')
+const layer = ref(['layer 1', 'layer 2', 'layer 3'])
 </script>
 
 <style scoped>
@@ -43,5 +48,6 @@ const {
   border: 1px solid #dfdfdf;
   border-radius: 4px;
   width: fit-content;
+  height: 100%;
 }
 </style>

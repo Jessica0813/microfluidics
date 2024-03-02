@@ -10,6 +10,7 @@ import CustomEdge from './CustomEdge.vue'
 import ScheduledProcessNode from './ScheduledProcessNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
+import RightSideBar from '../layout/RightSideBar.vue'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -144,6 +145,7 @@ function onDrop(event: any) {
     <div class="top-bar">
       <ZoomSlider />
       <UploadDownLoadControls />
+      <RightSideBar />
     </div>
     <VueFlow
       @dragover="onDragOver"

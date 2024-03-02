@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
-import RightSideBar from './components/layout/RightSideBar.vue'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 import DesignCanvasControl from './components/sensorPlacementCanvas/DesignCanvasControl.vue'
 import { ref, provide } from 'vue'
@@ -26,9 +25,6 @@ provide('DesignCanvasControl', {
   <div id="app">
     <div class="canvas">
       <FlowChartCanvas />
-      <div class="right-side-bar">
-        <RightSideBar />
-      </div>
       <div
         class="design-canvas elevation-1"
         :style="{
@@ -50,13 +46,6 @@ provide('DesignCanvasControl', {
 .canvas {
   width: 100%;
   position: relative;
-}
-
-.right-side-bar {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 5;
 }
 
 .design-canvas {

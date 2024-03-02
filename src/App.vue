@@ -2,6 +2,24 @@
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
 import RightSideBar from './components/layout/RightSideBar.vue'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
+import DesignCanvasControl from './components/sensorPlacementCanvas/DesignCanvasControl.vue'
+import { ref, provide } from 'vue'
+
+const isDesignCanvasVisible = ref(true)
+const designCanvasSize = ref('small')
+function toggleDesignCanvasSize() {
+  designCanvasSize.value = designCanvasSize.value === 'small' ? 'large' : 'small'
+}
+
+function toggleDesignCanvasVisibility() {
+  isDesignCanvasVisible.value = !isDesignCanvasVisible.value
+}
+provide('DesignCanvasControl', {
+  isDesignCanvasVisible,
+  designCanvasSize,
+  toggleDesignCanvasSize,
+  toggleDesignCanvasVisibility
+})
 </script>
 
 <template>
@@ -11,8 +29,18 @@ import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
       <div class="right-side-bar">
         <RightSideBar />
       </div>
-      <div class="design-canvas elevation-1">
+      <div
+        class="design-canvas elevation-1"
+        :style="{
+          width: designCanvasSize === 'small' ? '40%' : '80%',
+          height: designCanvasSize === 'small' ? '40%' : '80%'
+        }"
+        v-show="isDesignCanvasVisible"
+      >
         <DesignCanvas />
+      </div>
+      <div class="design-canvas-control">
+        <DesignCanvasControl />
       </div>
     </div>
   </div>
@@ -32,13 +60,16 @@ import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 }
 
 .design-canvas {
-  width: 40%;
-  height: 50%;
+  position: absolute;
+  bottom: 50px;
+  right: 10px;
+  z-index: 5;
+}
+
+.design-canvas-control {
   position: absolute;
   bottom: 10px;
   right: 10px;
   z-index: 5;
-  border: 1px solid #dfdfdf;
-  border-radius: 4px;
 }
 </style>

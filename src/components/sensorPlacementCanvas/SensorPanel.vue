@@ -1,5 +1,17 @@
 <script setup lang="ts">
+import type { DesignCanvasControl } from '@/types/designCanvasControl'
+import { defaultDesignCanvasControl } from '@/types/designCanvasControl'
+import { inject } from 'vue'
+
+const { designCanvasSize, toggleDesignCanvasSize } =
+  inject<DesignCanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
+
 function onDragStart(event: DragEvent, sensorType: string) {
+  setTimeout(() => {
+    if (designCanvasSize.value === 'small') {
+      toggleDesignCanvasSize()
+    }
+  }, 300)
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/desgin', sensorType)
     event.dataTransfer.effectAllowed = 'move'

@@ -11,10 +11,25 @@ const fluidStore = useFluidStore()
 const isTableVisible = defineModel<boolean>('isTableVisible')
 
 const headers: any = [
-  { title: 'Name', align: 'start', sortable: false, key: 'name', width: '40%' },
-  { title: 'Color', align: 'start', sortable: false, key: 'color', width: '20%' },
-  { title: 'Viscosity(cP)', align: 'start', sortable: false, key: 'viscosity', width: '20%' },
-  { title: 'Actions', align: 'start', sortable: false, key: 'actions', width: '20%' }
+  { title: 'Name', align: 'start', sortable: false, key: 'name', width: '20%' },
+  { title: 'Color', align: 'start', sortable: false, key: 'color', width: '10%' },
+  { title: 'Viscosity(cP)', align: 'start', sortable: false, key: 'viscosity', width: '10%' },
+  { title: 'WithParticle', align: 'start', sortable: false, key: 'withParticle', width: '10%' },
+  {
+    title: 'Particle Size(nm)',
+    align: 'start',
+    sortable: false,
+    key: 'particleSize',
+    width: '15%'
+  },
+  {
+    title: 'Particle Density(g/ml)',
+    align: 'start',
+    sortable: false,
+    key: 'particleDensity',
+    width: '20%'
+  },
+  { title: 'Actions', align: 'start', sortable: false, key: 'actions', width: '15%' }
 ]
 
 const dialogDelete = ref(false)
@@ -25,6 +40,9 @@ const createOrEditItemIndex = ref(-1)
 const name = ref('')
 const color = ref('')
 const viscosity = ref(0)
+const withParticle = ref<'Yes' | 'No'>('No')
+const particleSize = ref(0)
+const particleDensity = ref(0)
 
 function deleteItem(index: number) {
   dialogDelete.value = true
@@ -59,13 +77,19 @@ function confirmItemCreateOrEdit() {
     fluidStore.addFluid({
       name: name.value,
       color: color.value,
-      viscosity: viscosity.value
+      viscosity: viscosity.value,
+      withParticle: withParticle.value,
+      particleDensity: particleDensity.value || undefined,
+      particleSize: particleSize.value || undefined
     })
   } else {
     fluidStore.editFluid(createOrEditItemIndex.value, {
       name: name.value,
       color: color.value,
-      viscosity: viscosity.value
+      viscosity: viscosity.value,
+      withParticle: withParticle.value,
+      particleDensity: particleDensity.value || undefined,
+      particleSize: particleSize.value || undefined
     })
   }
   closeCreateOrEditDialog()
@@ -76,6 +100,9 @@ function handleAddNewFluid() {
   name.value = ''
   color.value = ''
   viscosity.value = 0
+  withParticle.value = 'No'
+  particleSize.value = 0
+  particleDensity.value = 0
   createOrEditItemIndex.value = -1
 }
 
@@ -84,6 +111,11 @@ function handleEditFluid(index: number, fluid: Fluid) {
   name.value = fluid.name
   color.value = fluid.color
   viscosity.value = fluid.viscosity
+  withParticle.value = fluid.withParticle
+  if (fluid.withParticle === 'Yes' && fluid.particleSize && fluid.particleDensity) {
+    particleSize.value = fluid.particleSize
+    particleDensity.value = fluid.particleDensity
+  }
   createOrEditItemIndex.value = index
 }
 </script>
@@ -102,6 +134,9 @@ function handleEditFluid(index: number, fluid: Fluid) {
         v-model:nameInput="name"
         v-model:colorInput="color"
         v-model:viscosityInput="viscosity"
+        v-model:withParticle="withParticle"
+        v-model:particleSize="particleSize"
+        v-model:particleDensity="particleDensity"
         @close="closeCreateOrEditDialog"
         @cancel="cancelItemCreateOrEdit"
         @save="confirmItemCreateOrEdit"
@@ -139,6 +174,15 @@ function handleEditFluid(index: number, fluid: Fluid) {
             }"
           ></div>
         </template>
+        <template v-slot:item.withParticle="{ item }">
+          <div>{{ item.withParticle === 'Yes' ? 'Yes' : 'No' }}</div>
+        </template>
+        <template v-slot:item.particleSize="{ item }">
+          <div>{{ item.withParticle === 'Yes' ? item.particleSize : '-' }}</div>
+        </template>
+        <template v-slot:item.particleDensity="{ item }">
+          <div>{{ item.withParticle === 'Yes' ? item.particleDensity : '-' }}</div>
+        </template>
         <template v-slot:item.actions="{ item, index }">
           <v-icon
             size="small"
@@ -156,4 +200,3 @@ function handleEditFluid(index: number, fluid: Fluid) {
     </v-card>
   </v-dialog>
 </template>
-@/stores/usefluidStore

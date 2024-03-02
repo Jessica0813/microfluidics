@@ -2,8 +2,8 @@
 import { computed, defineModel } from 'vue'
 import CustomizedButton from './CustomizedButton.vue'
 import { useFluidStore } from '@/stores/useFluidStore'
-import ColorPicker from './ColorPicker.vue'
 import type { Fluid } from '@/types/fluid'
+import CustomizedColorInputVue from '../general/CustomizedColorInput.vue'
 
 const fluidStore = useFluidStore()
 
@@ -15,6 +15,9 @@ const isDialogVisible = defineModel<boolean>('isDialogVisible')
 const nameInput = defineModel<string>('nameInput')
 const colorInput = defineModel<string>('colorInput', { default: '' })
 const viscosityInput = defineModel('viscosityInput', { default: 0 })
+const withParticle = defineModel<string>('withParticle', { default: 'No' })
+const particleSize = defineModel('particleSize', { default: 0 })
+const particleDensity = defineModel('particleDensity', { default: 0 })
 
 const emit = defineEmits(['close', 'cancel', 'save'])
 
@@ -63,8 +66,8 @@ const isNameExisted = computed(() => {
             <v-col cols="3">
               <v-list-subheader>Color:</v-list-subheader>
             </v-col>
-            <v-col cols="9">
-              <ColorPicker v-model="colorInput" />
+            <v-col cols="2">
+              <CustomizedColorInputVue v-model:color="colorInput" />
             </v-col>
           </v-row>
           <v-row class="align-start" dense>
@@ -83,6 +86,59 @@ const isNameExisted = computed(() => {
                 required
                 :rules="[
                   () => viscosityInput === 0 || !!viscosityInput || 'Please enter a proper number'
+                ]"
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row class="align-start" dense>
+            <v-col cols="3">
+              <v-list-subheader>With Particle:</v-list-subheader>
+            </v-col>
+            <v-col cols="4">
+              <v-radio-group inline v-model="withParticle" hide-details="auto">
+                <v-radio label="Yes" value="Yes"></v-radio>
+                <v-radio label="No" value="No"></v-radio>
+              </v-radio-group>
+            </v-col>
+          </v-row>
+          <v-row class="align-start" dense v-if="withParticle === 'Yes'">
+            <v-col cols="3">
+              <v-list-subheader>Particle Size:</v-list-subheader>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field
+                v-model="particleSize"
+                type="number"
+                placeholder="please enter the size of the particle"
+                variant="solo"
+                density="compact"
+                hide-details="auto"
+                suffix="nm"
+                required
+                :rules="[
+                  () => particleSize === 0 || !!particleSize || 'Please enter a proper number'
+                ]"
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row class="align-start" dense v-if="withParticle === 'Yes'">
+            <v-col cols="3">
+              <v-list-subheader>Particle Density:</v-list-subheader>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field
+                v-model="particleDensity"
+                type="number"
+                placeholder="please enter the density of the particle"
+                variant="solo"
+                density="compact"
+                hide-details="auto"
+                suffix="g/ml"
+                required
+                :rules="[
+                  () => particleDensity === 0 || !!particleDensity || 'Please enter a proper number'
                 ]"
               >
               </v-text-field>

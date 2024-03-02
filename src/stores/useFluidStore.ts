@@ -7,12 +7,16 @@ export const useFluidStore = defineStore('fluid', () => {
     {
       name: 'Water',
       color: '#0000ff',
-      viscosity: 1
+      viscosity: 1,
+      withParticle: 'No'
     },
     {
       name: 'Oil',
       color: '#ff0000',
-      viscosity: 0.5
+      viscosity: 0.5,
+      withParticle: 'Yes',
+      particleSize: 5,
+      particleDensity: 0.5
     }
   ])
 

@@ -1,5 +1,5 @@
 <template>
-  <p class="custom-label">{{ label + ':' }}</p>
+  <p class="custom-label" v-if="label !== undefined">{{ label + ':' }}</p>
   <input type="color" v-model="color" class="custom-input" />
 </template>
 

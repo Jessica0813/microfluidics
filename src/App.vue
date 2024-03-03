@@ -2,6 +2,7 @@
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
 import DesignCanvasControl from './components/sensorPlacementCanvas/DesignCanvasControl.vue'
+import ProcessEditMenuTest from './components/flowDesignCanvas/ProcessEditMenuTest.vue'
 import { ref, provide } from 'vue'
 
 const isDesignCanvasVisible = ref(true)
@@ -38,6 +39,7 @@ provide('DesignCanvasControl', {
       <div class="design-canvas-control">
         <DesignCanvasControl />
       </div>
+      <process-edit-menu-test />
     </div>
   </div>
 </template>

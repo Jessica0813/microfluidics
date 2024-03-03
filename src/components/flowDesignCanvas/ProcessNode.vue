@@ -4,6 +4,7 @@ import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 import type { FlowControl } from '@/types/flowControl'
 import ProcessEditMenu from './ProcessEditMenu.vue'
 import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
+import ProcessEditMenuTest from './ProcessEditMenuTest.vue'
 
 const { updateNodeData } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
@@ -15,7 +16,7 @@ const floatingRef = ref<HTMLElement | null>(null)
 const flowControl = ref<FlowControl>({
   name: id,
   inlet: 'inlet 1',
-  injection: 'Pump',
+  injection: 'pump',
   fluid: 'water',
   pressure: 0,
   duration: 0,
@@ -34,7 +35,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
 })
 
 function onTrigger() {
-  isMenuOpen.value = !isMenuOpen.value
+  isMenuOpen.value = true
   if (isMenuOpen.value) {
     useMenuPositionCalculator(targetRef, floatingRef)
   }
@@ -51,6 +52,7 @@ function onClickOutside() {
     v-click-outside="{
       handler: onClickOutside
     }"
+    @click="onTrigger"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{
@@ -81,10 +83,27 @@ function onClickOutside() {
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
     <div
-      class="flex align-center justify-center"
+      class="flex align-center justify-center pa-3"
       style="width: 300px; height: auto; background-color: #eeeeee; border-radius: 4px"
     >
-      <div class="d-flex align-center py-2">
+      <p
+        style="font-size: 14px"
+        v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
+      >
+        <strong>{{ flowControl.fluid }}</strong> is injected into
+        <strong>{{ flowControl.inlet }}</strong> using
+        <strong>{{ flowControl.injection }}</strong> at a pressure of
+        <strong>{{ flowControl.pressure }}</strong> for a duration of
+        <strong>{{ flowControl.duration }}</strong> seconds
+      </p>
+      <p style="font-size: 14px" v-else>
+        <strong>{{ flowControl.fluid }}</strong> is injected into
+        <strong>{{ flowControl.inlet }}</strong> using a
+        <strong>{{ flowControl.injection }}</strong> , at a flowrate of
+        <strong>{{ flowControl.flowrate }}</strong> for a duration of
+        <strong>{{ flowControl.duration }}</strong> seconds
+      </p>
+      <!-- <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-form-select</v-icon>
         <p class="text-body-2">
           {{ flowControl.name }}
@@ -103,7 +122,8 @@ function onClickOutside() {
         <v-chip class="mr-1 mb-2" size="small">{{ 'fluid: ' + flowControl.fluid }}</v-chip>
         <v-chip class="mr-1 mb-2" size="small">{{ 'pressure:' + flowControl.pressure }}</v-chip>
         <v-chip class="mr-1 mb-2" size="small">{{ 'injection: ' + flowControl.injection }}</v-chip>
-      </div>
+      </div> -->
+      <!-- </div> -->
     </div>
     <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
       <ProcessEditMenu
@@ -123,8 +143,8 @@ function onClickOutside() {
 
 <style>
 .vue-flow__handle-top {
-  height: 30px;
-  width: 30px;
+  height: 24px;
+  width: 24px;
   background-color: rgba(0, 100, 255, 0.1);
 }
 
@@ -136,8 +156,8 @@ function onClickOutside() {
 }
 
 .vue-flow__handle-right {
-  height: 30px;
-  width: 30px;
+  height: 24px;
+  width: 24px;
   background-color: rgba(0, 100, 255, 0.1);
 }
 
@@ -149,8 +169,8 @@ function onClickOutside() {
 }
 
 .vue-flow__handle-bottom {
-  height: 30px;
-  width: 30px;
+  height: 24px;
+  width: 24px;
   background-color: rgba(0, 100, 255, 0.1);
 }
 
@@ -162,8 +182,8 @@ function onClickOutside() {
 }
 
 .vue-flow__handle-left {
-  height: 30px;
-  width: 30px;
+  height: 24px;
+  width: 24px;
   background-color: rgba(0, 100, 255, 0.1);
 }
 

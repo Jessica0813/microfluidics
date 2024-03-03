@@ -21,7 +21,7 @@ const condition = ref<Condition>({
 })
 
 function onTrigger() {
-  isMenuOpen.value = !isMenuOpen.value
+  isMenuOpen.value = true
   if (isMenuOpen.value) {
     useMenuPositionCalculator(targetRef, floatingRef)
   }
@@ -81,10 +81,27 @@ watch(isMenuOpen, (newValue, oldValue) => {
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
     <div
-      class="flex align-center justify-center"
-      style="width: 300px; height: auto; background-color: #eeeeee; border-radius: 4px"
+      class="flex align-center justify-center pa-3"
+      style="
+        min-width: 100px;
+        max-width: 300px;
+        height: auto;
+        background-color: #eeeeee;
+        border-radius: 4px;
+      "
+      @click="onTrigger"
     >
-      <div class="d-flex align-center py-2">
+      <p
+        style="font-size: 14px"
+        v-if="condition.sensor === 'color sensor' || condition.sensor === ''"
+      >
+        if color <strong> {{ condition.operator }}</strong> {{ condition.color }}
+      </p>
+      <p style="font-size: 14px" v-if="condition.sensor === 'viscosity sensor'">
+        if viscosity <strong> {{ condition.operator }}</strong>
+        {{ condition.viscosity }}
+      </p>
+      <!-- <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" style="transform: rotate(180deg)" color="grey-darken-3">
           mdi-call-split</v-icon
         >
@@ -107,7 +124,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         <v-chip class="mr-1 mb-2" v-else-if="condition.sensor === 'viscosity sensor'">{{
           'viscosity ' + condition.operator + ' ' + condition.viscosity
         }}</v-chip>
-      </div>
+      </div> -->
     </div>
     <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
       <ConditionEditMenu

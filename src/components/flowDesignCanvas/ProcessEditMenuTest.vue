@@ -5,7 +5,7 @@ import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { watch } from 'vue'
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['Pump', 'Needle']
+const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
 
 defineProps({
@@ -32,7 +32,7 @@ watch(injection, (newInjection, oldInjection) => {
 
 <template>
   <v-sheet
-    class="py-4 px-4 align-center justify-center nodrag"
+    class="py-4 px-4 align-center justify-center no-drag process-edit-menu"
     :rounded="true"
     width="360"
     height="auto"
@@ -67,3 +67,15 @@ watch(injection, (newInjection, oldInjection) => {
     </v-row>
   </v-sheet>
 </template>
+
+<style scoped>
+.process-edit-menu {
+  position: absolute;
+  right: 10px;
+  top: 25%;
+  z-index: 10;
+  background-color: white;
+  border: 1px solid #dfdfdf;
+  border-radius: 4px;
+}
+</style>

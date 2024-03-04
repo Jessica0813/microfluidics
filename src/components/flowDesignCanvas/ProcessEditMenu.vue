@@ -5,7 +5,7 @@ import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { watch } from 'vue'
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['Pump', 'Needle']
+const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
 
 defineProps({

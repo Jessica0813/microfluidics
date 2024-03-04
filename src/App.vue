@@ -39,7 +39,7 @@ provide('DesignCanvasControl', {
       <div class="design-canvas-control">
         <DesignCanvasControl />
       </div>
-      <process-edit-menu-test />
+      <!-- <process-edit-menu-test /> -->
     </div>
   </div>
 </template>

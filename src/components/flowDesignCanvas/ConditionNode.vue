@@ -95,11 +95,10 @@ watch(isMenuOpen, (newValue, oldValue) => {
         style="font-size: 14px"
         v-if="condition.sensor === 'color sensor' || condition.sensor === ''"
       >
-        if color <strong> {{ condition.operator }}</strong> {{ condition.color }}
+        color <strong> {{ condition.operator }}</strong> {{ condition.color }}?
       </p>
       <p style="font-size: 14px" v-if="condition.sensor === 'viscosity sensor'">
-        if viscosity <strong> {{ condition.operator }}</strong>
-        {{ condition.viscosity }}
+        viscosity <strong> {{ condition.operator }}</strong> {{ condition.viscosity }}?
       </p>
       <!-- <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" style="transform: rotate(180deg)" color="grey-darken-3">

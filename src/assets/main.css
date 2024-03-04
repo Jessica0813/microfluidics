@@ -58,13 +58,17 @@ html::-webkit-scrollbar {
   margin-bottom: 2px;
 }
 .custom-input {
-  width: 100%;
+  width: fit-content;
   padding: 2px 4px;
   border: 1px solid grey;
   border-radius: 4px;
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
 .custom-input:focus {

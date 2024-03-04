@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import type { Condition } from '@/types/condition'
 import { useVueFlow } from '@vue-flow/core'
 import ConditionEditMenu from './ConditionEditMenu.vue'
 import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedTextInput from '../general/CustomizedTextInput.vue'
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 
 const { findNode } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
@@ -43,6 +47,21 @@ watch(isMenuOpen, (newValue, oldValue) => {
     console.log(node)
   }
 })
+
+const dynamicOperators = computed(() => {
+  // Get the selected sensor
+  const selectedSensor = condition.value.sensor
+
+  if (selectedSensor === 'color sensor' || selectedSensor === undefined) {
+    return ['=', '!=']
+  } else if (selectedSensor === 'viscosity sensor') {
+    return ['>', '<', '=', '!=', '>=', '<=']
+  } else {
+    return []
+  }
+})
+
+const items = ['color sensor', 'viscosity sensor']
 </script>
 
 <template>
@@ -85,13 +104,16 @@ watch(isMenuOpen, (newValue, oldValue) => {
       style="
         min-width: 100px;
         max-width: 300px;
+        width: fit-content;
         height: auto;
         background-color: #eeeeee;
         border-radius: 4px;
+        display: flex;
+        flex-direction: row;
       "
       @click="onTrigger"
     >
-      <p
+      <!-- <p
         style="font-size: 14px"
         v-if="condition.sensor === 'color sensor' || condition.sensor === ''"
       >
@@ -99,7 +121,21 @@ watch(isMenuOpen, (newValue, oldValue) => {
       </p>
       <p style="font-size: 14px" v-if="condition.sensor === 'viscosity sensor'">
         viscosity <strong> {{ condition.operator }}</strong> {{ condition.viscosity }}?
-      </p>
+      </p> -->
+      <CustomizedDropdown v-model:selected="condition.sensor" :items="items" class="mr-2" />
+      <CustomizedDropdown
+        v-model:selected="condition.operator"
+        :items="dynamicOperators"
+        class="mr-2"
+      />
+      <CustomizedColorInput
+        v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
+        v-model:color="condition.color"
+      />
+      <CustomizedNumberInput
+        v-else-if="condition.sensor === 'viscosity sensor'"
+        v-model:number="condition.viscosity"
+      />
       <!-- <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" style="transform: rotate(180deg)" color="grey-darken-3">
           mdi-call-split</v-icon
@@ -125,7 +161,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         }}</v-chip>
       </div> -->
     </div>
-    <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
+    <!-- <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
       <ConditionEditMenu
         v-model:name="condition.name"
         v-model:sensor="condition.sensor"
@@ -134,6 +170,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
         v-model:color="condition.color"
         :id="id"
       />
-    </div>
+    </div> -->
   </div>
 </template>

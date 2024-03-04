@@ -27,7 +27,7 @@ const onClickOutside = () => {
       handler: onClickOutside
     }"
   >
-    <p class="custom-label">{{ label + ':' }}</p>
+    <p class="custom-label" v-if="label !== undefined">{{ label + ':' }}</p>
     <div
       ref="targetRef"
       class="dropdown-button"
@@ -81,6 +81,8 @@ const onClickOutside = () => {
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
+  white-space: nowrap;
+  margin-right: 8px;
 }
 .dropdown-item {
   width: 100%;

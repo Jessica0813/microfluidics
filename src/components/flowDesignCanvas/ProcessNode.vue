@@ -56,10 +56,7 @@ function onClickOutside() {
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{
-      boxShadow:
-        selected || nodeIsHovered || isMenuOpen
-          ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
-          : ''
+      border: selected || nodeIsHovered || isMenuOpen ? '1px solid rgba(0, 100, 255, 0.7)' : ''
     }"
   >
     <Handle

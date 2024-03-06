@@ -5,7 +5,7 @@ import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { watch } from 'vue'
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['Pump', 'Needle']
+const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
 
 defineProps({
@@ -26,7 +26,7 @@ const flowrate = defineModel('flowrate', { default: 0 })
 
 watch(injection, (newInjection, oldInjection) => {
   if (newInjection !== oldInjection) {
-    if (newInjection === 'Pump' || newInjection === '') {
+    if (newInjection === 'pump' || newInjection === '') {
       pressure.value = 0
     } else if (newInjection === 'Needle') {
       flowrate.value = 0
@@ -81,10 +81,10 @@ watch(injection, (newInjection, oldInjection) => {
         <v-col cols="6">
           <CustomizedDropdown v-model:selected="injection" :items="injections" label="Injection" />
         </v-col>
-        <v-col cols="6" v-if="injection === '' || injection === 'Pump'">
+        <v-col cols="6" v-if="injection === '' || injection === 'pump'">
           <CustomizedNumberInput v-model:number="pressure" label="Pressure" />
         </v-col>
-        <v-col cols="6" v-else-if="injection === 'Needle'">
+        <v-col cols="6" v-else-if="injection === 'needle'">
           <CustomizedNumberInput v-model:number="flowrate" label="Flow rate" />
         </v-col>
       </v-row>

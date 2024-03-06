@@ -4,6 +4,7 @@ import type { Selection, BaseType } from 'd3-selection'
 import type { FlowControlProcess } from '@/types/flowControl'
 import type { D3DragEvent } from 'd3-drag'
 import type { Instance } from 'tippy.js'
+import { useTooltipContent } from '@/composables/useTooltipContent'
 
 let instance: Instance | undefined
 
@@ -66,13 +67,7 @@ function updateContent(
     | D3DragEvent<SVGRectElement, FlowControlProcess, any>
     | D3DragEvent<SVGLineElement, FlowControlProcess, any>
 ) {
-  instance?.setContent(`<div style="font-size: 10px;">
-          Duration: ${event.subject.startTime}-${event.subject.endTime}<br>
-          Inlet: ${event.subject.inlet}<br>
-          Injection: ${event.subject.injection}<br>
-          Fluid: ${event.subject.fluid}<br>
-          Pressure: ${event.subject.pressure}
-          </div>`)
+  instance?.setContent(useTooltipContent(event.subject))
   instance?.setProps({ trigger: 'mouseenter' })
   instance = undefined
 }

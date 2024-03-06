@@ -15,6 +15,7 @@ import type { FlowControlProcess } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
+import { useTooltipContent } from '@/composables/useTooltipContent'
 
 const props = defineProps({
   id: String,
@@ -32,7 +33,7 @@ const chart = ref<SVGAElement | null>(null)
 let instances: Instance[] = []
 
 const marginX = 17
-const marginTop = 20
+const marginTop = 10
 const barHeight = 20
 
 onMounted(() => {
@@ -53,11 +54,20 @@ onMounted(() => {
     const y = scaleBand()
       .domain(flowControlProcesses.value.map((p) => p.id))
       .range([marginTop, height])
-      .padding(0.15)
+      .padding(0.1)
 
     svgChart.attr('width', width).attr('height', height)
 
-    xAxis.call(axisTop(x).ticks(width / 100))
+    xAxis.call(
+      axisTop(x)
+        .ticks(width / 100)
+        .tickSize(-height)
+        .tickSizeOuter(0)
+    )
+    xAxis.selectAll('.tick line').attr('opacity', 0.2)
+    xAxis.selectAll('.tick text').attr('opacity', 0.6)
+    xAxis.select('.domain').style('display', 'none')
+
     const contentGroup = chartContent
       .selectAll<SVGGElement, FlowControlProcess>(`.${props.id}-process-group`)
       .data(flowControlProcesses.value, (d) => d.id)
@@ -134,6 +144,7 @@ onMounted(() => {
       if (!isInstanceExisted) {
         const instance = tippy(`#${props.id}-process-${process.id}`, {
           allowHTML: true,
+          maxWidth: 200,
           arrow: true,
           theme: 'light',
           trigger: 'mouseenter',
@@ -144,18 +155,7 @@ onMounted(() => {
             const process = flowControlProcesses.value.find(
               (p) => `${props.id}-process-${p.id}` === id
             )
-            if (process) {
-              return `
-                <div style="font-size: 10px;">
-                Duration: ${process.startTime}-${process.endTime}<br>
-                Inlet: ${process.inlet}<br>
-                Injection: ${process.injection}<br>
-                Fluid: ${process.fluid}<br>
-                Pressure: ${process.pressure}
-                </div>
-                `
-            }
-            return ''
+            return useTooltipContent(process!)
           }
         })
         instances.push(instance[0])
@@ -308,21 +308,7 @@ onMounted(() => {
           (i) => `${props.id}-process-${editedProcess.value!.id}` === i.reference.getAttribute('id')
         )
         if (instance) {
-          let content = `
-          <div style="font-size: 10px;">
-          Duration: ${editedProcess.value.startTime}-${editedProcess.value.endTime}<br>
-          Inlet: ${editedProcess.value.inlet}<br>
-          Fluid: ${editedProcess.value.fluid}<br>
-          Injection: ${editedProcess.value.injection}<br>`
-          if (editedProcess.value.injection === 'Pump') {
-            content += `Pressure: ${editedProcess.value.pressure}<br>`
-          } else if (editedProcess.value.injection === 'Needle') {
-            content += `Flowrate: ${editedProcess.value.flowrate}<br>`
-          }
-          content += `
-          </div>
-        `
-          instance.setContent(content)
+          instance.setContent(useTooltipContent(editedProcess.value!))
         }
       }
     },

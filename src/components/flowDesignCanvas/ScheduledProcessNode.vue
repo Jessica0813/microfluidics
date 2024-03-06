@@ -82,7 +82,7 @@ function addProcess() {
     endTime: 1.0,
     duration: 1.0,
     inlet: 'Inlet 1',
-    injection: 'Pump',
+    injection: 'pump',
     fluid: 'water',
     pressure: 0,
     flowrate: 0
@@ -161,7 +161,7 @@ watch(
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
     <div style="background-color: #eeeeee; border-radius: 4px; height: 100%">
-      <div class="d-flex align-center py-2">
+      <!-- <div class="d-flex align-center py-2">
         <v-icon size="small" class="mx-2" color="grey-darken-3"> mdi-chart-gantt</v-icon>
         <p class="text-subtitle-2">
           {{ scheduledFlowControl.name }}
@@ -171,8 +171,8 @@ watch(
           <v-icon size="small" color="grey-darken-3"> mdi-dots-vertical</v-icon>
         </div>
       </div>
-      <v-divider thickness="2" />
-      <div class="d-flex align-center py-2 px-5">
+      <v-divider thickness="2" /> -->
+      <div class="d-flex align-center py-3 px-4">
         <p style="font-size: 12px">
           {{ 'Total Duration: ' + scheduledFlowControl.totalDuration + 's' }}
         </p>

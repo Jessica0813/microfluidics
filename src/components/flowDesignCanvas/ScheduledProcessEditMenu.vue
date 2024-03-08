@@ -55,11 +55,11 @@ watch(injection, (newInjection, oldInjection) => {
       </v-row>
     </div>
     <div v-else>
-      <v-row dense>
+      <!-- <v-row dense>
         <v-col cols="12">
           <CustomizedTextInput v-model:text="processName" label="Name" />
         </v-col>
-      </v-row>
+      </v-row> -->
       <v-row dense>
         <v-col cols="6">
           <CustomizedNumberInput v-model:number="startTime" label="Start Time" />

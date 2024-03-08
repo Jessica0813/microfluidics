@@ -94,6 +94,26 @@ d3Drag.on('drag', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
     .select('.sensor-label')
     .attr('x', event.x - startOffsetX)
     .attr('y', event.y - startOffsetY)
+  select(`#sensor-${event.subject.id}`)
+    .select('.sensor-rect')
+    .attr('x', event.x - startOffsetX - event.subject.radius)
+    .attr('y', event.y - startOffsetY - event.subject.radius)
+  select(`#sensor-${event.subject.id}`)
+    .select('.upper-left-dot')
+    .attr('cx', event.x - startOffsetX - event.subject.radius)
+    .attr('cy', event.y - startOffsetY - event.subject.radius)
+  select(`#sensor-${event.subject.id}`)
+    .select('.upper-right-dot')
+    .attr('cx', event.x - startOffsetX + event.subject.radius)
+    .attr('cy', event.y - startOffsetY - event.subject.radius)
+  select(`#sensor-${event.subject.id}`)
+    .select('.lower-left-dot')
+    .attr('cx', event.x - startOffsetX - event.subject.radius)
+    .attr('cy', event.y - startOffsetY + event.subject.radius)
+  select(`#sensor-${event.subject.id}`)
+    .select('.lower-right-dot')
+    .attr('cx', event.x - startOffsetX + event.subject.radius)
+    .attr('cy', event.y - startOffsetY + event.subject.radius)
 })
 d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
   editSensor(event.subject.id, {
@@ -102,6 +122,75 @@ d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
       y: event.y - startOffsetY
     }
   })
+})
+
+const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
+let startPositionX = 0
+let originalRadius = 0
+let updatedRadius = 0
+d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+  // change mouse cursor to sw-resize
+
+  select('body').style('cursor', 'nwse-resize')
+  originalRadius = event.subject.radius
+  startPositionX = event.x
+})
+d3UpperLeftResize.on('drag', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+  updatedRadius = originalRadius + (startPositionX - event.x) / 2
+  select(`#sensor-${event.subject.id}`)
+    .select('.sensor')
+    .attr('r', updatedRadius)
+    .attr('cx', event.x + updatedRadius)
+    .attr('cy', event.y + updatedRadius)
+  select(`#sensor-${event.subject.id}`)
+    .select('.upper-left-dot')
+    .attr('cx', event.x)
+    .attr('cy', event.y)
+  select(`#sensor-${event.subject.id}`)
+    .select('.sensor-rect')
+    .attr('x', event.x)
+    .attr('y', event.y)
+    .attr('width', updatedRadius * 2)
+    .attr('height', updatedRadius * 2)
+
+  select(`#sensor-${event.subject.id}`)
+    .select('.sensor-label')
+    .attr('x', event.x + updatedRadius)
+    .attr('y', event.y + updatedRadius)
+    .attr('dy', -updatedRadius - 5)
+
+  select(`#sensor-${event.subject.id}`)
+    .select('.upper-right-dot')
+    .attr('cx', event.x + updatedRadius * 2)
+    .attr('cy', event.y)
+
+  select(`#sensor-${event.subject.id}`)
+    .select('.lower-left-dot')
+    .attr('cx', event.x)
+    .attr('cy', event.y + updatedRadius * 2)
+
+  select(`#sensor-${event.subject.id}`)
+    .select('.lower-right-dot')
+    .attr('cx', event.x + updatedRadius * 2)
+    .attr('cy', event.y + updatedRadius * 2)
+})
+d3UpperLeftResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+  editSensor(event.subject.id, {
+    position: {
+      x: event.x + updatedRadius,
+      y: event.y + updatedRadius
+    }
+  })
+
+  editSensor(event.subject.id, {
+    radius: updatedRadius
+  })
+
+  updatedRadius = 0
+  startPositionX = 0
+  originalRadius = 0
+
+  select('body').style('cursor', 'auto')
 })
 
 function onDragOver(event: any) {
@@ -169,9 +258,18 @@ onMounted(() => {
     const sensorGroup = canvas.selectAll<SVGGElement, Sensor>('.sensor-group').data(sensors)
     const sensor = sensorGroup.selectAll('.sensor').data((d) => [d])
     const sensorText = sensorGroup.selectAll('.sensor-label').data((d) => [d])
+    const sensorRect = sensorGroup.selectAll('.sensor-rect').data((d) => [d])
+    const upperLeftDot = sensorGroup.selectAll('.upper-left-dot').data((d) => [d])
+    const upperRightDot = sensorGroup.selectAll('.upper-right-dot').data((d) => [d])
+    const lowerLeftDot = sensorGroup.selectAll('.lower-left-dot').data((d) => [d])
+    const lowerRightDot = sensorGroup.selectAll('.lower-right-dot').data((d) => [d])
 
     // Enter
-    const sensorEnter = sensorGroup.enter().append('g').attr('class', 'sensor-group')
+    const sensorEnter = sensorGroup
+      .enter()
+      .append('g')
+      .attr('class', 'sensor-group')
+      .attr('id', (sensor) => `sensor-${sensor.id}`)
 
     // Append Circle
     sensorEnter
@@ -180,7 +278,60 @@ onMounted(() => {
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
-      .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
+      .attr('fill', (sensor) => (sensor.selected ? '#007bff' : '#BDBDBD'))
+
+    // add rect around circle
+    sensorEnter
+      .append('rect')
+      .attr('class', 'sensor-rect')
+      .attr('x', (sensor) => sensor.position.x - sensor.radius)
+      .attr('y', (sensor) => sensor.position.y - sensor.radius)
+      .attr('width', (sensor) => sensor.radius * 2)
+      .attr('height', (sensor) => sensor.radius * 2)
+      .attr('fill', 'none')
+      .attr('stroke', '#BDBDBD')
+      .attr('stroke-width', 1)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+
+    // add four dots around the rect corner
+
+    //add hover effect
+    sensorEnter
+      .append('circle')
+      .attr('class', 'upper-left-dot')
+      .attr('cx', (sensor) => sensor.position.x - sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y - sensor.radius)
+      .attr('r', 4)
+      .attr('fill', '#BDBDBD')
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+      .call(d3UpperLeftResize)
+
+    sensorEnter
+      .append('circle')
+      .attr('class', 'upper-right-dot')
+      .attr('cx', (sensor) => sensor.position.x + sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y - sensor.radius)
+      .attr('r', 4)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+      .attr('fill', '#BDBDBD')
+
+    sensorEnter
+      .append('circle')
+      .attr('class', 'lower-left-dot')
+      .attr('cx', (sensor) => sensor.position.x - sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y + sensor.radius)
+      .attr('r', 4)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+      .attr('fill', '#BDBDBD')
+
+    sensorEnter
+      .append('circle')
+      .attr('class', 'lower-right-dot')
+      .attr('cx', (sensor) => sensor.position.x + sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y + sensor.radius)
+      .attr('r', 4)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+      .attr('fill', '#BDBDBD')
 
     // Append Text
     sensorEnter
@@ -193,28 +344,53 @@ onMounted(() => {
       .style('font-size', 12)
       .text((sensor) => sensor.name)
 
-    sensorEnter
-      .attr('id', (sensor) => `sensor-${sensor.id}`)
-      .call(d3Drag)
-      .on('click', (event, sensor) => {
-        event.stopPropagation()
-        hasSensorSelected.value = true
-        onSelectSensor(sensor.id)
-        selectedSensorId.value = sensor.id
-      })
+    sensorEnter.call(d3Drag).on('click', (event, sensor) => {
+      event.stopPropagation()
+      hasSensorSelected.value = true
+      onSelectSensor(sensor.id)
+      selectedSensorId.value = sensor.id
+    })
 
     // Update
     sensor
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
-      .attr('fill', (sensor) => (sensor.selected ? 'blue' : 'grey'))
+      .attr('fill', (sensor) => (sensor.selected ? '#007bff' : '#BDBDBD'))
 
     sensorText
       .attr('x', (sensor) => sensor.position.x)
       .attr('y', (sensor) => sensor.position.y)
       .attr('dy', (sensor) => -sensor.radius - 5)
       .text((sensor) => sensor.name)
+
+    sensorRect
+      .attr('x', (sensor) => sensor.position.x - sensor.radius)
+      .attr('y', (sensor) => sensor.position.y - sensor.radius)
+      .attr('width', (sensor) => sensor.radius * 2)
+      .attr('height', (sensor) => sensor.radius * 2)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+
+    upperLeftDot
+      .attr('cx', (sensor) => sensor.position.x - sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y - sensor.radius)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+      .call(d3UpperLeftResize)
+
+    upperRightDot
+      .attr('cx', (sensor) => sensor.position.x + sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y - sensor.radius)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+
+    lowerLeftDot
+      .attr('cx', (sensor) => sensor.position.x - sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y + sensor.radius)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+
+    lowerRightDot
+      .attr('cx', (sensor) => sensor.position.x + sensor.radius)
+      .attr('cy', (sensor) => sensor.position.y + sensor.radius)
+      .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
 
     // Exit
     sensorGroup.exit().remove()

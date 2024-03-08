@@ -19,9 +19,9 @@
         <div class="pb-1">
           <CustomizedTextInput label="Name" v-model:text="sensorName" />
         </div>
-        <div>
+        <!-- <div>
           <CustomizedNumberInput label="Radius" v-model:number="sensorRadius" />
-        </div>
+        </div> -->
       </div>
     </v-menu>
   </div>
@@ -51,7 +51,6 @@ watch(
       return
     }
     sensorName.value = sensor.name
-    sensorRadius.value = sensor.radius
   }
 )
 
@@ -68,8 +67,7 @@ watchEffect(() => {
     ) {
       // Changes detected, update the sensor using editSensor mutation
       editSensor(props.selectedSensorId, {
-        name: currentName,
-        radius: currentRadius
+        name: currentName
       })
     }
   }

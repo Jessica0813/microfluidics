@@ -1,8 +1,15 @@
 <template>
   <div class="bar">
-    <button class="customized-button">
-      <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
-    </button>
+    <v-menu :close-on-content-click="false" offset="8">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
+        </button>
+      </template>
+      <div class="bg">
+        <CustomizedNumberInput v-model:number="flowControl.duration" />
+      </div>
+    </v-menu>
     <button class="customized-button">
       <v-icon size="small" color="#66615b">mdi-waves</v-icon>
     </button>
@@ -21,7 +28,20 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { FlowControl } from '@/types/flowControl'
+import { ref } from 'vue'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+
+const flowControl = ref<FlowControl>({
+  inlet: 'inlet 1',
+  injection: 'pump',
+  fluid: 'water',
+  pressure: 0,
+  duration: 0,
+  flowrate: 0
+})
+</script>
 
 <style scoped>
 .bar {
@@ -45,5 +65,10 @@
 .customized-button:hover {
   background-color: #f0f0f0;
   border-radius: 4px;
+}
+
+.bg {
+  background-color: white;
+  padding: 8px;
 }
 </style>

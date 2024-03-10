@@ -2,19 +2,12 @@
 import { ref, watch } from 'vue'
 import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 import type { FlowControl } from '@/types/flowControl'
-import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
-import ProcessEditMenubar from './ProcessEditMenubar.vue'
-import { toRef } from 'vue'
 
 const { updateNodeData } = useVueFlow()
 const { id, selected } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-const targetRef = ref<HTMLElement | null>(null)
-const floatingRef = ref<HTMLElement | null>(null)
-const isMenuOpen = toRef(selected || nodeIsHovered)
 
 const flowControl = ref<FlowControl>({
-  name: id,
   inlet: 'inlet 1',
   injection: 'pump',
   fluid: 'water',
@@ -32,13 +25,6 @@ const flowControl = ref<FlowControl>({
 //       console.log(node)
 //     })
 //   }
-// })
-
-// watch(isMenuOpen, () => {
-//   if (selected) {
-//     console.log('menu is open')
-//     useMenuPositionCalculator(targetRef, floatingRef)
-// }
 // })
 </script>
 

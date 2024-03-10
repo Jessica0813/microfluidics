@@ -1,20 +1,19 @@
 import { flip, shift, computePosition, offset } from '@floating-ui/vue'
-import { type Ref } from 'vue'
 
 export function useMenuPositionCalculator(
-  targetRef: Ref<HTMLElement | null>,
-  floatingRef: Ref<HTMLElement | null>
+  targetRef: HTMLElement | null,
+  floatingRef: HTMLElement | null
 ) {
-  if (!targetRef.value || !floatingRef.value) {
+  if (!targetRef || !floatingRef) {
     return
   }
 
   try {
-    computePosition(targetRef.value, floatingRef.value, {
-      placement: 'right',
-      middleware: [offset(5), flip(), shift()]
+    computePosition(targetRef, floatingRef, {
+      placement: 'top',
+      middleware: [offset(10), flip(), shift()]
     }).then((pos) => {
-      Object.assign(floatingRef.value!.style, {
+      Object.assign(floatingRef.style, {
         left: `${pos.x}px`,
         top: `${pos.y}px`
       })

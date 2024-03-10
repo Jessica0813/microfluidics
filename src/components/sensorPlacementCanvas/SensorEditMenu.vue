@@ -30,7 +30,6 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import { useSensorStore } from '@/stores/useSensorStore'
-import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 
 const { findSensor, editSensor } = useSensorStore()

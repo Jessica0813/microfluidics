@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
+import { VueFlow, useVueFlow, type EdgeUpdateEvent, isNode } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import NodePanel from './NodePanel.vue'
 import { Background } from '@vue-flow/background'
@@ -11,6 +11,9 @@ import ScheduledProcessNode from './ScheduledProcessNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
+import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
+import ProcessEditMenubar from './ProcessEditMenubar.vue'
+import { ref } from 'vue'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -33,8 +36,22 @@ function getEdgeId() {
   return `edge_${edgeId++}`
 }
 
-const { getEdges, findNode, onConnect, updateEdge, addEdges, addNodes, project, vueFlowRef } =
-  useVueFlow()
+const {
+  getEdges,
+  findNode,
+  onConnect,
+  updateEdge,
+  addEdges,
+  addNodes,
+  project,
+  vueFlowRef,
+  onNodeDragStart,
+  onNodeDragStop,
+  getSelectedNodes,
+  onViewportChangeStart,
+  onViewportChangeEnd,
+  viewport
+} = useVueFlow()
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -135,9 +152,103 @@ function onDrop(event: any) {
     )
   })
 }
+
+function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
+  const { x, y, zoom } = viewport.value
+  const screenX = (nodeX + x) * zoom
+  const screenY = (nodeY + y) * zoom
+
+  if (vueFlowRef.value === null) return
+  const { left, top, right, bottom } = vueFlowRef.value.getBoundingClientRect()
+  return screenX > left - width && screenY > top - height && screenX < right && screenY < bottom
+}
+
+const floatingRef = ref<HTMLElement | null>(null)
+const isMenuBarOpen = ref(false)
+const selectedId = ref<string | null>(null)
+
+watch(
+  getSelectedNodes,
+  (newSelectedNodes, oldSelectedNodes) => {
+    if (newSelectedNodes.length === 1) {
+      if (selectedId.value === null) {
+        selectedId.value = newSelectedNodes[0].id
+        isMenuBarOpen.value = true
+      } else if (newSelectedNodes[0] !== oldSelectedNodes[0]) {
+        selectedId.value = newSelectedNodes[0].id
+      }
+      const element = document.getElementById(selectedId.value!)
+      useMenuPositionCalculator(element, floatingRef.value)
+    } else {
+      isMenuBarOpen.value = false
+      selectedId.value = null
+    }
+  },
+  {
+    deep: true
+  }
+)
+
+onNodeDragStart(() => {
+  isMenuBarOpen.value = false
+})
+
+onNodeDragStop(() => {
+  const node = findNode(selectedId.value!)
+
+  if (!node) {
+    return
+  }
+
+  if (
+    !isNodeinView(node.position.x, node.position.y, node.dimensions.width, node.dimensions.height)
+  ) {
+    return
+  }
+
+  isMenuBarOpen.value = true
+  const element = document.getElementById(selectedId.value!)
+  useMenuPositionCalculator(element, floatingRef.value)
+})
+
+onViewportChangeStart(() => {
+  if (selectedId.value) {
+    isMenuBarOpen.value = false
+  }
+})
+
+onViewportChangeEnd(() => {
+  const node = findNode(selectedId.value!)
+
+  if (!node) {
+    return
+  }
+
+  if (
+    !isNodeinView(node.position.x, node.position.y, node.dimensions.width, node.dimensions.height)
+  ) {
+    return
+  }
+
+  if (selectedId.value) {
+    isMenuBarOpen.value = true
+    const element = document.getElementById(selectedId.value)
+    useMenuPositionCalculator(element, floatingRef.value)
+  }
+})
+
+// watch(isMenuBarOpen, () => {
+//   if (isMenuBarOpen.value && selectedId.value) {
+//     const element = document.getElementById(selectedId.value)
+//     useMenuPositionCalculator(element, floatingRef.value)
+//   }
+// })
 </script>
 
 <template>
+  <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuBarOpen">
+    <ProcessEditMenubar />
+  </div>
   <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
     <div class="side-panel">
       <NodePanel />

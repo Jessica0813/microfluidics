@@ -28,21 +28,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
     console.log(node)
   }
 })
-
-// const dynamicOperators = computed(() => {
-//   // Get the selected sensor
-//   const selectedSensor = condition.value.sensor
-
-//   if (selectedSensor === 'color sensor' || selectedSensor === undefined) {
-//     return ['=', '!=']
-//   } else if (selectedSensor === 'viscosity sensor') {
-//     return ['>', '<', '=', '!=', '>=', '<=']
-//   } else {
-//     return []
-//   }
-// })
-
-// const items = ['color sensor', 'viscosity sensor']
 </script>
 
 <template>
@@ -99,20 +84,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
       <p style="font-size: 14px" v-if="condition.sensor === 'viscosity sensor'">
         viscosity <strong> {{ condition.operator }}</strong> {{ condition.viscosity }}?
       </p>
-      <!-- <CustomizedDropdown v-model:selected="condition.sensor" :items="items" class="mr-2" />
-      <CustomizedDropdown
-        v-model:selected="condition.operator"
-        :items="dynamicOperators"
-        class="mr-2"
-      />
-      <CustomizedColorInput
-        v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
-        v-model:color="condition.color"
-      />
-      <CustomizedNumberInput
-        v-else-if="condition.sensor === 'viscosity sensor'"
-        v-model:number="condition.viscosity"
-      /> -->
     </div>
   </div>
 </template>

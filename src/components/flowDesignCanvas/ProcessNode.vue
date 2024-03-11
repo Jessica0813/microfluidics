@@ -65,17 +65,15 @@ const flowControl = ref<FlowControl>({
         style="font-size: 14px"
         v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
       >
-        <strong>{{ flowControl.fluid }}</strong> is injected into
-        <strong>{{ flowControl.inlet }}</strong> using
-        <strong>{{ flowControl.injection }}</strong> at a pressure of
-        <strong>{{ flowControl.pressure }}</strong> for a duration of
+        <strong>{{ flowControl.injection + ' ' }}</strong>
+        <strong>{{ flowControl.fluid }}</strong> into <strong>{{ flowControl.inlet }}</strong> at
+        <strong>{{ flowControl.pressure }}</strong> pressure for
         <strong>{{ flowControl.duration }}</strong> seconds
       </p>
       <p style="font-size: 14px" v-else>
-        <strong>{{ flowControl.fluid }}</strong> is injected into
-        <strong>{{ flowControl.inlet }}</strong> using a
-        <strong>{{ flowControl.injection }}</strong> , at a flowrate of
-        <strong>{{ flowControl.flowrate }}</strong> for a duration of
+        <strong>{{ flowControl.injection }}</strong>
+        <strong>{{ flowControl.fluid }}</strong> into <strong>{{ flowControl.inlet }}</strong> at a
+        rate of <strong>{{ flowControl.flowrate }}</strong> for
         <strong>{{ flowControl.duration }}</strong> seconds
       </p>
     </div>

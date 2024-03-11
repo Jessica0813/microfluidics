@@ -1,11 +1,21 @@
 <template>
-  <p class="custom-label" v-if="label !== undefined">{{ label + ':' }}</p>
-  <input type="color" v-model="color" class="custom-input" style="min-width: 50px" />
+  <input type="color" v-model="color" class="color-input" />
 </template>
 
 <script setup lang="ts">
-defineProps({
-  label: String
-})
 const color = defineModel<string>('color', { default: '' })
 </script>
+
+<style>
+.color-input {
+  width: 32px !important;
+  height: 32px;
+  padding: 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+.color-input:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+</style>

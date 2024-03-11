@@ -13,6 +13,8 @@ import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
 import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
 import ProcessEditMenubar from './ProcessEditMenubar.vue'
+import ConditionEditMenuBar from './ConditionEditMenuBar.vue'
+import ScheduledProcessEditMenuBar from './ScheduledProcessEditMenuBar.vue'
 import { ref } from 'vue'
 
 let processNodeId = 1
@@ -247,7 +249,9 @@ onViewportChangeEnd(() => {
 
 <template>
   <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuBarOpen">
-    <ProcessEditMenubar />
+    <ProcessEditMenubar v-if="findNode(selectedId)?.type === 'process'" />
+    <ConditionEditMenuBar v-else-if="findNode(selectedId)?.type === 'condition'" />
+    <ScheduledProcessEditMenuBar v-else-if="findNode(selectedId)?.type === 'schedule'" />
   </div>
   <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
     <div class="side-panel">

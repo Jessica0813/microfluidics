@@ -6,7 +6,7 @@ import { NodeResizer } from '@vue-flow/node-resizer'
 import type { ScheduledFlowControl, FlowControlProcess } from '@/types/flowControl'
 import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
 import { useVueFlow } from '@vue-flow/core'
-import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
+// import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
 
 const { findNode } = useVueFlow()
 
@@ -41,9 +41,9 @@ const scheduledFlowControl = ref<ScheduledFlowControl>({
 })
 
 watch(isEditingProcess, () => {
-  if (isEditingProcess.value) {
-    useMenuPositionCalculator(targetRef, floatingRef)
-  }
+  // if (isEditingProcess.value) {
+  //   useMenuPositionCalculator(targetRef, floatingRef)
+  // }
 })
 
 function onTrigger() {
@@ -55,9 +55,9 @@ function onTrigger() {
     isMenuOpen.value = !isMenuOpen.value
   }
 
-  if (isMenuOpen.value) {
-    useMenuPositionCalculator(targetRef, floatingRef)
-  }
+  // if (isMenuOpen.value) {
+  //   useMenuPositionCalculator(targetRef, floatingRef)
+  // }
 }
 
 function onClickOutside() {
@@ -128,6 +128,7 @@ watch(
     v-click-outside="{
       handler: onClickOutside
     }"
+    :id="id"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :style="{

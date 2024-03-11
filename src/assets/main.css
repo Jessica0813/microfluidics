@@ -59,8 +59,8 @@ html::-webkit-scrollbar {
 }
 .custom-input {
   width: fit-content;
-  padding: 2px 4px;
-  border: 1px solid grey;
+  padding: 8px 12px;
+  border: 0.5px solid lightgrey;
   border-radius: 4px;
   font-size: 14px;
   outline: none;
@@ -69,6 +69,7 @@ html::-webkit-scrollbar {
   overflow: hidden;
   text-overflow: ellipsis;
   box-sizing: border-box;
+  background-color: white;
 }
 
 .custom-input:focus {

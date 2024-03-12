@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
-import type { FlowControl } from '@/types/flowControl'
+// import type { FlowControl } from '@/types/flowControl'
 
-const { updateNodeData } = useVueFlow()
+// const { updateNodeData } = useVueFlow()
 const { id, selected, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 

@@ -77,10 +77,11 @@
 
 <script setup lang="ts">
 // import type { FlowControl } from '@/types/flowControl'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import type { ScheduledFlowControl } from '@/types/flowControl'
 
 const { findNode } = useVueFlow()
 
@@ -106,24 +107,24 @@ const props = defineProps<{
   id: string | null
 }>()
 
-const scheduledFlowControl = computed(() => {
+const scheduledFlowControl = ref<ScheduledFlowControl>({
+  totalDuration: 20,
+  name: 'a',
+  processes: []
+})
+
+onMounted(() => {
   const data = findNode(props.id)?.data
-
-  if (data === undefined || data.condition === undefined) {
-    return {
-      totalDuration: 20,
-      name: 'a',
-      processes: []
-    }
+  if (data === undefined || data.scheduledFlowControl === undefined) {
+    return
   }
-
-  return data.scheduledFlowControl
+  scheduledFlowControl.value = data.scheduledFlowControl
 })
 
 watch(
   () => scheduledFlowControl.value.processes,
   () => {
-    console.log('1111111')
+    console.log('watching')
     let i
     for (i = 0; i < scheduledFlowControl.value.processes.length; i++) {
       if (scheduledFlowControl.value.processes[i].selected) {

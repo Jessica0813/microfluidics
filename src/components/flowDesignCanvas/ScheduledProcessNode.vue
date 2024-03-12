@@ -69,7 +69,7 @@ const scheduledFlowControl = computed(() => {
   if (data === undefined || data.scheduledFlowControl === undefined) {
     return {
       totalDuration: 20,
-      name: id,
+      name: 'a',
       processes: []
     }
   }
@@ -169,7 +169,7 @@ const scheduledFlowControl = computed(() => {
           padding-bottom: 20px;
           padding-left: 12px;
           padding-right: 12px;
-          height: 62%;
+          height: 75%;
         "
       >
         <RangBarChart

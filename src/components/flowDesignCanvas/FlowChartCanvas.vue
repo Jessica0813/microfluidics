@@ -12,9 +12,9 @@ import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
 import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator'
-import ProcessEditMenubar from './ProcessEditMenubar.vue'
-import ConditionEditMenuBar from './ConditionEditMenuBar.vue'
-import ScheduledProcessEditMenuBar from './ScheduledProcessEditMenuBar.vue'
+import ProcessEditMenu from './ProcessEditMenu.vue'
+import ConditionEditMenu from './ConditionEditMenu.vue'
+import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
 import { ref } from 'vue'
 
 let processNodeId = 1
@@ -261,9 +261,9 @@ onViewportChangeEnd(() => {
 
 <template>
   <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuBarOpen">
-    <ProcessEditMenubar v-if="findNode(selectedId)?.type === 'process'" :id="selectedId" />
-    <ConditionEditMenuBar v-else-if="findNode(selectedId)?.type === 'condition'" :id="selectedId" />
-    <ScheduledProcessEditMenuBar
+    <ProcessEditMenu v-if="findNode(selectedId)?.type === 'process'" :id="selectedId" />
+    <ConditionEditMenu v-else-if="findNode(selectedId)?.type === 'condition'" :id="selectedId" />
+    <ScheduledProcessEditMenu
       v-else-if="findNode(selectedId)?.type === 'schedule'"
       :id="selectedId"
     />
@@ -302,4 +302,4 @@ onViewportChangeEnd(() => {
       <!-- <Controls /> -->
     </VueFlow>
   </div>
-</template>
+</template>./ScheduledProcessEditMenu.vue

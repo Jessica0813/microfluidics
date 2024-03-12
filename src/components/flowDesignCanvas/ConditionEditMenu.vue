@@ -1,24 +1,87 @@
+<template>
+  <div class="bar">
+    <v-menu offset="10">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-leak</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="condition.sensor" :items="sensors" />
+    </v-menu>
+    <v-menu offset="10">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-compare-horizontal</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="condition.operator" :items="dynamicOperators" />
+    </v-menu>
+    <!-- <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-palette</v-icon>
+        </button>
+      </template>
+      <CustomizedColorInput v-model:color="condition.color" />
+    </v-menu> -->
+    <CustomizedColorInput
+      v-model:color="condition.color"
+      v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
+    />
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-else-if="condition.sensor === 'viscosity sensor'"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-numeric</v-icon>
+        </button>
+      </template>
+      <CustomizedNumberInput v-model:number="condition.viscosity" />
+    </v-menu>
+    <button class="customized-button">
+      <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
+    </button>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
-import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedColorInput from '../general/CustomizedColorInput.vue'
+import { useVueFlow } from '@vue-flow/core'
 
-defineProps({
-  id: String
+const { findNode } = useVueFlow()
+
+const props = defineProps<{
+  id: string | null
+}>()
+
+const condition = computed(() => {
+  const data = findNode(props.id)?.data
+  if (data === undefined || data.condition === undefined) {
+    return {
+      name: 'xxx',
+      sensor: 'color sensor',
+      operator: '=',
+      color: '#FFFFFF',
+      viscosity: 0
+    }
+  }
+  return data.condition
 })
 
-const items = ['color sensor', 'viscosity sensor']
-const name = defineModel<string>('name', { default: '' })
-const sensor = defineModel<string>('sensor', { default: '' })
-const operator = defineModel<string>('operator', { default: '' })
-const viscosity = defineModel('viscosity', { default: 0 })
-const color = defineModel<string>('color', { default: '' })
+const sensors = ['color sensor', 'viscosity sensor']
 
 const dynamicOperators = computed(() => {
   // Get the selected sensor
-  const selectedSensor = sensor.value
+  const selectedSensor = condition.value.sensor
 
   if (selectedSensor === 'color sensor' || selectedSensor === undefined) {
     return ['=', '!=']
@@ -28,48 +91,34 @@ const dynamicOperators = computed(() => {
     return []
   }
 })
-
-watch(sensor, (newSensor, oldSensor) => {
-  // Check if the sensorInput has changed
-  if (newSensor !== oldSensor) {
-    // Reset operatorInput and valueInput when the sensorInput changes
-    operator.value = '='
-    viscosity.value = 0
-    color.value = '#FFFFFF'
-  }
-})
 </script>
 
-<template>
-  <v-sheet class="pa-3 align-center justify-center nodrag" width="320" :rounded="true">
-    <v-row dense>
-      <v-col cols="6">
-        <CustomizedTextInput v-model:text="name" label="Name" />
-      </v-col>
-      <v-col cols="6">
-        <CustomizedDropdown v-model:selected="sensor" :items="items" label="Sensor" />
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col cols="6">
-        <CustomizedDropdown
-          v-model:selected="operator"
-          :items="dynamicOperators"
-          label="Operator"
-        />
-      </v-col>
-      <v-col cols="6">
-        <CustomizedColorInput
-          v-if="sensor === '' || sensor === 'color sensor'"
-          v-model:color="color"
-          label="Color"
-        />
-        <CustomizedNumberInput
-          v-else-if="sensor === 'viscosity sensor'"
-          v-model:number="viscosity"
-          label="Viscosity"
-        />
-      </v-col>
-    </v-row>
-  </v-sheet>
-</template>
+<style scoped>
+.bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  background-color: white;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 8px;
+}
+.customized-button {
+  display: flex;
+  padding: 6px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+}
+.customized-button:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.bg {
+  background-color: white;
+  padding: 8px;
+}
+</style>

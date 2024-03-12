@@ -1,69 +1,125 @@
+<template>
+  <div class="bar">
+    <v-menu offset="10">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-waves</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluids" />
+    </v-menu>
+    <v-menu offset="10">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-location-enter</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
+    </v-menu>
+    <v-menu offset="10">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
+    </v-menu>
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-car-brake-low-pressure</v-icon>
+        </button>
+      </template>
+      <CustomizedNumberInput v-model:number="flowControl.pressure" />
+    </v-menu>
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-else-if="flowControl.injection === 'needle'"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-speedometer</v-icon>
+        </button>
+      </template>
+      <CustomizedNumberInput v-model:number="flowControl.flowrate" />
+    </v-menu>
+    <v-menu :close-on-content-click="false" offset="10">
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
+        </button>
+      </template>
+      <CustomizedNumberInput v-model:number="flowControl.duration" />
+    </v-menu>
+    <button class="customized-button">
+      <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
+    </button>
+  </div>
+</template>
+
 <script setup lang="ts">
+import { computed } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
-import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
-import { watch } from 'vue'
+import { useVueFlow } from '@vue-flow/core'
+
+const { findNode } = useVueFlow()
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
 
-defineProps({
-  id: String
-})
-const name = defineModel<string>('name', { default: '' })
-const duration = defineModel('duration', { default: 0 })
-const inlet = defineModel<string>('inlet', { default: '' })
-const injection = defineModel<string>('injection', { default: '' })
-const fluid = defineModel<string>('fluid', { default: '' })
-const pressure = defineModel('pressure', { default: 0 })
-const flowrate = defineModel('flowrate', { default: 0 })
+const props = defineProps<{
+  id: string | null
+}>()
 
-watch(injection, (newInjection, oldInjection) => {
-  if (newInjection !== oldInjection) {
-    if (newInjection === 'pump' || newInjection === '') {
-      pressure.value = 0
-    } else if (newInjection === 'needle') {
-      flowrate.value = 0
+const flowControl = computed(() => {
+  const data = findNode(props.id)?.data
+  if (data === undefined || data.flowControl === undefined) {
+    return {
+      inlet: 'inlet 1',
+      injection: 'pump',
+      fluid: 'water',
+      pressure: 0,
+      duration: 0,
+      flowrate: 0
     }
   }
+  return data.flowControl
 })
 </script>
 
-<template>
-  <v-sheet
-    class="py-4 px-4 align-center justify-center nodrag"
-    :rounded="true"
-    width="360"
-    height="auto"
-  >
-    <v-row dense>
-      <v-col cols="6">
-        <CustomizedTextInput v-model:text="name" label="Name" />
-      </v-col>
-      <v-col cols="6">
-        <CustomizedNumberInput v-model:number="duration" label="Duration" />
-      </v-col>
-    </v-row>
-    <v-row dense>
-      <v-col cols="6">
-        <CustomizedDropdown v-model:selected="inlet" :items="inlets" label="Inlet" />
-      </v-col>
-      <v-col cols="6">
-        <CustomizedDropdown v-model:selected="fluid" :items="fluids" label="Fluid" />
-      </v-col>
-    </v-row>
+<style scoped>
+.bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  background-color: white;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 8px;
+}
+.customized-button {
+  display: flex;
+  padding: 6px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+}
+.customized-button:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
 
-    <v-row dense>
-      <v-col cols="6">
-        <CustomizedDropdown v-model:selected="injection" :items="injections" label="Injection" />
-      </v-col>
-      <v-col cols="6" v-if="injection === '' || injection === 'pump'">
-        <CustomizedNumberInput v-model:number="pressure" label="Pressure" />
-      </v-col>
-      <v-col cols="6" v-else-if="injection === 'needle'">
-        <CustomizedNumberInput v-model:number="flowrate" label="Flow rate" />
-      </v-col>
-    </v-row>
-  </v-sheet>
-</template>
+.bg {
+  background-color: white;
+  padding: 8px;
+}
+</style>

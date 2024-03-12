@@ -63,22 +63,34 @@
 </template>
 
 <script setup lang="ts">
-import type { FlowControl } from '@/types/flowControl'
-import { ref } from 'vue'
+import { computed } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import { useVueFlow } from '@vue-flow/core'
+
+const { findNode } = useVueFlow()
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
 
-const flowControl = ref<FlowControl>({
-  inlet: 'inlet 1',
-  injection: 'pump',
-  fluid: 'water',
-  pressure: 0,
-  duration: 0,
-  flowrate: 0
+const props = defineProps<{
+  id: string | null
+}>()
+
+const flowControl = computed(() => {
+  const data = findNode(props.id)?.data
+  if (data === undefined || data.flowControl === undefined) {
+    return {
+      inlet: 'inlet 1',
+      injection: 'pump',
+      fluid: 'water',
+      pressure: 0,
+      duration: 0,
+      flowrate: 0
+    }
+  }
+  return data.flowControl
 })
 </script>
 

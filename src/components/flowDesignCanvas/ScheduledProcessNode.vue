@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import type { ScheduledFlowControl, FlowControlProcess } from '@/types/flowControl'
-import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
 import { useVueFlow } from '@vue-flow/core'
-// import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
 
 const { findNode } = useVueFlow()
 
@@ -14,63 +12,41 @@ let processId = 1
 function getProcessId() {
   return `${processId++}`
 }
-const { selected, id } = defineProps<NodeProps>()
+const { selected, id, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-const isMenuOpen = ref(false)
-const targetRef = ref<HTMLDivElement | null>(null)
-const floatingRef = ref<HTMLElement | null>(null)
-const isEditingProcess = ref(false)
-const editedProcess = ref<FlowControlProcess>({
-  id: '',
-  name: '',
-  selected: false,
-  startTime: 0,
-  endTime: 0,
-  duration: 0,
-  inlet: '',
-  injection: '',
-  fluid: '',
-  pressure: 0,
-  flowrate: 0
-})
+// const isMenuOpen = ref(false)
+// const isEditingProcess = ref(false)
+// const editedProcess = ref<FlowControlProcess>({
+//   id: '',
+//   name: '',
+//   selected: false,
+//   startTime: 0,
+//   endTime: 0,
+//   duration: 0,
+//   inlet: '',
+//   injection: '',
+//   fluid: '',
+//   pressure: 0,
+//   flowrate: 0
+// })
 
-const scheduledFlowControl = ref<ScheduledFlowControl>({
-  totalDuration: 20,
-  name: id,
-  processes: []
-})
+// const scheduledFlowControl = ref<ScheduledFlowControl>({
+//   totalDuration: 20,
+//   name: id,
+//   processes: []
+// })
 
-watch(isEditingProcess, () => {
-  // if (isEditingProcess.value) {
-  //   useMenuPositionCalculator(targetRef, floatingRef)
-  // }
-})
+// function onClickOutside() {
+//   updateProcess()
+//   isMenuOpen.value = false
+//   isEditingProcess.value = false
+// }
 
-function onTrigger() {
-  if (isEditingProcess.value) {
-    updateProcess()
-    isMenuOpen.value = true
-    isEditingProcess.value = false
-  } else {
-    isMenuOpen.value = !isMenuOpen.value
-  }
-
-  // if (isMenuOpen.value) {
-  //   useMenuPositionCalculator(targetRef, floatingRef)
-  // }
-}
-
-function onClickOutside() {
-  updateProcess()
-  isMenuOpen.value = false
-  isEditingProcess.value = false
-}
-
-function updateProcess() {
-  if (editedProcess.value.id) {
-    editedProcess.value.selected = false
-  }
-}
+// function updateProcess() {
+//   if (editedProcess.value.id) {
+//     editedProcess.value.selected = false
+//   }
+// }
 
 function addProcess() {
   const processId = getProcessId()
@@ -89,45 +65,53 @@ function addProcess() {
   })
 }
 
-watch(
-  [isMenuOpen, () => scheduledFlowControl.value.processes],
-  ([newValue], [oldValue]) => {
-    const node = findNode(id)
-    if (node === undefined) {
-      return
+const scheduledFlowControl = computed(() => {
+  if (data === undefined || data.scheduledFlowControl === undefined) {
+    return {
+      totalDuration: 20,
+      name: id,
+      processes: []
     }
-    const data = node.data
-
-    if (!newValue && oldValue) {
-      if (data.name !== scheduledFlowControl.value.name) {
-        node.data.scheduledFlowControl = scheduledFlowControl.value
-      }
-
-      if (data.totalDuration !== scheduledFlowControl.value.totalDuration) {
-        node.data.scheduledFlowControl.totalDuration = scheduledFlowControl.value.totalDuration
-      }
-
-      if (data.processes !== scheduledFlowControl.value.processes) {
-        node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
-      }
-      console.log(node.data.scheduledFlowControl)
-      return
-    }
-    if (data.processes !== scheduledFlowControl.value.processes) {
-      node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
-    }
-  },
-  {
-    deep: true
   }
-)
+  return data.scheduledFlowControl
+})
+
+// watch(
+//   [isMenuOpen, () => scheduledFlowControl.value.processes],
+//   ([newValue], [oldValue]) => {
+//     const node = findNode(id)
+//     if (node === undefined) {
+//       return
+//     }
+//     const data = node.data
+
+//     if (!newValue && oldValue) {
+//       if (data.name !== scheduledFlowControl.value.name) {
+//         node.data.scheduledFlowControl = scheduledFlowControl.value
+//       }
+
+//       if (data.totalDuration !== scheduledFlowControl.value.totalDuration) {
+//         node.data.scheduledFlowControl.totalDuration = scheduledFlowControl.value.totalDuration
+//       }
+
+//       if (data.processes !== scheduledFlowControl.value.processes) {
+//         node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
+//       }
+//       console.log(node.data.scheduledFlowControl)
+//       return
+//     }
+//     if (data.processes !== scheduledFlowControl.value.processes) {
+//       node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
+//     }
+//   },
+//   {
+//     deep: true
+//   }
+// )
 </script>
 
 <template>
   <div
-    v-click-outside="{
-      handler: onClickOutside
-    }"
     :id="id"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
@@ -138,7 +122,6 @@ watch(
           ? '0 0 0 2px rgba(0, 100, 255, 0.2), 0 0 0 4px rgba(0, 100, 255, 0.2)'
           : ''
     }"
-    ref="targetRef"
   >
     <NodeResizer :minWidth="300" :minHeight="150" :color="'transparent'" />
     <Handle
@@ -192,28 +175,9 @@ watch(
         <RangBarChart
           :id="id"
           :totalDuration="scheduledFlowControl.totalDuration"
-          v-model:isMenuOpen="isMenuOpen"
-          v-model:isEditingProcess="isEditingProcess"
-          v-model:editedProcess="editedProcess"
           v-model:flowControlProcesses="scheduledFlowControl.processes"
         />
       </div>
-    </div>
-    <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuOpen">
-      <ScheduledProcessEditMenu
-        :id="id"
-        :isEditingProcess="isEditingProcess"
-        v-model:nodeName="scheduledFlowControl.name"
-        v-model:totalDuration="scheduledFlowControl.totalDuration"
-        v-model:processName="editedProcess.name"
-        v-model:inlet="editedProcess.inlet"
-        v-model:injection="editedProcess.injection"
-        v-model:fluid="editedProcess.fluid"
-        v-model:pressure="editedProcess.pressure"
-        v-model:startTime="editedProcess.startTime"
-        v-model:endTime="editedProcess.endTime"
-        v-model:flowrate="editedProcess.flowrate"
-      />
     </div>
   </div>
 </template>

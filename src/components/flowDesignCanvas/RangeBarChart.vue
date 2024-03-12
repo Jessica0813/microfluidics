@@ -23,7 +23,7 @@ const props = defineProps({
 })
 
 const isMenuOpen = defineModel<boolean>('isMenuOpen', { default: false })
-const isEditingProcess = defineModel<boolean>('isEditingProcess', { default: false })
+// const isEditingProcess = defineModel<boolean>('isEditingProcess', { default: false })
 const editedProcess = defineModel<FlowControlProcess>('editedProcess')
 const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProcesses', {
   default: []
@@ -123,7 +123,7 @@ onMounted(() => {
       .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
       .call(useDrag(props.id!, instances, width, marginX))
       .on('click', (event, d) => {
-        isEditingProcess.value = true
+        // isEditingProcess.value = true
         //update relative process with selected is true
         flowControlProcesses.value = flowControlProcesses.value.map((p) => {
           if (p.id === d.id) {

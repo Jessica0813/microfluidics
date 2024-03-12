@@ -11,7 +11,7 @@ export function useMenuPositionCalculator(
   try {
     computePosition(targetRef, floatingRef, {
       placement: 'top',
-      middleware: [offset(10), flip(), shift()]
+      middleware: [offset(30), flip(), shift()]
     }).then((pos) => {
       Object.assign(floatingRef.style, {
         left: `${pos.x}px`,

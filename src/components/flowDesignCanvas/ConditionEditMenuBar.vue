@@ -51,18 +51,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedColorInput from '../general/CustomizedColorInput.vue'
-import type { Condition } from '@/types/condition'
+import { useVueFlow } from '@vue-flow/core'
 
-const condition = ref<Condition>({
-  name: 'a',
-  sensor: 'color sensor',
-  operator: '=',
-  color: '#FFFFFF',
-  viscosity: 0
+const { findNode } = useVueFlow()
+
+const props = defineProps<{
+  id: string | null
+}>()
+
+const condition = computed(() => {
+  const data = findNode(props.id)?.data
+  if (data === undefined || data.condition === undefined) {
+    return {
+      name: 'xxx',
+      sensor: 'color sensor',
+      operator: '=',
+      color: '#FFFFFF',
+      viscosity: 0
+    }
+  }
+  return data.condition
 })
 
 const sensors = ['color sensor', 'viscosity sensor']

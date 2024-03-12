@@ -11,7 +11,7 @@ import ScheduledProcessNode from './ScheduledProcessNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
-import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator() '
+import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator'
 import ProcessEditMenubar from './ProcessEditMenubar.vue'
 import ConditionEditMenuBar from './ConditionEditMenuBar.vue'
 import ScheduledProcessEditMenuBar from './ScheduledProcessEditMenuBar.vue'
@@ -127,10 +127,29 @@ function onDrop(event: any) {
   if (type === 'schedule') {
     const nodeData = {
       totalDuration: 20,
-      name: nodeId,
+      name: 'a',
       processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
+  } else if (type === 'process') {
+    const nodeData = {
+      inlet: 'inlet 1',
+      injection: 'pump',
+      fluid: 'water',
+      pressure: 0,
+      duration: 0,
+      flowrate: 0
+    }
+    newNode = { ...newNode, data: { flowControl: nodeData } }
+  } else if (type === 'condition') {
+    const nodeData = {
+      name: 'xxx',
+      sensor: 'color sensor',
+      operator: '=',
+      color: '#FFFFFF',
+      viscosity: 0
+    }
+    newNode = { ...newNode, data: { condition: nodeData } }
   }
 
   addNodes([newNode])
@@ -238,20 +257,16 @@ onViewportChangeEnd(() => {
     useMenuPositionCalculator(element, floatingRef.value)
   }
 })
-
-// watch(isMenuBarOpen, () => {
-//   if (isMenuBarOpen.value && selectedId.value) {
-//     const element = document.getElementById(selectedId.value)
-//     useMenuPositionCalculator(element, floatingRef.value)
-//   }
-// })
 </script>
 
 <template>
   <div ref="floatingRef" style="position: absolute; z-index: 1000" v-show="isMenuBarOpen">
-    <ProcessEditMenubar v-if="findNode(selectedId)?.type === 'process'" />
-    <ConditionEditMenuBar v-else-if="findNode(selectedId)?.type === 'condition'" />
-    <ScheduledProcessEditMenuBar v-else-if="findNode(selectedId)?.type === 'schedule'" />
+    <ProcessEditMenubar v-if="findNode(selectedId)?.type === 'process'" :id="selectedId" />
+    <ConditionEditMenuBar v-else-if="findNode(selectedId)?.type === 'condition'" :id="selectedId" />
+    <ScheduledProcessEditMenuBar
+      v-else-if="findNode(selectedId)?.type === 'schedule'"
+      :id="selectedId"
+    />
   </div>
   <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
     <div class="side-panel">

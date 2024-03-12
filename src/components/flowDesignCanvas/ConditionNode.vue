@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
-import type { Condition } from '@/types/condition'
 import { useVueFlow } from '@vue-flow/core'
 
 const { findNode } = useVueFlow()
-const { id, selected } = defineProps<NodeProps>()
+const { id, selected, data } = defineProps<NodeProps>()
 const isMenuOpen = ref<boolean>(false)
 const nodeIsHovered = ref<boolean>(false)
-const condition = ref<Condition>({
-  name: id,
-  sensor: 'color sensor',
-  operator: '=',
-  color: '#FFFFFF',
-  viscosity: 0
+
+const condition = computed(() => {
+  if (data === undefined || data.condition === undefined) {
+    return {
+      name: 'xxx',
+      sensor: 'color sensor',
+      operator: '=',
+      color: '#ffffff',
+      viscosity: 0
+    }
+  }
+  return data.condition
 })
 
 watch(isMenuOpen, (newValue, oldValue) => {
@@ -75,15 +80,35 @@ watch(isMenuOpen, (newValue, oldValue) => {
         flex-direction: row;
       "
     >
-      <p
-        style="font-size: 14px"
-        v-if="condition.sensor === 'color sensor' || condition.sensor === ''"
-      >
-        color <strong> {{ condition.operator }}</strong> {{ condition.color }}?
-      </p>
+      <div v-if="condition.sensor === 'color sensor' || condition.sensor === ''" class="wrap">
+        <p>
+          color <strong> {{ condition.operator }}</strong>
+        </p>
+        <div class="color-square" :style="{ backgroundColor: condition.color }"></div>
+        <p>?</p>
+      </div>
       <p style="font-size: 14px" v-if="condition.sensor === 'viscosity sensor'">
         viscosity <strong> {{ condition.operator }}</strong> {{ condition.viscosity }}?
       </p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+}
+.color-square {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+</style>

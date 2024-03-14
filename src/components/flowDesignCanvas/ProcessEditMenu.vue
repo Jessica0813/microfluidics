@@ -100,11 +100,8 @@ const flowControl = computed(() => {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 6px;
-  background-color: white;
   width: fit-content;
   height: fit-content;
-  border-radius: 8px;
 }
 .customized-button {
   display: flex;

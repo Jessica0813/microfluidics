@@ -86,7 +86,7 @@ const flowControl = computed(() => {
         >s
       </p>
       <p style="font-size: 14px" v-else>
-        <strong>{{ flowControl.injection }}</strong>
+        <strong>{{ flowControl.injection + ' ' }}</strong>
         <strong>{{ flowControl.fluid }}</strong> into <strong>{{ flowControl.inlet }}</strong> at a
         rate of <strong>{{ flowControl.flowrate }}</strong> for
         <strong>{{ flowControl.duration }}</strong

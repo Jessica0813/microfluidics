@@ -204,6 +204,12 @@ onMounted(() => {
       .attr('fill', '#BDBDBD')
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .call(d3UpperLeftResize(editedSensor.value))
+      .on('mouseover', () => {
+        select('body').style('cursor', 'nwse-resize')
+      })
+      .on('mouseout', () => {
+        select('body').style('cursor', 'default')
+      })
 
     sensorEnter
       .append('circle')
@@ -214,6 +220,12 @@ onMounted(() => {
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
       .call(d3UpperRightResize(editedSensor.value))
+      .on('mouseover', () => {
+        select('body').style('cursor', 'nesw-resize')
+      })
+      .on('mouseout', () => {
+        select('body').style('cursor', 'default')
+      })
 
     sensorEnter
       .append('circle')
@@ -224,6 +236,12 @@ onMounted(() => {
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
       .call(d3LowerLeftResize(editedSensor.value))
+      .on('mouseover', () => {
+        select('body').style('cursor', 'nesw-resize')
+      })
+      .on('mouseout', () => {
+        select('body').style('cursor', 'default')
+      })
 
     sensorEnter
       .append('circle')
@@ -234,6 +252,12 @@ onMounted(() => {
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
       .call(d3LowerRightResize(editedSensor.value))
+      .on('mouseover', () => {
+        select('body').style('cursor', 'nwse-resize')
+      })
+      .on('mouseout', () => {
+        select('body').style('cursor', 'default')
+      })
 
     // Append Text
     sensorEnter

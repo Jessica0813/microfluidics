@@ -15,6 +15,7 @@ export function d3Drag(editedSensor: EditedSensor) {
   d3Drag.on('start', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
     startOffsetX = event.x - event.subject.position.x
     startOffsetY = event.y - event.subject.position.y
+    select('body').style('cursor', 'grabbing')
   })
   d3Drag.on('drag', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
     select(`#sensor-${event.subject.id}`)
@@ -51,6 +52,7 @@ export function d3Drag(editedSensor: EditedSensor) {
     editedSensor.position.x = event.x - startOffsetX
     editedSensor.position.y = event.y - startOffsetY
     editedSensor.radius = event.subject.radius
+    select('body').style('cursor', 'default')
   })
   return d3Drag
 }

@@ -56,9 +56,6 @@ import ZoomSlider from './ZoomSlider.vue'
 import { useDrop } from '@/composables/useDrop'
 import SensorPanel from './SensorPanel.vue'
 import type { D3Zoom, D3Selection } from '@/types/d3'
-import type { DesignCanvasControl } from '@/types/designCanvasControl'
-import { defaultDesignCanvasControl } from '@/types/designCanvasControl'
-import { inject } from 'vue'
 import {
   d3UpperLeftResize,
   d3UpperRightResize,
@@ -67,9 +64,6 @@ import {
   d3Drag
 } from '@/composables/useSensorDragandResize'
 import type { EditedSensor } from '@/composables/useSensorDragandResize'
-
-const { designCanvasSize, toggleDesignCanvasSize } =
-  inject<DesignCanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
 
 const {
   sensors,
@@ -119,14 +113,6 @@ function onDrop(event: any) {
   const left = svg.value.getBoundingClientRect().left
   const top = svg.value.getBoundingClientRect().top
   useDrop(left, top, event, transform.value, getSensorId(), addSensor)
-
-  if (event.dataTransfer && event.dataTransfer.getData('isCanvasSizeChanged') === 'true') {
-    setTimeout(() => {
-      if (designCanvasSize.value === 'large') {
-        toggleDesignCanvasSize()
-      }
-    }, 1000)
-  }
 }
 
 function removeSelectedSensor() {

@@ -44,12 +44,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
-import { zoom, zoomIdentity } from 'd3-zoom'
+import { ref, onMounted, watch } from 'vue'
+import { zoom } from 'd3-zoom'
+// import { zoomIdentity } from 'd3'
 import { select } from 'd3-selection'
 import { useSensorStore } from '@/stores/useSensorStore'
-import { drag } from 'd3-drag'
-import type { D3DragEvent } from 'd3-drag'
+// import { drag } from 'd3-drag'
+// import type { D3DragEvent } from 'd3-drag'
 import type { Sensor } from '@/types/sensor'
 import ZoomSlider from './ZoomSlider.vue'
 import { useDrop } from '@/composables/useDrop'
@@ -58,6 +59,14 @@ import type { D3Zoom, D3Selection } from '@/types/d3'
 import type { DesignCanvasControl } from '@/types/designCanvasControl'
 import { defaultDesignCanvasControl } from '@/types/designCanvasControl'
 import { inject } from 'vue'
+import {
+  d3UpperLeftResize,
+  d3UpperRightResize,
+  d3LowerLeftResize,
+  d3LowerRightResize,
+  d3Drag
+} from '@/composables/useSensorDragandResize'
+import type { EditedSensor } from '@/composables/useSensorDragandResize'
 
 const { designCanvasSize, toggleDesignCanvasSize } =
   inject<DesignCanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
@@ -77,121 +86,25 @@ const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
 const hasSensorSelected = ref(selectedSensor.length > 0)
 const selectedSensorId = ref(selectedSensor[0]?.id || '')
-
-const d3Drag = drag<SVGGElement, Sensor, any>()
-let startOffsetX: number = 0
-let startOffsetY: number = 0
-d3Drag.on('start', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
-  startOffsetX = event.x - event.subject.position.x
-  startOffsetY = event.y - event.subject.position.y
-})
-d3Drag.on('drag', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
-  select(`#sensor-${event.subject.id}`)
-    .select('.sensor')
-    .attr('cx', event.x - startOffsetX)
-    .attr('cy', event.y - startOffsetY)
-  select(`#sensor-${event.subject.id}`)
-    .select('.sensor-label')
-    .attr('x', event.x - startOffsetX)
-    .attr('y', event.y - startOffsetY)
-  select(`#sensor-${event.subject.id}`)
-    .select('.sensor-rect')
-    .attr('x', event.x - startOffsetX - event.subject.radius)
-    .attr('y', event.y - startOffsetY - event.subject.radius)
-  select(`#sensor-${event.subject.id}`)
-    .select('.upper-left-dot')
-    .attr('cx', event.x - startOffsetX - event.subject.radius)
-    .attr('cy', event.y - startOffsetY - event.subject.radius)
-  select(`#sensor-${event.subject.id}`)
-    .select('.upper-right-dot')
-    .attr('cx', event.x - startOffsetX + event.subject.radius)
-    .attr('cy', event.y - startOffsetY - event.subject.radius)
-  select(`#sensor-${event.subject.id}`)
-    .select('.lower-left-dot')
-    .attr('cx', event.x - startOffsetX - event.subject.radius)
-    .attr('cy', event.y - startOffsetY + event.subject.radius)
-  select(`#sensor-${event.subject.id}`)
-    .select('.lower-right-dot')
-    .attr('cx', event.x - startOffsetX + event.subject.radius)
-    .attr('cy', event.y - startOffsetY + event.subject.radius)
-})
-d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
-  editSensor(event.subject.id, {
-    position: {
-      x: event.x - startOffsetX,
-      y: event.y - startOffsetY
-    }
-  })
+const editedSensor = ref<EditedSensor>({
+  id: '',
+  position: { x: 0, y: 0 },
+  radius: 0
 })
 
-const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
-let startPositionX = 0
-let originalRadius = 0
-let updatedRadius = 0
-d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-  // change mouse cursor to sw-resize
-
-  select('body').style('cursor', 'nwse-resize')
-  originalRadius = event.subject.radius
-  startPositionX = event.x
-})
-d3UpperLeftResize.on('drag', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-  updatedRadius = originalRadius + (startPositionX - event.x) / 2
-  select(`#sensor-${event.subject.id}`)
-    .select('.sensor')
-    .attr('r', updatedRadius)
-    .attr('cx', event.x + updatedRadius)
-    .attr('cy', event.y + updatedRadius)
-  select(`#sensor-${event.subject.id}`)
-    .select('.upper-left-dot')
-    .attr('cx', event.x)
-    .attr('cy', event.y)
-  select(`#sensor-${event.subject.id}`)
-    .select('.sensor-rect')
-    .attr('x', event.x)
-    .attr('y', event.y)
-    .attr('width', updatedRadius * 2)
-    .attr('height', updatedRadius * 2)
-
-  select(`#sensor-${event.subject.id}`)
-    .select('.sensor-label')
-    .attr('x', event.x + updatedRadius)
-    .attr('y', event.y + updatedRadius)
-    .attr('dy', -updatedRadius - 5)
-
-  select(`#sensor-${event.subject.id}`)
-    .select('.upper-right-dot')
-    .attr('cx', event.x + updatedRadius * 2)
-    .attr('cy', event.y)
-
-  select(`#sensor-${event.subject.id}`)
-    .select('.lower-left-dot')
-    .attr('cx', event.x)
-    .attr('cy', event.y + updatedRadius * 2)
-
-  select(`#sensor-${event.subject.id}`)
-    .select('.lower-right-dot')
-    .attr('cx', event.x + updatedRadius * 2)
-    .attr('cy', event.y + updatedRadius * 2)
-})
-d3UpperLeftResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-  editSensor(event.subject.id, {
-    position: {
-      x: event.x + updatedRadius,
-      y: event.y + updatedRadius
-    }
-  })
-
-  editSensor(event.subject.id, {
-    radius: updatedRadius
-  })
-
-  updatedRadius = 0
-  startPositionX = 0
-  originalRadius = 0
-
-  select('body').style('cursor', 'auto')
-})
+watch(
+  () => editedSensor.value,
+  (newValue) => {
+    editSensor(newValue.id, {
+      position: {
+        x: newValue.position.x,
+        y: newValue.position.y
+      },
+      radius: newValue.radius
+    })
+  },
+  { deep: true }
+)
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -304,7 +217,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('fill', '#BDBDBD')
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
-      .call(d3UpperLeftResize)
+      .call(d3UpperLeftResize(editedSensor.value))
 
     sensorEnter
       .append('circle')
@@ -314,6 +227,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
+      .call(d3UpperRightResize(editedSensor.value))
 
     sensorEnter
       .append('circle')
@@ -323,6 +237,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
+      .call(d3LowerLeftResize(editedSensor.value))
 
     sensorEnter
       .append('circle')
@@ -332,6 +247,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
+      .call(d3LowerRightResize(editedSensor.value))
 
     // Append Text
     sensorEnter
@@ -344,7 +260,7 @@ onMounted(() => {
       .style('font-size', 12)
       .text((sensor) => sensor.name)
 
-    sensorEnter.call(d3Drag).on('click', (event, sensor) => {
+    sensorEnter.call(d3Drag(editedSensor.value)).on('click', (event, sensor) => {
       event.stopPropagation()
       hasSensorSelected.value = true
       onSelectSensor(sensor.id)
@@ -375,22 +291,29 @@ onMounted(() => {
       .attr('cx', (sensor) => sensor.position.x - sensor.radius)
       .attr('cy', (sensor) => sensor.position.y - sensor.radius)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
-      .call(d3UpperLeftResize)
+
+    // .call(d3UpperLeftResize(editedSensor.value))
 
     upperRightDot
       .attr('cx', (sensor) => sensor.position.x + sensor.radius)
       .attr('cy', (sensor) => sensor.position.y - sensor.radius)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
 
+    // .call(d3UpperRightResize(editedSensor.value))
+
     lowerLeftDot
       .attr('cx', (sensor) => sensor.position.x - sensor.radius)
       .attr('cy', (sensor) => sensor.position.y + sensor.radius)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
 
+    // .call(d3LowerLeftResize(editedSensor.value))
+
     lowerRightDot
       .attr('cx', (sensor) => sensor.position.x + sensor.radius)
       .attr('cy', (sensor) => sensor.position.y + sensor.radius)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
+
+    // .call(d3LowerRightResize(editedSensor.value))
 
     // Exit
     sensorGroup.exit().remove()

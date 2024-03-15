@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
-import DesignCanvasControl from './components/sensorPlacementCanvas/DesignCanvasControl.vue'
 import { ref, provide } from 'vue'
 
 const isDesignCanvasVisible = ref(true)
@@ -26,17 +25,14 @@ provide('DesignCanvasControl', {
     <div class="canvas">
       <FlowChartCanvas />
       <div
-        class="design-canvas elevation-1"
+        class="design-canvas"
         :style="{
-          width: designCanvasSize === 'small' ? '40%' : '80%',
-          height: designCanvasSize === 'small' ? '40%' : '80%'
+          width: designCanvasSize === 'small' ? '45%' : '80%',
+          height: designCanvasSize === 'small' ? '45%' : '80%'
         }"
         v-show="isDesignCanvasVisible"
       >
         <DesignCanvas />
-      </div>
-      <div class="design-canvas-control">
-        <DesignCanvasControl />
       </div>
     </div>
   </div>
@@ -50,7 +46,7 @@ provide('DesignCanvasControl', {
 
 .design-canvas {
   position: absolute;
-  bottom: 50px;
+  bottom: 10px;
   right: 10px;
   z-index: 5;
 }

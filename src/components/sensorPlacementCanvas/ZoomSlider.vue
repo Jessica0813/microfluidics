@@ -15,11 +15,11 @@
     <button @click="zoomIn" class="button" :disabled="maxZoomReached">
       <IconZoomIn :color="maxZoomReached ? '#BDBDBD' : ''" />
     </button>
-  </div>
-  <div class="d-flex button-group ml-4">
     <button class="icon-button with-right-border" title="reset the view" @click="resetView">
       <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
     </button>
+  </div>
+  <!-- <div class="d-flex button-group ml-4">
     <button
       class="icon-button with-right-border"
       title="delete"
@@ -36,7 +36,7 @@
       v-model="menu"
       :selected-sensor-id="selectedSensorId"
     />
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">

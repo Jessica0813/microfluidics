@@ -1,20 +1,45 @@
 <template>
-  <div
-    style="
-      width: 100%;
-      height: 100%;
-      overflow: clip;
-      background-color: #faf9f7;
-      border: 1px solid #dfdfdf;
-      border-radius: 4px;
-    "
-    @click="removeSelectedSensor"
-    @dragover="onDragOver"
-    @drop="onDrop"
-  >
-    <SensorPanel class="sensor-panel" />
-    <div class="top-bar">
-      <ZoomSlider
+  <div class="canvas-wrapper">
+    <!-- <div v-if="isCanvasFocused">
+      <button>
+        <v-icon color="#66615b">{{ isCanvasFocused ? 'mdi-plus' : 'mdi-minus' }}</v-icon>
+      </button>
+    </div> -->
+    <div
+      class="canvas"
+      @click="removeSelectedSensor"
+      @dragover="onDragOver"
+      @drop="onDrop"
+      @mouseenter="isCanvasFocused = true"
+      @mouseleave="isCanvasFocused = false"
+      :style="{
+        boxShadow: isCanvasFocused
+          ? '4px 4px 8px 2px rgba(0, 100, 255, 0.4)'
+          : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
+      }"
+    >
+      <SensorPanel class="sensor-panel" />
+      <svg ref="svg" width="100%" height="100%">
+        <defs>
+          <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />
+          </pattern>
+          <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+            <rect
+              width="100%"
+              height="100%"
+              fill="url(#smallGrid)"
+              stroke="#E0E0E0"
+              stroke-width="1"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" x="0" y="0" fill="url(#grid)" />
+        <g id="canvas"></g>
+      </svg>
+    </div>
+    <div class="control-bar">
+      <DesignCanvasControl
         v-model:transform="transform"
         :d3-zoom="d3Zoom"
         :d3-selection="d3Selection"
@@ -22,24 +47,6 @@
         :selected-sensor-id="selectedSensorId"
       />
     </div>
-    <svg ref="svg" width="100%" height="100%">
-      <defs>
-        <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-          <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />
-        </pattern>
-        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-          <rect
-            width="100%"
-            height="100%"
-            fill="url(#smallGrid)"
-            stroke="#E0E0E0"
-            stroke-width="1"
-          />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" x="0" y="0" fill="url(#grid)" />
-      <g id="canvas"></g>
-    </svg>
   </div>
 </template>
 
@@ -64,6 +71,7 @@ import {
   d3Drag
 } from '@/composables/useSensorDragandResize'
 import type { EditedSensor } from '@/composables/useSensorDragandResize'
+import DesignCanvasControl from './DesignCanvasControl.vue'
 
 const {
   sensors,
@@ -85,6 +93,7 @@ const editedSensor = ref<EditedSensor>({
   position: { x: 0, y: 0 },
   radius: 0
 })
+const isCanvasFocused = ref(false)
 
 watch(
   () => editedSensor.value,
@@ -352,6 +361,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.canvas-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex; /* Add display:flex; to enable flexbox */
+  flex-direction: column; /* Align items to the end of the container */
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+  background-color: #faf9f7;
+  border: 1px solid #dfdfdf;
+  border-radius: 4px;
+  box-shadow: 4px 4px 8px 2px rgba(128, 128, 128, 0.2);
+}
+
+.control-bar {
+  display: flex;
+  margin-top: 8px;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
 .sensor-panel {
   position: absolute;
   top: 35%;

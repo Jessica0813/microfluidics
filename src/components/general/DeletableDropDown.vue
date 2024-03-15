@@ -17,6 +17,11 @@ const selectItem = (item: string) => {
 const onClickOutside = () => {
   isMenuOpen.value = false
 }
+
+const removeSelectedItem = () => {
+  selected.value = ''
+  isMenuOpen.value = false
+}
 </script>
 
 <template>
@@ -56,7 +61,7 @@ const onClickOutside = () => {
       v-if="isMenuOpen"
       class="flex flex-column elevation-2"
     >
-      <button class="dropdown-item" @click="selected = ''">remove</button>
+      <button class="dropdown-item" @click="removeSelectedItem">remove</button>
       <button
         class="dropdown-item"
         v-for="(item, index) in items"
@@ -79,7 +84,8 @@ const onClickOutside = () => {
   height: 100%;
   width: 180px;
   padding: 2px 4px;
-  border-radius: 4px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
   font-size: 14px;
   border-right: 1px solid #dfdfdf;
 }

@@ -1,61 +1,66 @@
 <template>
-  <!-- <div class="canvas-wrapper"> -->
   <div
-    class="canvas"
-    @click="removeSelectedSensor"
-    @dragover="onDragOver"
-    @drop="onDrop"
+    class="wrapper"
+    v-if="isDesignCanvasVisible"
     @mouseenter="isCanvasFocused = true"
     @mouseleave="isCanvasFocused = false"
-    :style="{
-      boxShadow: isCanvasFocused
-        ? '4px 4px 8px 2px rgba(128, 128, 128, 0.6)'
-        : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
-    }"
   >
-    <SensorPanel class="sensor-panel" />
-    <svg ref="svg" width="100%" height="100%">
-      <defs>
-        <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-          <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />
-        </pattern>
-        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-          <rect
-            width="100%"
-            height="100%"
-            fill="url(#smallGrid)"
-            stroke="#E0E0E0"
-            stroke-width="1"
-          />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" x="0" y="0" fill="url(#grid)" />
-      <g id="canvas"></g>
-    </svg>
-    <div class="control-bar">
-      <DesignCanvasControl
-        v-model:transform="transform"
-        :d3-zoom="d3Zoom"
-        :d3-selection="d3Selection"
-        v-model:hasSensorSelected="hasSensorSelected"
-        :selected-sensor-id="selectedSensorId"
-      />
-    </div>
-    <div class="size-control">
-      <button @click="toggleDesignCanvasSize" class="button-canvas-down">
-        <v-icon size="small" color="#66615b">{{
+    <div class="size-control" v-show="isCanvasFocused">
+      <button @click="toggleDesignCanvasSize" class="button-size">
+        <v-icon size="24" color="#66615b">{{
           designCanvasSize === 'small' ? 'mdi-plus' : 'mdi-minus'
         }}</v-icon>
       </button>
-      <!-- <button
-        class="button-canvas-down"
-        @click="toggleDesignCanvasVisibility"
-      >
+      <button class="button-canvas-down" @click="toggleDesignCanvasVisibility">
         <IconCanvasDown />
-      </button> -->
+      </button>
+    </div>
+    <div
+      class="canvas"
+      @click="removeSelectedSensor"
+      @dragover="onDragOver"
+      @drop="onDrop"
+      :style="{
+        boxShadow: isCanvasFocused
+          ? '4px 4px 8px 2px rgba(128, 128, 128, 0.6)'
+          : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)',
+        width: designCanvasSize === 'small' ? '560px' : '960px',
+        height: designCanvasSize === 'small' ? '350px' : '600px'
+      }"
+    >
+      <SensorPanel class="sensor-panel" />
+      <svg ref="svg" width="100%" height="100%">
+        <defs>
+          <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />
+          </pattern>
+          <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+            <rect
+              width="100%"
+              height="100%"
+              fill="url(#smallGrid)"
+              stroke="#E0E0E0"
+              stroke-width="1"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" x="0" y="0" fill="url(#grid)" />
+        <g id="canvas"></g>
+      </svg>
+      <div class="control-bar">
+        <DesignCanvasControl
+          v-model:transform="transform"
+          :d3-zoom="d3Zoom"
+          :d3-selection="d3Selection"
+          v-model:hasSensorSelected="hasSensorSelected"
+          :selected-sensor-id="selectedSensorId"
+        />
+      </div>
     </div>
   </div>
-  <!-- </div> -->
+  <button v-else class="button-canvas-down" @click="toggleDesignCanvasVisibility">
+    <IconCanvasUp />
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -381,21 +386,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.canvas-wrapper {
+.wrapper {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
 }
-
 .canvas {
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: clip;
   background-color: #faf9f7;
   border: 1px solid #dfdfdf;
   border-radius: 4px;
-  box-shadow: 4px 4px 8px 2px rgba(128, 128, 128, 0.2);
+  transition:
+    width 0.5s ease,
+    height 0.5s ease,
+    box-shadow 0.5s ease;
 }
 
 .control-bar {
@@ -413,11 +422,15 @@ onMounted(() => {
 }
 
 .size-control {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   display: flex;
   flex-direction: row;
+}
+
+.button-size {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
 }
 
 .button-canvas-down {

@@ -24,14 +24,7 @@ provide('DesignCanvasControl', {
   <div id="app">
     <div class="canvas">
       <FlowChartCanvas />
-      <div
-        class="design-canvas"
-        :style="{
-          width: designCanvasSize === 'small' ? '45%' : '80%',
-          height: designCanvasSize === 'small' ? '45%' : '80%'
-        }"
-        v-show="isDesignCanvasVisible"
-      >
+      <div class="design-canvas">
         <DesignCanvas />
       </div>
     </div>
@@ -49,12 +42,6 @@ provide('DesignCanvasControl', {
   bottom: 10px;
   right: 10px;
   z-index: 5;
-}
-
-.design-canvas {
-  transition:
-    width 0.5s ease,
-    height 0.5s ease;
 }
 
 .design-canvas-control {

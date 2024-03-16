@@ -28,7 +28,7 @@ function onDragStart(event: DragEvent, sensorType: string) {
   padding: 2px;
 }
 .icon-padding {
-  padding: 4px 6px;
+  padding: 0px 2px;
 }
 .icon-padding:hover {
   background-color: #e0e0e0;

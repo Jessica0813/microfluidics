@@ -51,6 +51,12 @@ provide('DesignCanvasControl', {
   z-index: 5;
 }
 
+.design-canvas {
+  transition:
+    width 0.5s ease,
+    height 0.5s ease;
+}
+
 .design-canvas-control {
   position: absolute;
   bottom: 10px;

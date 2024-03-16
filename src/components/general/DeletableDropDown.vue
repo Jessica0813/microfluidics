@@ -38,7 +38,7 @@ const removeSelectedItem = () => {
       @click="isMenuOpen = !isMenuOpen"
     >
       <div style="text-align: center; width: 90%">
-        <p>{{ selected === '' ? 'please select a layer' : selected }}</p>
+        <p>{{ selected === '' ? 'Select Layer' : selected }}</p>
       </div>
       <v-icon
         size="16px"
@@ -82,7 +82,7 @@ const removeSelectedItem = () => {
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  width: 180px;
+  width: 120px;
   padding: 2px 4px;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;

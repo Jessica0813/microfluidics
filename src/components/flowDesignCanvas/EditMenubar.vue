@@ -51,29 +51,30 @@ const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
 
-watch(
-  getSelectedNodes,
-  (newSelectedNodes, oldSelectedNodes) => {
-    if (newSelectedNodes.length === 1) {
-      if (selectedId.value === null) {
-        selectedId.value = newSelectedNodes[0].id
-        isMenuBarOpen.value = true
-      } else if (newSelectedNodes[0] !== oldSelectedNodes[0]) {
-        selectedId.value = newSelectedNodes[0].id
-      }
-      const element = document.getElementById(selectedId.value!)
-      useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-        position.value = pos
-      })
-    } else {
-      isMenuBarOpen.value = false
-      selectedId.value = null
-    }
-  },
-  {
-    deep: true
+watch(getSelectedNodes, (newSelectedNodes, oldSelectedNodes) => {
+  if (
+    newSelectedNodes.length === 1 &&
+    oldSelectedNodes.length === 1 &&
+    newSelectedNodes[0].id === oldSelectedNodes[0].id
+  ) {
+    return
   }
-)
+  if (newSelectedNodes.length === 1) {
+    if (selectedId.value === null) {
+      selectedId.value = newSelectedNodes[0].id
+      isMenuBarOpen.value = true
+    } else if (newSelectedNodes[0] !== oldSelectedNodes[0]) {
+      selectedId.value = newSelectedNodes[0].id
+    }
+    const element = document.getElementById(selectedId.value!)
+    useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+      position.value = pos
+    })
+  } else {
+    isMenuBarOpen.value = false
+    selectedId.value = null
+  }
+})
 
 onNodeDragStart(() => {
   isMenuBarOpen.value = false
@@ -166,7 +167,7 @@ watch(
 <style scoped>
 .wrapper {
   position: fixed;
-  z-index: 100;
+  z-index: 3;
   display: flex;
   flex-direction: row;
   justify-content: center;

@@ -1,7 +1,7 @@
 <template>
   <div
     class="wrapper"
-    v-if="isDesignCanvasVisible"
+    v-show="isDesignCanvasVisible"
     @mouseenter="isCanvasFocused = true"
     @mouseleave="isCanvasFocused = false"
   >
@@ -58,7 +58,11 @@
       </div>
     </div>
   </div>
-  <button v-else class="button-canvas-down" @click="toggleDesignCanvasVisibility">
+  <button
+    v-show="!isDesignCanvasVisible"
+    class="button-canvas-down"
+    @click="toggleDesignCanvasVisibility"
+  >
     <IconCanvasUp />
   </button>
 </template>

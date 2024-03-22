@@ -8,7 +8,7 @@
       </template>
       <CustomizedNumberInput v-model:number="scheduledFlowControl.totalDuration" />
     </v-menu>
-    <button class="customized-button">
+    <button class="customized-button" @click="deleteSelectedElements">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>
@@ -69,7 +69,7 @@
       </template>
       <CustomizedNumberInput v-model:number="flowControl.duration" />
     </v-menu>
-    <button class="customized-button">
+    <button class="customized-button" @click="deleteSelectedElements">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>
@@ -83,7 +83,7 @@ import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import type { ScheduledFlowControl } from '@/types/flowControl'
 
-const { findNode } = useVueFlow()
+const { findNode, removeNodes } = useVueFlow()
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
@@ -154,6 +154,13 @@ watch(
     deep: true
   }
 )
+
+function deleteSelectedElements() {
+  const node = findNode(props.id)
+  if (node) {
+    removeNodes([node])
+  }
+}
 </script>
 
 <style scoped>

@@ -31,7 +31,8 @@ const {
   onViewportChangeStart,
   onViewportChangeEnd,
   viewport,
-  vueFlowRef
+  vueFlowRef,
+  removeNodes
 } = useVueFlow()
 
 function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
@@ -140,7 +141,6 @@ d3Drag.on('start', (event: D3DragEvent<HTMLDivElement, any, any>) => {
 d3Drag.on('drag', (event: D3DragEvent<HTMLDivElement, any, any>) => {
   x = event.x - startOffsetX
   y = event.y - startOffsetY
-  // select('#dragIcon').style('transform', `translate(${x}px, ${y}px)`)
   select('#menu-bar').style('top', `${y}px`).style('left', `${x}px`)
 })
 d3Drag.on('end', (event: D3DragEvent<HTMLDivElement, any, any>) => {
@@ -176,6 +176,7 @@ watch(
   width: fit-content;
   height: fit-content;
   border-radius: 8px;
+  box-shadow: 2px 2px 4px 0px rgba(128, 128, 128, 0.2);
 }
 .drag-button {
   display: flex;

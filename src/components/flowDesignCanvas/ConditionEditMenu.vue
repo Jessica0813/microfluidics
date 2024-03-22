@@ -44,7 +44,7 @@
       </template>
       <CustomizedNumberInput v-model:number="condition.viscosity" />
     </v-menu>
-    <button class="customized-button">
+    <button class="customized-button" @click="deleteSelectedElements">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>
@@ -57,7 +57,7 @@ import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 
-const { findNode } = useVueFlow()
+const { findNode, removeNodes } = useVueFlow()
 
 const props = defineProps<{
   id: string | null
@@ -91,6 +91,13 @@ const dynamicOperators = computed(() => {
     return []
   }
 })
+
+function deleteSelectedElements() {
+  const node = findNode(props.id)
+  if (node) {
+    removeNodes([node])
+  }
+}
 </script>
 
 <style scoped>

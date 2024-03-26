@@ -8,33 +8,11 @@
       v-model:hasSensorSelected="hasSensorSelected"
       :selected-sensor-id="selectedSensorId"
     />
-    <!-- <button
-      class="icon-button with-right-border"
-      :title="
-        designCanvasSize === 'small' ? 'Enlarge the design canvas' : 'Reduce the design canvas'
-      "
-      @click="toggleDesignCanvasSize"
-    >
-      <v-icon size="small" color="#66615b">{{
-        designCanvasSize === 'small' ? 'mdi-plus' : 'mdi-minus'
-      }}</v-icon>
-    </button>
-    <button
-      class="icon-button"
-      :title="isDesignCanvasVisible ? 'hide the design canvas' : 'show the design canvas'"
-      @click="toggleDesignCanvasVisibility"
-    >
-      <v-icon size="small" color="#66615b">{{
-        isDesignCanvasVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
-      }}</v-icon>
-    </button> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, ref } from 'vue'
-// import type { CanvasControl } from '@/types/designCanvasControl'
-// import { defaultDesignCanvasControl } from '@/types/designCanvasControl'
+import { ref } from 'vue'
 import DeletableDropDown from '../general/DeletableDropDown.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
@@ -46,13 +24,6 @@ defineProps<{
   d3Selection: D3Selection | undefined
   selectedSensorId: string
 }>()
-
-// const {
-//   isDesignCanvasVisible,
-//   designCanvasSize,
-//   toggleDesignCanvasSize,
-//   toggleDesignCanvasVisibility
-// } = inject<CanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
 
 const selected = ref('')
 const layer = ref(['layer 1', 'layer 2', 'layer 3'])

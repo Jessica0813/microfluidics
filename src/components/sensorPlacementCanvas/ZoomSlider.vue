@@ -40,25 +40,25 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, ref } from 'vue'
+import { toRef } from 'vue'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
-import { useSensorStore } from '@/stores/useSensorStore'
-import SensorEditMenu from './SensorEditMenu.vue'
+// import { useSensorStore } from '@/stores/useSensorStore'
+// import SensorEditMenu from './SensorEditMenu.vue'
 
-const { deleteSelectedSensor } = useSensorStore()
+// const { deleteSelectedSensor } = useSensorStore()
 
 const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
-const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
+// const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
   selectedSensorId: string
 }>()
 
-const menu = ref(false)
+// const menu = ref(false)
 
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
 const maxZoomReached = toRef(() => transform.value.k >= 2)
@@ -95,10 +95,10 @@ function resetView() {
   }
 }
 
-function onDeleteSelectedSensor() {
-  hasSensorSelected.value = false
-  deleteSelectedSensor()
-}
+// function onDeleteSelectedSensor() {
+//   hasSensorSelected.value = false
+//   deleteSelectedSensor()
+// }
 </script>
 
 <style scoped>

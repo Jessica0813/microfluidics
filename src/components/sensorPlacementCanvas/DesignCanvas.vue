@@ -41,9 +41,9 @@
       />
     </div>
     <button
-      @click="toggleDesignCanvasSize"
+      @click="designCanvasSize = designCanvasSize === 'small' ? 'large' : 'small'"
       class="button-size"
-      v-show="isCanvasFocused && isDesignCanvasVisible"
+      v-if="isCanvasFocused && isDesignCanvasVisible"
     >
       <v-icon size="24" color="#66615b">{{
         designCanvasSize === 'small' ? 'mdi-plus' : 'mdi-minus'
@@ -51,8 +51,8 @@
     </button>
     <button
       class="button-canvas-down"
-      @click="toggleDesignCanvasVisibility"
-      v-show="isCanvasFocused && isDesignCanvasVisible"
+      @click.stop="isDesignCanvasVisible = !isDesignCanvasVisible"
+      v-if="isCanvasFocused && isDesignCanvasVisible"
     >
       <IconCanvasDown />
     </button>
@@ -80,9 +80,6 @@ import {
 } from '@/composables/useSensorDragandResize'
 import type { EditedSensor } from '@/composables/useSensorDragandResize'
 import DesignCanvasControl from './DesignCanvasControl.vue'
-import { inject } from 'vue'
-import { defaultDesignCanvasControl } from '@/types/designCanvasControl'
-import type { CanvasControl } from '@/types/designCanvasControl'
 import IconCanvasDown from '../icons/IconCanvasDown.vue'
 
 const {
@@ -107,12 +104,8 @@ const editedSensor = ref<EditedSensor>({
 })
 const isCanvasFocused = ref(false)
 
-const {
-  isDesignCanvasVisible,
-  designCanvasSize,
-  toggleDesignCanvasSize,
-  toggleDesignCanvasVisibility
-} = inject<CanvasControl>('DesignCanvasControl') || defaultDesignCanvasControl
+const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
+const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
 
 watch(
   () => editedSensor.value,
@@ -127,18 +120,6 @@ watch(
   },
   { deep: true }
 )
-
-function onMouseEnter() {
-  if (isDesignCanvasVisible) {
-    isCanvasFocused.value = true
-  }
-}
-
-function onMouseLeave() {
-  if (isDesignCanvasVisible) {
-    isCanvasFocused.value = false
-  }
-}
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -156,9 +137,13 @@ function onDrop(event: any) {
 }
 
 function removeSelectedSensor() {
-  removeAllSelectedSensors()
-  hasSensorSelected.value = false
-  selectedSensorId.value = ''
+  if (isDesignCanvasVisible.value) {
+    removeAllSelectedSensors()
+    hasSensorSelected.value = false
+    selectedSensorId.value = ''
+  } else {
+    isDesignCanvasVisible.value = true
+  }
 }
 
 onMounted(() => {
@@ -433,13 +418,5 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.button-canvas-up {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
 }
 </style>

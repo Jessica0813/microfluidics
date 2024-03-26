@@ -1,23 +1,10 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
 import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
-import { ref, provide } from 'vue'
+import { ref } from 'vue'
 
 const isDesignCanvasVisible = ref(true)
 const designCanvasSize = ref('small')
-function toggleDesignCanvasSize() {
-  designCanvasSize.value = designCanvasSize.value === 'small' ? 'large' : 'small'
-}
-
-function toggleDesignCanvasVisibility() {
-  isDesignCanvasVisible.value = !isDesignCanvasVisible.value
-}
-provide('DesignCanvasControl', {
-  isDesignCanvasVisible,
-  designCanvasSize,
-  toggleDesignCanvasSize,
-  toggleDesignCanvasVisibility
-})
 </script>
 
 <template>
@@ -31,7 +18,10 @@ provide('DesignCanvasControl', {
           height: isDesignCanvasVisible ? (designCanvasSize === 'small' ? '40%' : '80%') : '50px'
         }"
       >
-        <DesignCanvas />
+        <DesignCanvas
+          v-model:design-canvas-size="designCanvasSize"
+          v-model:is-design-canvas-visible="isDesignCanvasVisible"
+        />
       </div>
     </div>
   </div>

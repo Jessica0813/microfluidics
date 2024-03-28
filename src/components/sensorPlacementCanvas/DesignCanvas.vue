@@ -44,17 +44,18 @@
       @click="designCanvasSize = designCanvasSize === 'small' ? 'large' : 'small'"
       class="button-size"
       v-if="isCanvasFocused && isDesignCanvasVisible"
+      @mouseenter="isButtonHovered = true"
+      @mouseleave="isButtonHovered = false"
     >
-      <v-icon size="24" color="#66615b">{{
-        designCanvasSize === 'small' ? 'mdi-plus' : 'mdi-minus'
-      }}</v-icon>
+      <IconEnlarge :size="isButtonHovered ? 28 : 24" v-if="designCanvasSize === 'small'" />
+      <IconSchrink :size="isButtonHovered ? 28 : 24" v-else />
     </button>
     <button
       class="button-canvas-down"
       @click.stop="isDesignCanvasVisible = !isDesignCanvasVisible"
       v-if="isCanvasFocused && isDesignCanvasVisible"
     >
-      <IconCanvasDown />
+      <IconScreenSchrink />
     </button>
   </div>
 </template>
@@ -62,11 +63,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { zoom } from 'd3-zoom'
-// import { zoomIdentity } from 'd3'
 import { select } from 'd3-selection'
 import { useSensorStore } from '@/stores/useSensorStore'
-// import { drag } from 'd3-drag'
-// import type { D3DragEvent } from 'd3-drag'
 import type { Sensor } from '@/types/sensor'
 import { useDrop } from '@/composables/useDrop'
 import SensorPanel from './SensorPanel.vue'
@@ -81,6 +79,9 @@ import {
 import type { EditedSensor } from '@/composables/useSensorDragandResize'
 import DesignCanvasControl from './DesignCanvasControl.vue'
 import IconCanvasDown from '../icons/IconCanvasDown.vue'
+import IconEnlarge from '../icons/IconEnlarge.vue'
+import IconSchrink from '../icons/IconSchrink.vue'
+import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
 
 const {
   sensors,
@@ -103,6 +104,7 @@ const editedSensor = ref<EditedSensor>({
   radius: 0
 })
 const isCanvasFocused = ref(false)
+const isButtonHovered = ref(false)
 
 const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
 const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })

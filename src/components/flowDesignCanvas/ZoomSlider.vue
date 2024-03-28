@@ -18,7 +18,7 @@
   </div>
   <div class="d-flex button-group ml-4">
     <button class="icon-button with-right-border" title="reset the view" @click="resetView">
-      <v-icon size="small" color="#66615b">mdi-border-radius</v-icon>
+      <v-icon size="small" color="#66615b">mdi-image-filter-center-focus-weak</v-icon>
     </button>
     <button
       class="icon-button"

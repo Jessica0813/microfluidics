@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto; max-width: 100%; max-height: 100%">
+  <div style="overflow: auto; max-width: 100%; max-height: 100%" @click="onClick">
     <svg ref="chart" style="max-width: auto; max-height: auto; font: 10px sans-serif">
       <g id="xAxis"></g>
       <g id="chartContent" />
@@ -16,11 +16,14 @@ import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
 import { useTooltipContent } from '@/composables/useTooltipContent'
+import { useVueFlow } from '@vue-flow/core'
 
 const props = defineProps({
   id: String,
   totalDuration: Number
 })
+
+const { findNode } = useVueFlow()
 
 const isMenuOpen = defineModel<boolean>('isMenuOpen', { default: false })
 // const isEditingProcess = defineModel<boolean>('isEditingProcess', { default: false })
@@ -35,6 +38,13 @@ let instances: Instance[] = []
 const marginX = 17
 const marginTop = 10
 const barHeight = 20
+
+function onClick(event: MouseEvent) {
+  event.stopPropagation()
+  if (editedProcess.value) {
+    editedProcess.value.selected = false
+  }
+}
 
 onMounted(() => {
   if (!chart.value) return
@@ -123,8 +133,15 @@ onMounted(() => {
       .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
       .call(useDrag(props.id!, instances, width, marginX))
       .on('click', (event, d) => {
-        // isEditingProcess.value = true
         //update relative process with selected is true
+        event.stopPropagation()
+
+        const node = findNode(props.id)
+
+        if (node && !node.selected) {
+          node.selected = true
+        }
+
         flowControlProcesses.value = flowControlProcesses.value.map((p) => {
           if (p.id === d.id) {
             p.selected = true

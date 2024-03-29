@@ -78,7 +78,6 @@ import {
 } from '@/composables/useSensorDragandResize'
 import type { EditedSensor } from '@/composables/useSensorDragandResize'
 import DesignCanvasControl from './DesignCanvasControl.vue'
-import IconCanvasDown from '../icons/IconCanvasDown.vue'
 import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'

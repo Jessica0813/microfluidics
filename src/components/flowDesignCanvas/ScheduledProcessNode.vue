@@ -48,6 +48,8 @@ const nodeIsHovered = ref(false)
 //   }
 // }
 
+const editedProcess = ref<FlowControlProcess>()
+
 function addProcess() {
   const processId = getProcessId()
   scheduledFlowControl.value.processes.push({
@@ -75,6 +77,20 @@ const scheduledFlowControl = computed(() => {
   }
   return data.scheduledFlowControl
 })
+
+function unselectProcess() {
+  //potential bug
+  if (editedProcess.value) {
+    editedProcess.value.selected = false
+  }
+}
+
+// watch(()=>selected, (newValue) => {
+//   console.log(newValue)
+//   if (newValue === false) {
+//     unSelectProcess();
+//   }
+// });
 
 // watch(
 //   [isMenuOpen, () => scheduledFlowControl.value.processes],
@@ -112,6 +128,8 @@ const scheduledFlowControl = computed(() => {
 
 <template>
   <div
+    @click="unselectProcess"
+    v-click-outside="unselectProcess"
     :id="id"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
@@ -176,6 +194,7 @@ const scheduledFlowControl = computed(() => {
           :id="id"
           :totalDuration="scheduledFlowControl.totalDuration"
           v-model:flowControlProcesses="scheduledFlowControl.processes"
+          v-model:edited-process="editedProcess"
         />
       </div>
     </div>

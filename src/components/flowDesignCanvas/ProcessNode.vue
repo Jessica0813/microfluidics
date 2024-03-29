@@ -1,20 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
-// import type { FlowControl } from '@/types/flowControl'
+import { ref, computed } from 'vue'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
-// const { updateNodeData } = useVueFlow()
 const { id, selected, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-
-// const flowControl = ref<FlowControl>({
-//   inlet: 'inlet 1',
-//   injection: 'pump',
-//   fluid: 'water',
-//   pressure: 0,
-//   duration: 0,
-//   flowrate: 0
-// })
 
 const flowControl = computed(() => {
   if (data === undefined || data.flowControl === undefined) {
@@ -29,17 +18,6 @@ const flowControl = computed(() => {
   }
   return data.flowControl
 })
-
-// watch(isMenuOpen, (newValue, oldValue) => {
-//   if (!newValue && oldValue) {
-//     updateNodeData(id, (node) => {
-//       if (node.data === undefined || node.data.flowControl !== flowControl.value) {
-//         node.data.flowControl = flowControl.value
-//       }
-//       console.log(node)
-//     })
-//   }
-// })
 </script>
 
 <template>

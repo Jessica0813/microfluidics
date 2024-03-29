@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
-import type { ScheduledFlowControl, FlowControlProcess } from '@/types/flowControl'
-import { useVueFlow } from '@vue-flow/core'
-
-const { findNode } = useVueFlow()
+import type { FlowControlProcess } from '@/types/flowControl'
 
 let processId = 1
 function getProcessId() {
@@ -14,39 +11,6 @@ function getProcessId() {
 }
 const { selected, id, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-// const isMenuOpen = ref(false)
-// const isEditingProcess = ref(false)
-// const editedProcess = ref<FlowControlProcess>({
-//   id: '',
-//   name: '',
-//   selected: false,
-//   startTime: 0,
-//   endTime: 0,
-//   duration: 0,
-//   inlet: '',
-//   injection: '',
-//   fluid: '',
-//   pressure: 0,
-//   flowrate: 0
-// })
-
-// const scheduledFlowControl = ref<ScheduledFlowControl>({
-//   totalDuration: 20,
-//   name: id,
-//   processes: []
-// })
-
-// function onClickOutside() {
-//   updateProcess()
-//   isMenuOpen.value = false
-//   isEditingProcess.value = false
-// }
-
-// function updateProcess() {
-//   if (editedProcess.value.id) {
-//     editedProcess.value.selected = false
-//   }
-// }
 
 const editedProcess = ref<FlowControlProcess>()
 
@@ -84,46 +48,6 @@ function unselectProcess() {
     editedProcess.value.selected = false
   }
 }
-
-// watch(()=>selected, (newValue) => {
-//   console.log(newValue)
-//   if (newValue === false) {
-//     unSelectProcess();
-//   }
-// });
-
-// watch(
-//   [isMenuOpen, () => scheduledFlowControl.value.processes],
-//   ([newValue], [oldValue]) => {
-//     const node = findNode(id)
-//     if (node === undefined) {
-//       return
-//     }
-//     const data = node.data
-
-//     if (!newValue && oldValue) {
-//       if (data.name !== scheduledFlowControl.value.name) {
-//         node.data.scheduledFlowControl = scheduledFlowControl.value
-//       }
-
-//       if (data.totalDuration !== scheduledFlowControl.value.totalDuration) {
-//         node.data.scheduledFlowControl.totalDuration = scheduledFlowControl.value.totalDuration
-//       }
-
-//       if (data.processes !== scheduledFlowControl.value.processes) {
-//         node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
-//       }
-//       console.log(node.data.scheduledFlowControl)
-//       return
-//     }
-//     if (data.processes !== scheduledFlowControl.value.processes) {
-//       node.data.scheduledFlowControl.processes = scheduledFlowControl.value.processes
-//     }
-//   },
-//   {
-//     deep: true
-//   }
-// )
 </script>
 
 <template>

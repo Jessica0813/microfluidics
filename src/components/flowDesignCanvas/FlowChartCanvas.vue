@@ -11,11 +11,6 @@ import ScheduledProcessNode from './ScheduledProcessNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
-// import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator'
-// import ProcessEditMenu from './ProcessEditMenu.vue'
-// import ConditionEditMenu from './ConditionEditMenu.vue'
-// import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
-// import { ref } from 'vue'
 import EditMenubar from './EditMenubar.vue'
 
 let processNodeId = 1
@@ -159,6 +154,8 @@ function onDrop(event: any) {
       { deep: true, flush: 'post' }
     )
   })
+
+  console.log(findNode(newNode.id))
 }
 </script>
 
@@ -199,4 +196,3 @@ function onDrop(event: any) {
     </VueFlow>
   </div>
 </template>
-./ScheduledProcessEditMenu.vue

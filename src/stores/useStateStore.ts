@@ -7,7 +7,11 @@ export const useStateStore = defineStore('state', () => {
   const undo = ref<StateController[]>([])
 
   function addState(stateController: StateController) {
+    if (redo.value.length > 0) {
+      redo.value = []
+    }
     undo.value.push(stateController)
+    console.log(undo.value)
   }
 
   function undoState() {

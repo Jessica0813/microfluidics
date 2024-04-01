@@ -56,8 +56,12 @@ import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 import { useVueFlow } from '@vue-flow/core'
+import { ActionType } from '@/types/stateController'
+import { useStateStore } from '@/stores/useStateStore'
+import { createState } from '@/composables/useStateCreation'
 
 const { findNode, removeNodes } = useVueFlow()
+const { addState } = useStateStore()
 
 const props = defineProps<{
   id: string | null
@@ -96,6 +100,8 @@ function deleteSelectedElements() {
   const node = findNode(props.id)
   if (node) {
     removeNodes([node])
+    const state = createState(node, ActionType.DELETE_NODE)
+    addState(state)
   }
 }
 </script>

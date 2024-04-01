@@ -67,8 +67,12 @@ import { computed } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { useVueFlow } from '@vue-flow/core'
+import { ActionType } from '@/types/stateController'
+import { useStateStore } from '@/stores/useStateStore'
+import { createState } from '@/composables/useStateCreation'
 
 const { findNode, removeNodes } = useVueFlow()
+const { addState } = useStateStore()
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
@@ -97,6 +101,8 @@ function deleteSelectedElements() {
   const node = findNode(props.id)
   if (node) {
     removeNodes([node])
+    const state = createState(node, ActionType.DELETE_NODE)
+    addState(state)
   }
 }
 </script>

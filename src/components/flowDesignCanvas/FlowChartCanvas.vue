@@ -12,6 +12,8 @@ import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
+import { type StateController, ActionType } from '@/types/stateController'
+import { useStateStore } from '@/stores/useStateStore'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -36,6 +38,8 @@ function getEdgeId() {
 
 const { getEdges, findNode, onConnect, updateEdge, addEdges, addNodes, project, vueFlowRef } =
   useVueFlow()
+
+const { addState } = useStateStore()
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -106,15 +110,17 @@ function onDrop(event: any) {
     data: {}
   }
 
+  let nodeData
+
   if (type === 'schedule') {
-    const nodeData = {
+    nodeData = {
       totalDuration: 20,
       name: 'a',
       processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
   } else if (type === 'process') {
-    const nodeData = {
+    nodeData = {
       inlet: 'inlet 1',
       injection: 'pump',
       fluid: 'water',
@@ -124,7 +130,7 @@ function onDrop(event: any) {
     }
     newNode = { ...newNode, data: { flowControl: nodeData } }
   } else if (type === 'condition') {
-    const nodeData = {
+    nodeData = {
       name: 'xxx',
       sensor: 'color sensor',
       operator: '=',
@@ -155,7 +161,15 @@ function onDrop(event: any) {
     )
   })
 
-  console.log(findNode(newNode.id))
+  const state: StateController = {
+    type: ActionType.CREATE_NODE,
+    name: 'create node ' + newNode.id,
+    objectId: newNode.id,
+    objectPosition: newNode.position,
+    data: nodeData
+  }
+
+  addState(state)
 }
 </script>
 

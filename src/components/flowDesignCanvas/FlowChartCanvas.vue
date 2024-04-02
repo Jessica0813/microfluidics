@@ -14,6 +14,7 @@ import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
+import { createState } from '@/composables/useStateCreation'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -36,8 +37,17 @@ function getEdgeId() {
   return `edge_${edgeId++}`
 }
 
-const { getEdges, findNode, onConnect, updateEdge, addEdges, addNodes, project, vueFlowRef } =
-  useVueFlow()
+const {
+  getEdges,
+  findNode,
+  onConnect,
+  updateEdge,
+  addEdges,
+  addNodes,
+  project,
+  vueFlowRef,
+  onNodesChange
+} = useVueFlow()
 
 const { addState } = useStateStore()
 
@@ -171,6 +181,25 @@ function onDrop(event: any) {
 
   addState(state)
 }
+
+onNodesChange((nodeChange) => {
+  // loop through all nodeChange
+  nodeChange.forEach((change) => {
+    if (change.type === 'position' && change.dragging === false) {
+      const state: StateController = {
+        type: ActionType.MOVE_NODE,
+        name: 'move node ' + change.id,
+        objectId: change.id,
+        objectPosition: { x: change.from.x, y: change.from.y },
+        data: ''
+      }
+      addState(state)
+    }
+    // else if (change.type === 'dimensions' && change.id.includes('schedule_')) {
+    //   console.log('Node resize', change)
+    // }
+  })
+})
 </script>
 
 <template>

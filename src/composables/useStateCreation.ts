@@ -10,7 +10,7 @@ export function createState(node: Node, type: ActionType) {
     case ActionType.DELETE_NODE:
       name = 'delete node ' + node.id
       break
-    case ActionType.NODE_POSITION_CHANGE:
+    case ActionType.MOVE_NODE:
       name = 'move node ' + node.id
       break
     case ActionType.NODE_DATA_CHANGE:

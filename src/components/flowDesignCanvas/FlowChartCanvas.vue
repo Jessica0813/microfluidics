@@ -14,7 +14,6 @@ import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
-import { createState } from '@/composables/useStateCreation'
 
 let processNodeId = 1
 let conditionNodeId = 1

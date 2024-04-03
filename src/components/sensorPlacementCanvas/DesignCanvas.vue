@@ -11,6 +11,7 @@
         ? '4px 4px 8px 2px rgba(128, 128, 128, 0.6)'
         : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
     }"
+    v-click-outside="removeAllSelectedSensors"
   >
     <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
     <svg ref="svg" width="100%" height="100%">

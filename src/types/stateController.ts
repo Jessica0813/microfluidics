@@ -9,7 +9,8 @@ export enum ActionType {
   NODE_DATA_CHANGE = 'NODE_DATA_CHANGE',
   CREATE_SENSOR = 'CREATE_SENSOR',
   DELETE_SENSOR = 'DELETE_SENSOR',
-  SENSOR_POSITION_CHANGE = 'SENSOR_POSITION_CHANGE',
+  MOVE_SENSOR = 'MOVE_SENSOR',
+  RESIZE_SENSOR = 'RESIZE_SENSOR',
   SENSOR_DATA_CHANGE = 'SENSOR_DATA_CHANGE'
 }
 
@@ -18,5 +19,6 @@ export interface StateController {
   name: string
   objectId: string
   objectPosition?: { x: number; y: number }
+  objectRadius?: number
   data: FlowControl | ScheduledFlowControl | Condition | Sensor | any
 }

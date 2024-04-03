@@ -1,8 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Sensor } from '@/types/sensor.ts'
+import { useStateStore } from './useStateStore'
+import { type StateController, ActionType } from '@/types/stateController'
 
 export const useSensorStore = defineStore('sensor', () => {
+  const { addState } = useStateStore()
+
+  const tolerance = 0.00001
+
   const sensors = ref<Sensor[]>([])
 
   const selectedSensor = ref<Sensor[]>([])
@@ -15,12 +21,30 @@ export const useSensorStore = defineStore('sensor', () => {
 
   function addSensor(sensor: Sensor) {
     sensors.value.push(sensor)
+
+    const state: StateController = {
+      type: ActionType.CREATE_SENSOR,
+      name: 'create sensor ' + sensor.id,
+      objectId: sensor.id,
+      objectPosition: sensor.position,
+      data: ''
+    }
+    addState(state)
   }
 
   function deleteSelectedSensor() {
     selectedSensor.value.forEach((sensor) => {
       const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
       if (sensorIndex !== -1) {
+        const state: StateController = {
+          type: ActionType.DELETE_SENSOR,
+          name: 'delete sensor ' + sensor.name,
+          objectId: sensor.id,
+          objectPosition: sensor.position,
+          data: ''
+        }
+        addState(state)
+
         sensors.value.splice(sensorIndex, 1)
       }
     })
@@ -30,6 +54,39 @@ export const useSensorStore = defineStore('sensor', () => {
   function editSensor(id: string, updatedSensor: Partial<Sensor>) {
     const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id)
     if (sensorIndex !== -1) {
+      const sensor = sensors.value[sensorIndex]
+      if (
+        updatedSensor.position !== undefined &&
+        updatedSensor.radius !== undefined &&
+        Math.abs(updatedSensor.position.x - sensor.position.x) >= tolerance &&
+        Math.abs(updatedSensor.position.y - sensor.position.y) >= tolerance &&
+        Math.abs(updatedSensor.radius - sensor.radius) >= tolerance
+      ) {
+        console.log(1)
+        const state: StateController = {
+          type: ActionType.RESIZE_SENSOR,
+          name: 'resize sensor ' + sensor.name,
+          objectId: sensor.id,
+          objectPosition: sensor.position,
+          data: ''
+        }
+        addState(state)
+      } else if (
+        updatedSensor.position !== undefined &&
+        Math.abs(updatedSensor.position.x - sensor.position.x) >= tolerance &&
+        Math.abs(updatedSensor.position.y - sensor.position.y) >= tolerance
+      ) {
+        console.log(2)
+        const state: StateController = {
+          type: ActionType.MOVE_SENSOR,
+          name: 'move sensor ' + sensor.name,
+          objectId: sensor.id,
+          objectPosition: sensor.position,
+          data: ''
+        }
+        addState(state)
+      }
+
       // If the sensor with the given id is found, update it
       Object.assign(sensors.value[sensorIndex], updatedSensor)
       console.log('1', sensors.value[sensorIndex])

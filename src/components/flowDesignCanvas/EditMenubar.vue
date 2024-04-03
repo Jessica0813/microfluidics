@@ -31,8 +31,7 @@ const {
   onViewportChangeStart,
   onViewportChangeEnd,
   viewport,
-  vueFlowRef,
-  removeNodes
+  vueFlowRef
 } = useVueFlow()
 
 function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {

@@ -28,6 +28,7 @@
       :close-on-content-click="false"
       offset="10"
       v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
+      v-model="isMenuOpen"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
@@ -40,6 +41,7 @@
       :close-on-content-click="false"
       offset="10"
       v-else-if="flowControl.injection === 'needle'"
+      v-model="isMenuOpen"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
@@ -48,7 +50,7 @@
       </template>
       <CustomizedNumberInput v-model:number="flowControl.flowrate" />
     </v-menu>
-    <v-menu :close-on-content-click="false" offset="10">
+    <v-menu :close-on-content-click="false" offset="10" v-model="isMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -63,11 +65,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch, ref } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { useVueFlow } from '@vue-flow/core'
-import { ActionType } from '@/types/stateController'
+import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createState } from '@/composables/useStateCreation'
 
@@ -77,6 +79,7 @@ const { addState } = useStateStore()
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
+const isMenuOpen = ref(false)
 
 const props = defineProps<{
   id: string | null
@@ -95,6 +98,52 @@ const flowControl = computed(() => {
     }
   }
   return data.flowControl
+})
+
+let oldFlowControl = Object.assign({}, flowControl.value)
+
+watch(
+  flowControl.value,
+  (newFlowControl) => {
+    if (newFlowControl && !isMenuOpen.value) {
+      const node = findNode(props.id)
+      if (node) {
+        console.log(node.data)
+        const state: StateController = {
+          type: ActionType.UPDATE_NODE_DATA,
+          name: 'update node data ' + node.id,
+          objectId: node.id,
+          objectPosition: node.position,
+          data: oldFlowControl
+        }
+        addState(state)
+        oldFlowControl = Object.assign({}, newFlowControl)
+      }
+    }
+  },
+  { deep: true }
+)
+
+watch(isMenuOpen, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    const node = findNode(props.id)
+    if (
+      node &&
+      (flowControl.value.pressure !== oldFlowControl.pressure ||
+        flowControl.value.duration !== oldFlowControl.duration ||
+        flowControl.value.flowrate !== oldFlowControl.flowrate)
+    ) {
+      const state: StateController = {
+        type: ActionType.UPDATE_NODE_DATA,
+        name: 'update node data ' + node.id,
+        objectId: node.id,
+        objectPosition: node.position,
+        data: oldFlowControl
+      }
+      addState(state)
+      oldFlowControl = Object.assign({}, flowControl.value)
+    }
+  }
 })
 
 function deleteSelectedElements() {

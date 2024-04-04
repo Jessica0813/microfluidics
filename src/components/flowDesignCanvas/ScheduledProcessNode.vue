@@ -26,7 +26,7 @@ function addProcess() {
     startTime: 0.0,
     endTime: 1.0,
     duration: 1.0,
-    inlet: 'Inlet 1',
+    inlet: 'inlet 1',
     injection: 'pump',
     fluid: 'water',
     pressure: 0,

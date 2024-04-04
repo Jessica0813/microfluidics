@@ -36,6 +36,7 @@
       :close-on-content-click="false"
       offset="10"
       v-else-if="condition.sensor === 'viscosity sensor'"
+      v-model="isMenuOpen"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
@@ -51,12 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 import { useVueFlow } from '@vue-flow/core'
-import { ActionType } from '@/types/stateController'
+import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createState } from '@/composables/useStateCreation'
 
@@ -82,6 +83,7 @@ const condition = computed(() => {
 })
 
 const sensors = ['color sensor', 'viscosity sensor']
+const isMenuOpen = ref(false)
 
 const dynamicOperators = computed(() => {
   // Get the selected sensor
@@ -95,6 +97,51 @@ const dynamicOperators = computed(() => {
     return []
   }
 })
+
+let oldCondition = Object.assign({}, condition.value)
+
+watch(
+  condition.value,
+  (newCondition) => {
+    if (newCondition && !isMenuOpen.value) {
+      const node = findNode(props.id)
+      if (node) {
+        const state: StateController = {
+          type: ActionType.UPDATE_NODE_DATA,
+          name: 'update node data ' + node.id,
+          objectId: node.id,
+          objectPosition: node.position,
+          data: oldCondition
+        }
+        addState(state)
+        oldCondition = Object.assign({}, newCondition)
+        console.log(oldCondition)
+      }
+    }
+  },
+  { deep: true }
+)
+
+watch(
+  isMenuOpen,
+  (newValue, oldValue) => {
+    if (newValue === false && oldValue === true) {
+      const node = findNode(props.id)
+      if (node && condition.value.viscosity !== oldCondition.viscosity) {
+        const state: StateController = {
+          type: ActionType.UPDATE_NODE_DATA,
+          name: 'update node data ' + node.id,
+          objectId: node.id,
+          objectPosition: node.position,
+          data: oldCondition
+        }
+        addState(state)
+        oldCondition = Object.assign({}, condition.value)
+      }
+    }
+  },
+  { deep: true }
+)
 
 function deleteSelectedElements() {
   const node = findNode(props.id)

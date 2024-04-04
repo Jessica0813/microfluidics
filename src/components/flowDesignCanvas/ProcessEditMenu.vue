@@ -28,7 +28,7 @@
       :close-on-content-click="false"
       offset="10"
       v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
-      v-model="isMenuOpen"
+      v-model="isPressureMenuOpen"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
@@ -41,7 +41,7 @@
       :close-on-content-click="false"
       offset="10"
       v-else-if="flowControl.injection === 'needle'"
-      v-model="isMenuOpen"
+      v-model="isViscosityMenuOpen"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
@@ -50,7 +50,7 @@
       </template>
       <CustomizedNumberInput v-model:number="flowControl.flowrate" />
     </v-menu>
-    <v-menu :close-on-content-click="false" offset="10" v-model="isMenuOpen">
+    <v-menu :close-on-content-click="false" offset="10" v-model="isDurationMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -79,7 +79,13 @@ const { addState } = useStateStore()
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
-const isMenuOpen = ref(false)
+const isPressureMenuOpen = ref(false)
+const isViscosityMenuOpen = ref(false)
+const isDurationMenuOpen = ref(false)
+
+const isMenuOpen = computed(() => {
+  return isPressureMenuOpen.value || isViscosityMenuOpen.value || isDurationMenuOpen.value
+})
 
 const props = defineProps<{
   id: string | null
@@ -108,7 +114,6 @@ watch(
     if (newFlowControl && !isMenuOpen.value) {
       const node = findNode(props.id)
       if (node) {
-        console.log(node.data)
         const state: StateController = {
           type: ActionType.UPDATE_NODE_DATA,
           name: 'update node data ' + node.id,

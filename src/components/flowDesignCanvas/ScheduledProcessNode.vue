@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import type { FlowControlProcess } from '@/types/flowControl'
+import { useVueFlow } from '@vue-flow/core'
+
+const { findNode } = useVueFlow()
 
 let processId = 1
 function getProcessId() {
@@ -42,6 +45,22 @@ const scheduledFlowControl = computed(() => {
   return data.scheduledFlowControl
 })
 
+const isSelected = computed(() => {
+  const node = findNode(id)
+  if (node) {
+    return node.selected
+  }
+  return false
+})
+
+watch(isSelected, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    if (editedProcess.value) {
+      editedProcess.value.selected = false
+    }
+  }
+})
+
 function unselectProcess() {
   //potential bug
   if (editedProcess.value) {
@@ -53,7 +72,6 @@ function unselectProcess() {
 <template>
   <div
     @click="unselectProcess"
-    v-click-outside="unselectProcess"
     :id="id"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"

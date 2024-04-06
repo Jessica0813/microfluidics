@@ -11,7 +11,10 @@ export enum ActionType {
   DELETE_SENSOR = 'DELETE_SENSOR',
   MOVE_SENSOR = 'MOVE_SENSOR',
   RESIZE_SENSOR = 'RESIZE_SENSOR',
-  SENSOR_DATA_CHANGE = 'SENSOR_DATA_CHANGE'
+  SENSOR_DATA_CHANGE = 'SENSOR_DATA_CHANGE',
+  CREATE_EDGE = 'CREATE_EDGE',
+  DELETE_EDGE = 'DELETE_EDGE',
+  UPDATE_EDGE = 'UPDATE_EDGE'
 }
 
 export interface StateController {
@@ -21,4 +24,7 @@ export interface StateController {
   objectPosition?: { x: number; y: number }
   objectRadius?: number
   data: FlowControl | ScheduledFlowControl | Condition | Sensor | any
+  sourceHandleId?: string
+  targetHandleId?: string
+  edgeLabel?: string
 }

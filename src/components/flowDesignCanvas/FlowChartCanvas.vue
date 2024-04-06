@@ -14,6 +14,7 @@ import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
+import { lab } from 'd3'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -45,7 +46,8 @@ const {
   addNodes,
   project,
   vueFlowRef,
-  onNodesChange
+  onNodesChange,
+  onEdgesChange
 } = useVueFlow()
 
 const { addState } = useStateStore()
@@ -89,6 +91,17 @@ onConnect((params) => {
 })
 
 function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
+  console.log('edge update', edge, connection)
+  const state: StateController = {
+    type: ActionType.UPDATE_EDGE,
+    name: 'delete edge ' + edge.id,
+    objectId: edge.id,
+    data: '',
+    sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
+    targetHandleId: edge.targetHandle ? edge.targetHandle : '',
+    edgeLabel: edge.label?.toString() ? edge.label?.toString() : ''
+  }
+  addState(state)
   return updateEdge(edge, connection, false)
 }
 
@@ -181,9 +194,9 @@ function onDrop(event: any) {
   addState(state)
 }
 
-onNodesChange((nodeChange) => {
+onNodesChange((nodesChange) => {
   // loop through all nodeChange
-  nodeChange.forEach((change) => {
+  nodesChange.forEach((change) => {
     if (change.type === 'position' && change.dragging === false) {
       const state: StateController = {
         type: ActionType.MOVE_NODE,
@@ -197,6 +210,35 @@ onNodesChange((nodeChange) => {
     // else if (change.type === 'dimensions' && change.id.includes('schedule_')) {
     //   console.log('Node resize', change)
     // }
+    console.log('Node change', change)
+  })
+})
+
+onEdgesChange((edgesChange) => {
+  edgesChange.forEach((change) => {
+    if (change.type === 'add') {
+      const state: StateController = {
+        type: ActionType.CREATE_EDGE,
+        name: 'create edge ' + change.item.id,
+        objectId: change.item.id,
+        data: '',
+        sourceHandleId: change.item.sourceHandle ? change.item.sourceHandle : '',
+        targetHandleId: change.item.targetHandle ? change.item.targetHandle : '',
+        edgeLabel: change.item.label?.toString() ? change.item.label?.toString() : ''
+      }
+      addState(state)
+    } else if (change.type === 'remove') {
+      const state: StateController = {
+        type: ActionType.DELETE_EDGE,
+        name: 'delete edge ' + change.id,
+        objectId: change.id,
+        data: '',
+        sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
+        targetHandleId: change.targetHandle ? change.targetHandle : '',
+        edgeLabel: ''
+      }
+      addState(state)
+    }
   })
 })
 </script>

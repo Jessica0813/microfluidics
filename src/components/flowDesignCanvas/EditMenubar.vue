@@ -8,6 +8,7 @@
     <ScheduledProcessEditMenu
       v-else-if="findNode(selectedId)?.type === 'schedule'"
       :id="selectedId"
+      v-model:edited-flow-control="flowControl"
     />
   </div>
 </template>
@@ -33,6 +34,20 @@ const {
   viewport,
   vueFlowRef
 } = useVueFlow()
+
+const flowControl = ref({
+  id: '-1',
+  name: 'xyz',
+  selected: false,
+  startTime: 0.0,
+  endTime: 1.0,
+  duration: 1.0,
+  inlet: 'inlet 1',
+  injection: 'pump',
+  fluid: 'water',
+  pressure: 0,
+  flowrate: 0
+})
 
 function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
   const { x, y, zoom } = viewport.value
@@ -74,6 +89,27 @@ watch(getSelectedNodes, (newSelectedNodes, oldSelectedNodes) => {
     selectedId.value = null
   }
 })
+
+watch(
+  flowControl,
+  (newValue, oldValue) => {
+    if (selectedId.value !== null && !flowControl.value.selected) {
+      const element = document.getElementById(selectedId.value)
+      useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+        position.value = pos
+      })
+    }
+    if (newValue.selected && selectedId.value && newValue.id !== oldValue.id) {
+      const element = document.getElementById(`${selectedId.value}-process-group-${newValue.id}`)
+      useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+        position.value = pos
+      })
+    }
+  },
+  {
+    deep: true
+  }
+)
 
 onNodeDragStart(() => {
   isMenuBarOpen.value = false

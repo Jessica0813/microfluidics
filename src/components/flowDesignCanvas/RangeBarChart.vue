@@ -106,6 +106,7 @@ onMounted(() => {
       .enter()
       .append('g')
       .attr('class', `${props.id}-process-group`)
+      .attr('id', (d) => `${props.id}-process-group-${d.id}`)
       .on('mouseenter', (event, d) => {
         select(`#${props.id}-delete-icon-${d.id}`).style('display', 'block')
       })

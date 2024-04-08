@@ -17,10 +17,7 @@ export enum ActionType {
   UPDATE_EDGE = 'UPDATE_EDGE'
 }
 
-export interface StateController {
-  type: ActionType
-  name: string
-  objectId: string
+export interface state {
   objectPosition?: { x: number; y: number }
   objectType?: string
   objectRadius?: number
@@ -29,4 +26,11 @@ export interface StateController {
   target?: string
   sourceHandleId?: string
   targetHandleId?: string
+}
+export interface StateController {
+  type: ActionType
+  name: string
+  objectId: string
+  oldState: state
+  newState?: state
 }

@@ -15,7 +15,6 @@ import EditMenubar from './EditMenubar.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { ref } from 'vue'
-import { isConditionalExpression } from 'typescript'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -109,14 +108,23 @@ function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
     type: ActionType.UPDATE_EDGE,
     name: 'update edge ' + edge.id,
     objectId: edge.id,
-    data: '',
-    source: edge.source,
-    target: edge.target,
-    sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-    targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+    oldState: {
+      data: '',
+      source: edge.source,
+      target: edge.target,
+      sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
+      targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+    },
+    newState: {
+      data: '',
+      source: connection.source,
+      target: connection.target,
+      sourceHandleId: connection.sourceHandle ? connection.sourceHandle : '',
+      targetHandleId: connection.targetHandle ? connection.targetHandle : ''
+    }
   }
   addState(state)
-  return updateEdge(edge, connection, false)
+  updateEdge(edge, connection, false)
 }
 
 function onDrop(event: any) {
@@ -201,9 +209,11 @@ function onDrop(event: any) {
     type: ActionType.CREATE_NODE,
     name: 'create node ' + newNode.id,
     objectId: newNode.id,
-    objectPosition: newNode.position,
-    objectType: newNode.type,
-    data: nodeData
+    oldState: {
+      objectPosition: newNode.position,
+      objectType: newNode.type,
+      data: nodeData
+    }
   }
 
   addState(state)
@@ -220,8 +230,10 @@ onNodesChange((nodesChange) => {
         type: ActionType.MOVE_NODE,
         name: 'move node ' + change.id,
         objectId: change.id,
-        objectPosition: { x: change.from.x, y: change.from.y },
-        data: ''
+        oldState: {
+          objectPosition: { x: change.from.x, y: change.from.y },
+          data: ''
+        }
       }
       addState(state)
     }
@@ -241,11 +253,13 @@ onEdgesChange((edgesChange) => {
         type: ActionType.CREATE_EDGE,
         name: 'create edge ' + change.item.id,
         objectId: change.item.id,
-        data: '',
-        source: change.item.source,
-        target: change.item.target,
-        sourceHandleId: change.item.sourceHandle ? change.item.sourceHandle : '',
-        targetHandleId: change.item.targetHandle ? change.item.targetHandle : ''
+        oldState: {
+          data: '',
+          source: change.item.source,
+          target: change.item.target,
+          sourceHandleId: change.item.sourceHandle ? change.item.sourceHandle : '',
+          targetHandleId: change.item.targetHandle ? change.item.targetHandle : ''
+        }
       }
       addState(state)
     } else if (change.type === 'remove') {
@@ -254,11 +268,13 @@ onEdgesChange((edgesChange) => {
         type: ActionType.DELETE_EDGE,
         name: 'delete edge ' + change.id,
         objectId: change.id,
-        data: '',
-        source: change.source,
-        target: change.target,
-        sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
-        targetHandleId: change.targetHandle ? change.targetHandle : ''
+        oldState: {
+          data: '',
+          source: change.source,
+          target: change.target,
+          sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
+          targetHandleId: change.targetHandle ? change.targetHandle : ''
+        }
       }
       addState(state)
     }

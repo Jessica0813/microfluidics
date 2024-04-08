@@ -110,8 +110,14 @@ watch(
           type: ActionType.UPDATE_NODE_DATA,
           name: 'update node data ' + node.id,
           objectId: node.id,
-          objectPosition: node.position,
-          data: oldCondition
+          oldState: {
+            objectPosition: node.position,
+            data: oldCondition
+          },
+          newState: {
+            objectPosition: node.position,
+            data: condition.value
+          }
         }
         addState(state)
         oldCondition = Object.assign({}, newCondition)
@@ -132,8 +138,14 @@ watch(
           type: ActionType.UPDATE_NODE_DATA,
           name: 'update node data ' + node.id,
           objectId: node.id,
-          objectPosition: node.position,
-          data: oldCondition
+          oldState: {
+            objectPosition: node.position,
+            data: oldCondition
+          },
+          newState: {
+            objectPosition: node.position,
+            data: condition.value
+          }
         }
         addState(state)
         oldCondition = Object.assign({}, condition.value)

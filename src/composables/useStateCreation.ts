@@ -13,16 +13,19 @@ export function createState(node: Node, type: ActionType) {
     case ActionType.MOVE_NODE:
       name = 'move node ' + node.id
       break
-    case ActionType.NODE_DATA_CHANGE:
-      name = 'change data of the node ' + node.id
+    case ActionType.UPDATE_NODE_DATA:
+      name = 'update node data ' + node.id
       break
   }
   const state: StateController = {
     type: type,
     name: name,
     objectId: node.id,
-    objectPosition: node.position,
-    data: node.data
+    oldState: {
+      objectPosition: node.position,
+      objectType: node.type,
+      data: node.data
+    }
   }
 
   return state

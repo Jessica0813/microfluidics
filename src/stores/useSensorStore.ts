@@ -7,7 +7,7 @@ import { type StateController, ActionType } from '@/types/stateController'
 export const useSensorStore = defineStore('sensor', () => {
   const { addState } = useStateStore()
 
-  const tolerance = 0.00001
+  const tolerance = 0.0001
 
   const sensors = ref<Sensor[]>([])
 
@@ -36,10 +36,12 @@ export const useSensorStore = defineStore('sensor', () => {
       type: ActionType.CREATE_SENSOR,
       name: 'create sensor ' + sensor.id,
       objectId: sensor.id,
-      objectPosition: sensor.position,
-      objectType: sensor.type,
-      objectRadius: sensor.radius,
-      data: ''
+      oldState: {
+        objectPosition: sensor.position,
+        objectType: sensor.type,
+        objectRadius: sensor.radius,
+        data: ''
+      }
     }
     addState(state)
   }
@@ -52,10 +54,12 @@ export const useSensorStore = defineStore('sensor', () => {
           type: ActionType.DELETE_SENSOR,
           name: 'delete sensor ' + sensor.name,
           objectId: sensor.id,
-          objectPosition: sensor.position,
-          objectType: sensor.type,
-          objectRadius: sensor.radius,
-          data: ''
+          oldState: {
+            objectPosition: sensor.position,
+            objectType: sensor.type,
+            objectRadius: sensor.radius,
+            data: ''
+          }
         }
         addState(state)
         sensors.value.splice(sensorIndex, 1)
@@ -87,10 +91,18 @@ export const useSensorStore = defineStore('sensor', () => {
             type: ActionType.RESIZE_SENSOR,
             name: 'resize sensor ' + sensor.name,
             objectId: sensor.id,
-            objectPosition: sensor.position,
-            objectType: sensor.type,
-            objectRadius: sensor.radius,
-            data: ''
+            oldState: {
+              objectPosition: sensor.position,
+              objectType: sensor.type,
+              objectRadius: sensor.radius,
+              data: ''
+            },
+            newState: {
+              objectPosition: updatedSensor.position,
+              objectType: sensor.type,
+              objectRadius: updatedSensor.radius,
+              data: ''
+            }
           }
           addState(state)
         } else if (
@@ -102,15 +114,22 @@ export const useSensorStore = defineStore('sensor', () => {
             type: ActionType.MOVE_SENSOR,
             name: 'move sensor ' + sensor.name,
             objectId: sensor.id,
-            objectPosition: sensor.position,
-            objectType: sensor.type,
-            objectRadius: sensor.radius,
-            data: ''
+            oldState: {
+              objectPosition: sensor.position,
+              objectType: sensor.type,
+              objectRadius: sensor.radius,
+              data: ''
+            },
+            newState: {
+              objectPosition: updatedSensor.position,
+              objectType: sensor.type,
+              objectRadius: sensor.radius,
+              data: ''
+            }
           }
           addState(state)
         }
       }
-
       // If the sensor with the given id is found, update it
       Object.assign(sensors.value[sensorIndex], updatedSensor)
     }

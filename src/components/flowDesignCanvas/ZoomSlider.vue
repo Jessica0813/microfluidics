@@ -65,8 +65,7 @@ const {
   addEdges
 } = useVueFlow()
 
-const { editSensor, addSensor, getSensorId, deleteSensorWithId, toggleRecordState } =
-  useSensorStore()
+const { editSensor, addSensor, deleteSensorWithId, toggleRecordState } = useSensorStore()
 
 const zoom = ref(1)
 
@@ -142,9 +141,9 @@ function undo() {
     case ActionType.DELETE_NODE: {
       const node = {
         id: state.objectId,
-        type: state.objectType || 'process',
-        position: state.objectPosition || { x: 0, y: 0 },
-        data: state.data
+        type: state.oldState.objectType || 'process',
+        position: state.oldState.objectPosition || { x: 0, y: 0 },
+        data: state.oldState.data
       }
       addNodes([node])
       break
@@ -152,14 +151,14 @@ function undo() {
     case ActionType.MOVE_NODE: {
       const node = findNode(state.objectId)
       if (node) {
-        node.position = state.objectPosition || { x: 0, y: 0 }
+        node.position = state.oldState.objectPosition || { x: 0, y: 0 }
       }
       break
     }
     case ActionType.UPDATE_NODE_DATA: {
       const node = findNode(state.objectId)
       if (node) {
-        const data = { ...state.data }
+        const data = { ...state.oldState.data }
         if (node.type === 'process') {
           node.data.flowControl = data
         } else if (node.type === 'condition') {
@@ -179,10 +178,10 @@ function undo() {
     }
     case ActionType.DELETE_EDGE: {
       const edge: Connection = {
-        source: state.source || '',
-        target: state.target || '',
-        sourceHandle: state.sourceHandleId,
-        targetHandle: state.targetHandleId
+        source: state.oldState.source || '',
+        target: state.oldState.target || '',
+        sourceHandle: state.oldState.sourceHandleId,
+        targetHandle: state.oldState.targetHandleId
       }
       if (state.objectId.includes('edgeTrue')) {
         addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'Yes' }])
@@ -196,10 +195,10 @@ function undo() {
     case ActionType.UPDATE_EDGE: {
       const edge = findEdge(state.objectId)
       if (edge) {
-        edge.source = state.source || ''
-        edge.target = state.target || ''
-        edge.sourceHandle = state.sourceHandleId
-        edge.targetHandle = state.targetHandleId
+        edge.source = state.oldState.source || ''
+        edge.target = state.oldState.target || ''
+        edge.sourceHandle = state.oldState.sourceHandleId
+        edge.targetHandle = state.oldState.targetHandleId
       }
       break
     }
@@ -213,7 +212,7 @@ function undo() {
         id: state.objectId,
         name: state.objectId,
         type: 'temperature',
-        position: state.objectPosition || { x: 0, y: 0 },
+        position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: 20,
         selected: false
       }
@@ -225,8 +224,8 @@ function undo() {
       toggleRecordState()
       editSensor(state.objectId, {
         position: {
-          x: state.objectPosition?.x || 0,
-          y: state.objectPosition?.y || 0
+          x: state.oldState.objectPosition?.x || 0,
+          y: state.oldState.objectPosition?.y || 0
         }
       })
       toggleRecordState()
@@ -236,10 +235,10 @@ function undo() {
       toggleRecordState()
       editSensor(state.objectId, {
         position: {
-          x: state.objectPosition?.x || 0,
-          y: state.objectPosition?.y || 0
+          x: state.oldState.objectPosition?.x || 0,
+          y: state.oldState.objectPosition?.y || 0
         },
-        radius: state.objectRadius || 20
+        radius: state.oldState.objectRadius || 20
       })
       toggleRecordState()
       break

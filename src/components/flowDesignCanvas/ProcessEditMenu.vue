@@ -118,8 +118,14 @@ watch(
           type: ActionType.UPDATE_NODE_DATA,
           name: 'update node data ' + node.id,
           objectId: node.id,
-          objectPosition: node.position,
-          data: oldFlowControl
+          oldState: {
+            objectPosition: node.position,
+            data: oldFlowControl
+          },
+          newState: {
+            objectPosition: node.position,
+            data: newFlowControl
+          }
         }
         addState(state)
         oldFlowControl = Object.assign({}, newFlowControl)
@@ -142,8 +148,14 @@ watch(isMenuOpen, (newValue, oldValue) => {
         type: ActionType.UPDATE_NODE_DATA,
         name: 'update node data ' + node.id,
         objectId: node.id,
-        objectPosition: node.position,
-        data: oldFlowControl
+        oldState: {
+          objectPosition: node.position,
+          data: oldFlowControl
+        },
+        newState: {
+          objectPosition: node.position,
+          data: flowControl.value
+        }
       }
       addState(state)
       oldFlowControl = Object.assign({}, flowControl.value)

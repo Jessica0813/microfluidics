@@ -14,11 +14,13 @@ export const useStateStore = defineStore('state', () => {
     console.log(undo.value)
   }
 
-  function undoState() {
+  function undoState(): StateController | null {
     const lastState = undo.value.pop()
     if (lastState) {
       redo.value.push(lastState)
+      return lastState
     }
+    return null
   }
 
   function redoState() {

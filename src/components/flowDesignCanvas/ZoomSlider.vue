@@ -31,7 +31,7 @@
         >mdi-trash-can-outline</v-icon
       >
     </button>
-    <button class="icon-button with-right-border" title="undo">
+    <button class="icon-button with-right-border" title="undo" @click="undo">
       <v-icon size="small" color="#66615b">mdi-undo</v-icon>
     </button>
     <button class="icon-button" title="redo">
@@ -45,15 +45,39 @@ import { ref, watch, toRef } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
+import { useStateStore } from '@/stores/useStateStore'
+import { ActionType } from '@/types/stateController'
+import type { Connection } from '@vue-flow/core'
+import { useSensorStore } from '@/stores/useSensorStore'
+import type { Sensor } from '@/types/sensor'
 
-const { zoomTo, viewport, getSelectedElements, removeEdges, removeNodes, setViewport } =
-  useVueFlow()
+const { undoState } = useStateStore()
+const {
+  zoomTo,
+  viewport,
+  getSelectedElements,
+  removeEdges,
+  removeNodes,
+  setViewport,
+  findNode,
+  addNodes,
+  findEdge,
+  addEdges
+} = useVueFlow()
+
+const { editSensor, addSensor, getSensorId, deleteSensorWithId, toggleRecordState } =
+  useSensorStore()
+
 const zoom = ref(1)
 
 const minZoomReached = toRef(() => viewport.value.zoom <= 0.2)
 const maxZoomReached = toRef(() => viewport.value.zoom >= 2)
 
 const hasSelectedElements = toRef(() => getSelectedElements.value.length > 0)
+
+const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
+  default: true
+})
 
 watch(
   () => viewport.value,
@@ -98,6 +122,131 @@ function deleteSelectedElements() {
 
 function resetView() {
   setViewport({ zoom: 1, x: 0, y: 0 })
+}
+
+function undo() {
+  shouldRecordState.value = false
+  const state = undoState()
+  if (!state) {
+    shouldRecordState.value = true
+    return
+  }
+  switch (state.type) {
+    case ActionType.CREATE_NODE: {
+      const node = findNode(state.objectId)
+      if (node) {
+        removeNodes([node])
+      }
+      break
+    }
+    case ActionType.DELETE_NODE: {
+      const node = {
+        id: state.objectId,
+        type: state.objectType || 'process',
+        position: state.objectPosition || { x: 0, y: 0 },
+        data: state.data
+      }
+      addNodes([node])
+      break
+    }
+    case ActionType.MOVE_NODE: {
+      const node = findNode(state.objectId)
+      if (node) {
+        node.position = state.objectPosition || { x: 0, y: 0 }
+      }
+      break
+    }
+    case ActionType.UPDATE_NODE_DATA: {
+      const node = findNode(state.objectId)
+      if (node) {
+        const data = { ...state.data }
+        if (node.type === 'process') {
+          node.data.flowControl = data
+        } else if (node.type === 'condition') {
+          node.data.condition = data
+        } else if (node.type === 'schedule') {
+          node.data.scheduledFlowControl = data
+        }
+      }
+      break
+    }
+    case ActionType.CREATE_EDGE: {
+      const edge = findEdge(state.objectId)
+      if (edge) {
+        removeEdges([edge])
+      }
+      break
+    }
+    case ActionType.DELETE_EDGE: {
+      const edge: Connection = {
+        source: state.source || '',
+        target: state.target || '',
+        sourceHandle: state.sourceHandleId,
+        targetHandle: state.targetHandleId
+      }
+      if (state.objectId.includes('edgeTrue')) {
+        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'Yes' }])
+      } else if (state.objectId.includes('edgeFalse')) {
+        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'No' }])
+      } else if (state.objectId.includes('edge')) {
+        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: '' }])
+      }
+      break
+    }
+    case ActionType.UPDATE_EDGE: {
+      const edge = findEdge(state.objectId)
+      if (edge) {
+        edge.source = state.source || ''
+        edge.target = state.target || ''
+        edge.sourceHandle = state.sourceHandleId
+        edge.targetHandle = state.targetHandleId
+      }
+      break
+    }
+    case ActionType.CREATE_SENSOR: {
+      deleteSensorWithId(state.objectId)
+      break
+    }
+    case ActionType.DELETE_SENSOR: {
+      toggleRecordState()
+      const sensor: Sensor = {
+        id: state.objectId,
+        name: state.objectId,
+        type: 'temperature',
+        position: state.objectPosition || { x: 0, y: 0 },
+        radius: 20,
+        selected: false
+      }
+      addSensor(sensor)
+      toggleRecordState()
+      break
+    }
+    case ActionType.MOVE_SENSOR: {
+      toggleRecordState()
+      editSensor(state.objectId, {
+        position: {
+          x: state.objectPosition?.x || 0,
+          y: state.objectPosition?.y || 0
+        }
+      })
+      toggleRecordState()
+      break
+    }
+    case ActionType.RESIZE_SENSOR: {
+      toggleRecordState()
+      editSensor(state.objectId, {
+        position: {
+          x: state.objectPosition?.x || 0,
+          y: state.objectPosition?.y || 0
+        },
+        radius: state.objectRadius || 20
+      })
+      toggleRecordState()
+      break
+    }
+  }
+
+  shouldRecordState.value = true
 }
 </script>
 

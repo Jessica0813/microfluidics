@@ -14,12 +14,17 @@ import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
+import { ref } from 'vue'
+import { isConditionalExpression } from 'typescript'
 
 let processNodeId = 1
 let conditionNodeId = 1
 let processScheduleNodeId = 1
 
 let edgeId = 1
+let edgeTrueId = 1
+let edgeFalseId = 1
+
 function getProcessNodeId() {
   return `process_${processNodeId++}`
 }
@@ -36,6 +41,14 @@ function getEdgeId() {
   return `edge_${edgeId++}`
 }
 
+function getEdgeTrueId() {
+  return `edgeTrue_${edgeTrueId++}`
+}
+
+function getEdgeFalseId() {
+  return `edgeFalse_${edgeFalseId++}`
+}
+
 const {
   getEdges,
   findNode,
@@ -48,6 +61,8 @@ const {
   onNodesChange,
   onEdgesChange
 } = useVueFlow()
+
+const shouldRecordState = ref(true)
 
 const { addState } = useStateStore()
 
@@ -82,23 +97,23 @@ onConnect((params) => {
     if (isTrueEdgeExist && isFalseEdgeExist) {
       return
     } else if ((!isTrueEdgeExist && !isFalseEdgeExist) || isFalseEdgeExist) {
-      addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'Yes' }])
+      addEdges([{ ...params, type: 'custom', id: getEdgeTrueId(), label: 'Yes' }])
     } else if (isTrueEdgeExist) {
-      addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'No' }])
+      addEdges([{ ...params, type: 'custom', id: getEdgeFalseId(), label: 'No' }])
     }
   }
 })
 
 function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
-  console.log('edge update', edge, connection)
   const state: StateController = {
     type: ActionType.UPDATE_EDGE,
-    name: 'delete edge ' + edge.id,
+    name: 'update edge ' + edge.id,
     objectId: edge.id,
     data: '',
+    source: edge.source,
+    target: edge.target,
     sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-    targetHandleId: edge.targetHandle ? edge.targetHandle : '',
-    edgeLabel: edge.label?.toString() ? edge.label?.toString() : ''
+    targetHandleId: edge.targetHandle ? edge.targetHandle : ''
   }
   addState(state)
   return updateEdge(edge, connection, false)
@@ -187,6 +202,7 @@ function onDrop(event: any) {
     name: 'create node ' + newNode.id,
     objectId: newNode.id,
     objectPosition: newNode.position,
+    objectType: newNode.type,
     data: nodeData
   }
 
@@ -194,6 +210,9 @@ function onDrop(event: any) {
 }
 
 onNodesChange((nodesChange) => {
+  if (!shouldRecordState.value) {
+    return
+  }
   // loop through all nodeChange
   nodesChange.forEach((change) => {
     if (change.type === 'position' && change.dragging === false) {
@@ -209,11 +228,13 @@ onNodesChange((nodesChange) => {
     // else if (change.type === 'dimensions' && change.id.includes('schedule_')) {
     //   console.log('Node resize', change)
     // }
-    console.log('Node change', change)
   })
 })
 
 onEdgesChange((edgesChange) => {
+  if (!shouldRecordState.value) {
+    return
+  }
   edgesChange.forEach((change) => {
     if (change.type === 'add') {
       const state: StateController = {
@@ -221,20 +242,23 @@ onEdgesChange((edgesChange) => {
         name: 'create edge ' + change.item.id,
         objectId: change.item.id,
         data: '',
+        source: change.item.source,
+        target: change.item.target,
         sourceHandleId: change.item.sourceHandle ? change.item.sourceHandle : '',
-        targetHandleId: change.item.targetHandle ? change.item.targetHandle : '',
-        edgeLabel: change.item.label?.toString() ? change.item.label?.toString() : ''
+        targetHandleId: change.item.targetHandle ? change.item.targetHandle : ''
       }
       addState(state)
     } else if (change.type === 'remove') {
+      console.log('Edge removed', change)
       const state: StateController = {
         type: ActionType.DELETE_EDGE,
         name: 'delete edge ' + change.id,
         objectId: change.id,
         data: '',
+        source: change.source,
+        target: change.target,
         sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
-        targetHandleId: change.targetHandle ? change.targetHandle : '',
-        edgeLabel: ''
+        targetHandleId: change.targetHandle ? change.targetHandle : ''
       }
       addState(state)
     }
@@ -249,7 +273,7 @@ onEdgesChange((edgesChange) => {
       <NodePanel />
     </div>
     <div class="top-bar">
-      <ZoomSlider />
+      <ZoomSlider v-model:should-record-state="shouldRecordState" />
       <UploadDownLoadControls />
       <RightSideBar />
     </div>

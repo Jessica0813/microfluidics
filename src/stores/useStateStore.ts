@@ -23,11 +23,21 @@ export const useStateStore = defineStore('state', () => {
     return null
   }
 
-  function redoState() {
+  function redoState(): StateController | null {
     const lastState = redo.value.pop()
     if (lastState) {
       undo.value.push(lastState)
+      return lastState
     }
+    return null
+  }
+
+  function isUndoable() {
+    return undo.value.length > 0
+  }
+
+  function isRedoable() {
+    return redo.value.length > 0
   }
 
   return {
@@ -35,6 +45,8 @@ export const useStateStore = defineStore('state', () => {
     undo,
     addState,
     undoState,
-    redoState
+    redoState,
+    isUndoable,
+    isRedoable
   }
 })

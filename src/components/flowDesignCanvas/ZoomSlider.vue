@@ -21,21 +21,21 @@
       <v-icon size="small" color="#66615b">mdi-image-filter-center-focus-weak</v-icon>
     </button>
     <button
-      class="icon-button"
-      :class="hasSelectedElements ? '' : 'disable-hover'"
-      title="delete"
-      @click="deleteSelectedElements"
-      :disabled="!hasSelectedElements"
+      class="icon-button with-right-border"
+      title="undo"
+      @click="undo"
+      :disabled="!isUndoable()"
+      :class="isUndoable() ? '' : 'disable-hover'"
     >
-      <v-icon size="small" :color="hasSelectedElements ? '#66615b' : '#c2c2be'"
-        >mdi-trash-can-outline</v-icon
-      >
+      <v-icon size="small" :color="isUndoable()? '#66615b' : '#BDBDBD'">mdi-undo</v-icon>
     </button>
-    <button class="icon-button with-right-border" title="undo" @click="undo">
-      <v-icon size="small" color="#66615b">mdi-undo</v-icon>
-    </button>
-    <button class="icon-button" title="redo">
-      <v-icon size="small" color="#66615b">mdi-redo</v-icon>
+    <button
+      class="icon-button"
+      title="redo"
+      :disabled="!isRedoable"
+      :class="isUndoable() ? '' : 'disable-hover'"
+    >
+      <v-icon size="small"  :color="isRedoable()? '#66615b' : '#BDBDBD'">mdi-redo</v-icon>
     </button>
   </div>
 </template>
@@ -51,7 +51,7 @@ import type { Connection } from '@vue-flow/core'
 import { useSensorStore } from '@/stores/useSensorStore'
 import type { Sensor } from '@/types/sensor'
 
-const { undoState } = useStateStore()
+const { undoState, isUndoable, isRedoable } = useStateStore()
 const {
   zoomTo,
   viewport,

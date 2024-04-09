@@ -30,7 +30,7 @@
       <v-icon size="small" :color="isUndoable() ? '#66615b' : '#BDBDBD'">mdi-undo</v-icon>
     </button>
     <button
-      class="icon-button"
+      class="icon-button with-right-border"
       title="redo"
       :disabled="!isRedoable"
       :class="isUndoable() ? '' : 'disable-hover'"
@@ -38,6 +38,21 @@
     >
       <v-icon size="small" :color="isRedoable() ? '#66615b' : '#BDBDBD'">mdi-redo</v-icon>
     </button>
+    <v-menu offset="1">
+      <template v-slot:activator="{ props }">
+        <button class="icon-button" title="history" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-cached</v-icon>
+        </button>
+      </template>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" v-for="(item, index) in undoList" :key="index">
+          {{ item.name }}
+        </button>
+        <button class="dropdown-item" v-for="(item, index) in redoList" :key="index">
+          {{ item.name }}
+        </button>
+      </div>
+    </v-menu>
   </div>
 </template>
 
@@ -52,7 +67,7 @@ import type { Connection } from '@vue-flow/core'
 import { useSensorStore } from '@/stores/useSensorStore'
 import type { Sensor } from '@/types/sensor'
 
-const { undoState, redoState, isUndoable, isRedoable } = useStateStore()
+const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = useStateStore()
 const {
   zoomTo,
   viewport,
@@ -62,8 +77,7 @@ const {
   findNode,
   addNodes,
   findEdge,
-  addEdges,
-  project
+  addEdges
 } = useVueFlow()
 
 const { editSensor, addSensor, deleteSensorWithId, toggleRecordState } = useSensorStore()
@@ -379,5 +393,42 @@ function redo() {
   border: 1px solid #dfdfdf;
   border-radius: 4px;
   width: fit-content;
+}
+
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 8px;
+  background-color: white;
+  border-radius: 4px;
+  width: fit-content;
+  border: 0.5px solid lightgray;
+}
+
+.dropdown-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2px 4px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  font-size: 14px;
+  border-right: 1px solid #dfdfdf;
+}
+
+.dropdown-button:hover {
+  background-color: #d4d4d4;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background-color: #e0e0e0;
 }
 </style>

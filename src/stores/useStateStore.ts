@@ -3,46 +3,46 @@ import { ref } from 'vue'
 import type { StateController } from '@/types/stateController.ts'
 
 export const useStateStore = defineStore('state', () => {
-  const redo = ref<StateController[]>([])
-  const undo = ref<StateController[]>([])
+  const redoList = ref<StateController[]>([])
+  const undoList = ref<StateController[]>([])
 
   function addState(stateController: StateController) {
-    if (redo.value.length > 0) {
-      redo.value = []
+    if (redoList.value.length > 0) {
+      redoList.value = []
     }
-    undo.value.push(stateController)
-    console.log(undo.value)
+    undoList.value.push(stateController)
+    console.log(undoList.value)
   }
 
   function undoState(): StateController | null {
-    const lastState = undo.value.pop()
+    const lastState = undoList.value.pop()
     if (lastState) {
-      redo.value.push(lastState)
+      redoList.value.push(lastState)
       return lastState
     }
     return null
   }
 
   function redoState(): StateController | null {
-    const lastState = redo.value.pop()
+    const lastState = redoList.value.pop()
     if (lastState) {
-      undo.value.push(lastState)
+      undoList.value.push(lastState)
       return lastState
     }
     return null
   }
 
   function isUndoable() {
-    return undo.value.length > 0
+    return undoList.value.length > 0
   }
 
   function isRedoable() {
-    return redo.value.length > 0
+    return redoList.value.length > 0
   }
 
   return {
-    redo,
-    undo,
+    redoList,
+    undoList,
     addState,
     undoState,
     redoState,

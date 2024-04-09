@@ -58,7 +58,8 @@ const {
   project,
   vueFlowRef,
   onNodesChange,
-  onEdgesChange
+  onEdgesChange,
+  findEdge
 } = useVueFlow()
 
 const shouldRecordState = ref(true)
@@ -205,6 +206,8 @@ function onDrop(event: any) {
     )
   })
 
+  console.log('x', newNode.position.x, 'y', newNode.position.y)
+
   const state: StateController = {
     type: ActionType.CREATE_NODE,
     name: 'create node ' + newNode.id,
@@ -226,12 +229,17 @@ onNodesChange((nodesChange) => {
   // loop through all nodeChange
   nodesChange.forEach((change) => {
     if (change.type === 'position' && change.dragging === false) {
+      const node = findNode(change.id)
       const state: StateController = {
         type: ActionType.MOVE_NODE,
         name: 'move node ' + change.id,
         objectId: change.id,
         oldState: {
           objectPosition: { x: change.from.x, y: change.from.y },
+          data: ''
+        },
+        newState: {
+          objectPosition: { x: node?.position.x || 0, y: node?.position.y || 0 },
           data: ''
         }
       }
@@ -263,7 +271,7 @@ onEdgesChange((edgesChange) => {
       }
       addState(state)
     } else if (change.type === 'remove') {
-      console.log('Edge removed', change)
+      const edge = findEdge(change.id)
       const state: StateController = {
         type: ActionType.DELETE_EDGE,
         name: 'delete edge ' + change.id,
@@ -274,6 +282,13 @@ onEdgesChange((edgesChange) => {
           target: change.target,
           sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
           targetHandleId: change.targetHandle ? change.targetHandle : ''
+        },
+        newState: {
+          data: '',
+          source: edge?.source || '',
+          target: edge?.target || '',
+          sourceHandleId: edge?.sourceHandle || '',
+          targetHandleId: edge?.targetHandle || ''
         }
       }
       addState(state)

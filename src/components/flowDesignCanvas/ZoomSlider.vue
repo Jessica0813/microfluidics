@@ -45,10 +45,20 @@
         </button>
       </template>
       <div class="dropdown-menu">
-        <button class="dropdown-item" v-for="(item, index) in undoList" :key="index">
+        <button
+          class="dropdown-item"
+          v-for="(item, index) in undoList"
+          :key="index"
+          @click="undoToStep(index)"
+        >
           {{ item.name }}
         </button>
-        <button class="dropdown-item" v-for="(item, index) in redoList" :key="index">
+        <button
+          class="dropdown-item-withBackground"
+          v-for="(item, index) in redoList"
+          :key="index"
+          @click="redoToStep(index)"
+        >
           {{ item.name }}
         </button>
       </div>
@@ -68,6 +78,7 @@ import { useSensorStore } from '@/stores/useSensorStore'
 import type { Sensor } from '@/types/sensor'
 
 const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = useStateStore()
+
 const {
   zoomTo,
   viewport,
@@ -379,6 +390,18 @@ function redo() {
 
   shouldRecordState.value = true
 }
+
+function undoToStep(index: number) {
+  for (let i = undoList.length; i > index; i--) {
+    undo()
+  }
+}
+
+function redoToStep(index: number) {
+  for (let i = 0; i <= index; i++) {
+    redo()
+  }
+}
 </script>
 
 <style scoped>
@@ -398,37 +421,33 @@ function redo() {
 .dropdown-menu {
   display: flex;
   flex-direction: column;
-  padding: 8px 8px;
+  padding: 8px 0px;
   background-color: white;
   border-radius: 4px;
   width: fit-content;
   border: 0.5px solid lightgray;
 }
 
-.dropdown-button {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  padding: 2px 4px;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  font-size: 14px;
-  border-right: 1px solid #dfdfdf;
-}
-
-.dropdown-button:hover {
-  background-color: #d4d4d4;
-}
-
 .dropdown-item {
   width: 100%;
   padding: 4px;
   font-size: 14px;
+  padding: 4px 8px;
 }
 
 .dropdown-item:hover {
+  background-color: #bdbdbd;
+}
+
+.dropdown-item-withBackground {
+  width: 100%;
+  padding: 4px;
+  font-size: 14px;
   background-color: #e0e0e0;
+  padding: 4px 8px;
+}
+
+.dropdown-item-withBackground:hover {
+  background-color: #bdbdbd;
 }
 </style>

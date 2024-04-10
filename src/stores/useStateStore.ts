@@ -17,14 +17,14 @@ export const useStateStore = defineStore('state', () => {
   function undoState(): StateController | null {
     const lastState = undoList.value.pop()
     if (lastState) {
-      redoList.value.push(lastState)
+      redoList.value.unshift(lastState)
       return lastState
     }
     return null
   }
 
   function redoState(): StateController | null {
-    const lastState = redoList.value.pop()
+    const lastState = redoList.value.shift()
     if (lastState) {
       undoList.value.push(lastState)
       return lastState

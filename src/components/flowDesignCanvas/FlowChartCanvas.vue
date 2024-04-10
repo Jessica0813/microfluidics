@@ -15,6 +15,7 @@ import EditMenubar from './EditMenubar.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { ref } from 'vue'
+import HistoryManager from './HistoryManager.vue'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -206,8 +207,6 @@ function onDrop(event: any) {
     )
   })
 
-  console.log('x', newNode.position.x, 'y', newNode.position.y)
-
   const state: StateController = {
     type: ActionType.CREATE_NODE,
     name: 'create node ' + newNode.id,
@@ -304,7 +303,8 @@ onEdgesChange((edgesChange) => {
       <NodePanel />
     </div>
     <div class="top-bar">
-      <ZoomSlider v-model:should-record-state="shouldRecordState" />
+      <ZoomSlider />
+      <HistoryManager v-model:should-record-state="shouldRecordState" />
       <UploadDownLoadControls />
       <RightSideBar />
     </div>

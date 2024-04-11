@@ -10,25 +10,31 @@
       :id="selectedId"
       v-model:edited-flow-control="flowControl"
     />
+    <EdgeEditMenu v-else-if="findEdge(selectedId)?.type === 'custom'" :id="selectedId" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
-import { useMenuPositionCalculator } from '@/composables/useMenuPositionCalculator'
+import {
+  useMenuPositionCalculator,
+  useMenuPositionCalculatorForEdges
+} from '@/composables/useMenuPositionCalculator'
 import ProcessEditMenu from './ProcessEditMenu.vue'
 import ConditionEditMenu from './ConditionEditMenu.vue'
 import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
+import EdgeEditMenu from './EdgeEditMenu.vue'
 import { select } from 'd3'
 import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
 
 const {
   findNode,
+  findEdge,
   onNodeDragStart,
   onNodeDragStop,
-  getSelectedNodes,
+  getSelectedElements,
   onViewportChangeStart,
   onViewportChangeEnd,
   viewport,
@@ -65,20 +71,27 @@ const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
 
-watch(getSelectedNodes, (newSelectedNodes, oldSelectedNodes) => {
+watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
   if (
-    newSelectedNodes.length === 1 &&
-    oldSelectedNodes.length === 1 &&
-    newSelectedNodes[0].id === oldSelectedNodes[0].id
+    newSelectedElements.length === 1 &&
+    oldSelectedElements.length === 1 &&
+    newSelectedElements[0].id === oldSelectedElements[0].id
   ) {
     return
   }
-  if (newSelectedNodes.length === 1) {
+  if (newSelectedElements.length === 1) {
     if (selectedId.value === null) {
-      selectedId.value = newSelectedNodes[0].id
+      selectedId.value = newSelectedElements[0].id
       isMenuBarOpen.value = true
-    } else if (newSelectedNodes[0] !== oldSelectedNodes[0]) {
-      selectedId.value = newSelectedNodes[0].id
+    } else if (newSelectedElements[0] !== oldSelectedElements[0]) {
+      selectedId.value = newSelectedElements[0].id
+    }
+    if (selectedId.value.includes('edge')) {
+      const element = document.getElementById(selectedId.value!)
+      useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
+        position.value = pos
+      })
+      return;
     }
     const element = document.getElementById(selectedId.value!)
     useMenuPositionCalculator(element, floatingRef.value).then((pos) => {

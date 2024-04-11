@@ -201,24 +201,24 @@ function onDrop(event: any) {
             y: node.position.y - node.dimensions.height / 2
           }
           stop()
+
+          const state: StateController = {
+            type: ActionType.CREATE_NODE,
+            name: 'create node ' + newNode.id,
+            objectId: newNode.id,
+            oldState: {
+              objectPosition: node.position,
+              objectType: newNode.type,
+              data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
+            }
+          }
+
+          addState(state)
         }
       },
       { deep: true, flush: 'post' }
     )
   })
-
-  const state: StateController = {
-    type: ActionType.CREATE_NODE,
-    name: 'create node ' + newNode.id,
-    objectId: newNode.id,
-    oldState: {
-      objectPosition: newNode.position,
-      objectType: newNode.type,
-      data: nodeData
-    }
-  }
-
-  addState(state)
 }
 
 onNodesChange((nodesChange) => {

@@ -59,3 +59,31 @@ export function useMenuPositionCalculatorForEdges(
     }
   })
 }
+
+export function useMenuPositionCalculatorForSensor(
+  targetRef: HTMLElement | null,
+  floatingRef: HTMLElement | null
+): Promise<Position> {
+  return new Promise((resolve, reject) => {
+    if (!targetRef || !floatingRef) {
+      reject('Invalid target or floating element reference')
+      return
+    }
+
+    try {
+      computePosition(targetRef, floatingRef, {
+        placement: 'right',
+        middleware: [offset(15), flip(), shift()]
+      }).then((pos) => {
+        Object.assign(floatingRef.style, {
+          left: `${pos.x}px`,
+          top: `${pos.y}px`
+        })
+        resolve({ x: pos.x, y: pos.y })
+      })
+    } catch (error) {
+      console.error('Error calculating position:', error)
+      reject(error)
+    }
+  })
+}

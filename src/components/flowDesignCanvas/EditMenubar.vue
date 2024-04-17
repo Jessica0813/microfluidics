@@ -91,7 +91,7 @@ watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
       useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
         position.value = pos
       })
-      return;
+      return
     }
     const element = document.getElementById(selectedId.value!)
     useMenuPositionCalculator(element, floatingRef.value).then((pos) => {

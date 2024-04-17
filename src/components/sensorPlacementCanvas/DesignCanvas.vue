@@ -13,6 +13,13 @@
     }"
     v-click-outside="removeAllSelectedSensors"
   >
+    <EditMenu
+      :selected-sensor-id="selectedSensorId"
+      :design-canvas-ref="svg"
+      :d3-zoom="d3Zoom"
+      :transform="transform"
+      v-model:is-edit-menu-open="isEditMenuOpen"
+    />
     <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
     <svg ref="svg" width="100%" height="100%">
       <defs>
@@ -82,6 +89,7 @@ import DesignCanvasControl from './DesignCanvasControl.vue'
 import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
+import EditMenu from './EditMenu.vue'
 
 const {
   sensors,
@@ -108,6 +116,8 @@ const isButtonHovered = ref(false)
 
 const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
 const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
+const isEditMenuOpen = ref(false)
+const isZooming = ref(false)
 
 watch(
   () => editedSensor.value,
@@ -157,6 +167,18 @@ onMounted(() => {
 
   d3Zoom.value = zoom<HTMLElement, any>()
     .scaleExtent([0.2, 2])
+    .on('start', () => {
+      if (isEditMenuOpen.value) {
+        isEditMenuOpen.value = false
+        isZooming.value = true
+      }
+    })
+    .on('end', () => {
+      if (isZooming.value) {
+        isZooming.value = false
+        isEditMenuOpen.value = true
+      }
+    })
     .on('zoom', (event) => {
       transform.value = event.transform
 
@@ -350,16 +372,8 @@ onMounted(() => {
       .attr('cy', (sensor) => sensor.position.y + sensor.radius)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
 
-    // .call(d3LowerRightResize(editedSensor.value))
-
     // Exit
     sensorGroup.exit().remove()
-
-    // // Apply D3 drag behavior
-    // sensorGroup.call(d3Drag).on('click', (event, sensor) => {
-    //   event.stopPropagation()
-    //   onSelectSensor(sensor.id)
-    // })
   }
 
   // Watch for changes in the sensors array and update the visualization
@@ -367,14 +381,6 @@ onMounted(() => {
 
   // Initial update
   updateCirclesWithText()
-
-  // onBeforeUnmount(() => {
-  //   canvas.selectAll('.sensor-group').on('.drag', null)
-  //   canvas.selectAll('.sensor-group').data(sensors).remove()
-  //   if (d3Zoom.value && d3Selection.value) {
-  //     d3Zoom.value.transform(d3Selection.value, zoomIdentity)
-  //   }
-  // })
 })
 </script>
 

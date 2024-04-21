@@ -1,5 +1,5 @@
 <template>
-  <div ref="senosrFloatingRef" class="wrapper" id="sensor-menu-bar">
+  <div ref="senosrFloatingRef" class="wrapper" id="sensor-menu-bar" v-show="isEditMenuOpen">
     <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useMenuPositionCalculatorForSensor } from '@/composables/useMenuPositionCalculator'
 import { select } from 'd3'
 import { drag } from 'd3-drag'
@@ -37,9 +37,10 @@ import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import { useSensorStore } from '@/stores/useSensorStore'
 import type { D3Zoom } from '@/types/d3'
+import type { Sensor } from '@/types/sensor'
 
 const { findSensor, deleteSensorWithId } = useSensorStore()
-const isEditMenuOpen = defineModel<boolean>('isEditMenuOpen', { default: false })
+const isEditMenuOpen = ref(false)
 
 const sensorType = ['temperature', 'speed']
 const props = defineProps<{
@@ -47,6 +48,7 @@ const props = defineProps<{
   designCanvasRef: HTMLElement | null
   d3Zoom: D3Zoom | undefined
   transform: { x: number; y: number; k: number }
+  isZooming: boolean
 }>()
 const isMenuOpen = ref(false)
 
@@ -54,27 +56,46 @@ const senosrFloatingRef = ref<HTMLElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(true)
 
-const selectedSensor = computed(() => {
-  if (props.selectedSensorId) {
-    const sensor = findSensor(props.selectedSensorId)
-    if (sensor) {
-      return sensor
-    }
-  }
-  return {
-    id: '',
-    name: '',
-    type: 'temperature',
-    position: { x: 0, y: 0 },
-    dimensions: { width: 0, height: 0 },
-    selected: false
-  }
+const selectedSensor = ref<Sensor>({
+  id: '',
+  name: '',
+  type: 'temperature',
+  position: { x: 0, y: 0 },
+  radius: 20,
+  selected: false
 })
 
 watch(
-  () => selectedSensor.value,
+  () => props.selectedSensorId,
+  (newValue) => {
+    if (newValue === '') {
+      isEditMenuOpen.value = false
+      selectedSensor.value = {
+        id: '',
+        name: '',
+        type: 'temperature',
+        position: { x: 0, y: 0 },
+        radius: 20,
+        selected: false
+      }
+    } else {
+      const sensor = findSensor(newValue)
+      if (sensor) {
+        selectedSensor.value = sensor
+        const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+        useMenuPositionCalculatorForSensor(target, senosrFloatingRef.value).then((pos) => {
+          position.value = pos
+        })
+        isEditMenuOpen.value = true
+      }
+    }
+  }
+)
+
+watch(
+  () => selectedSensor.value.position,
   () => {
-    if (selectedSensor.value) {
+    if (selectedSensor.value.id !== '') {
       const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
       useMenuPositionCalculatorForSensor(target, senosrFloatingRef.value).then((pos) => {
         position.value = pos
@@ -83,6 +104,23 @@ watch(
   },
   {
     deep: true
+  }
+)
+
+watch(
+  () => props.isZooming,
+  (newValue) => {
+    if (selectedSensor.value.id !== '') {
+      if (newValue) {
+        isEditMenuOpen.value = false
+      } else {
+        isEditMenuOpen.value = true
+        const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+        useMenuPositionCalculatorForSensor(target, senosrFloatingRef.value).then((pos) => {
+          position.value = pos
+        })
+      }
+    }
   }
 )
 

@@ -1,6 +1,7 @@
 import { drag, select } from 'd3'
 import { type D3DragEvent } from 'd3-drag'
 import { type Sensor } from '@/types/sensor'
+import { type Ref } from 'vue'
 
 export interface EditedSensor {
   id: string
@@ -8,11 +9,12 @@ export interface EditedSensor {
   radius: number
 }
 
-export function d3Drag(editedSensor: EditedSensor) {
+export function d3Drag(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
   let startOffsetY: number = 0
   d3Drag.on('start', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
+    isDragging.value = true
     startOffsetX = event.x - event.subject.position.x
     startOffsetY = event.y - event.subject.position.y
     select('body').style('cursor', 'grabbing')
@@ -53,6 +55,7 @@ export function d3Drag(editedSensor: EditedSensor) {
     editedSensor.position.y = event.y - startOffsetY
     editedSensor.radius = event.subject.radius
     select('body').style('cursor', 'default')
+    isDragging.value = false
   })
   return d3Drag
 }
@@ -61,9 +64,10 @@ let startPositionX = 0
 let originalRadius = 0
 let updatedRadius = 0
 
-export function d3UpperLeftResize(editedSensor: EditedSensor) {
+export function d3UpperLeftResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
   const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+    isDragging.value = true
     select('body').style('cursor', 'nwse-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -117,14 +121,16 @@ export function d3UpperLeftResize(editedSensor: EditedSensor) {
     originalRadius = 0
 
     select('body').style('cursor', 'default')
+    isDragging.value = false
   })
 
   return d3UpperLeftResize
 }
 
-export function d3UpperRightResize(editedSensor: EditedSensor) {
+export function d3UpperRightResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
   const d3UpperRightResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+    isDragging.value = true
     select('body').style('cursor', 'nesw-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -177,13 +183,15 @@ export function d3UpperRightResize(editedSensor: EditedSensor) {
     originalRadius = 0
 
     select('body').style('cursor', 'default')
+    isDragging.value = false
   })
   return d3UpperRightResize
 }
 
-export function d3LowerLeftResize(editedSensor: EditedSensor) {
+export function d3LowerLeftResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
   const d3LowerLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+    isDragging.value = true
     select('body').style('cursor', 'nesw-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -237,13 +245,15 @@ export function d3LowerLeftResize(editedSensor: EditedSensor) {
     originalRadius = 0
 
     select('body').style('cursor', 'default')
+    isDragging.value = false
   })
   return d3LowerLeftResize
 }
 
-export function d3LowerRightResize(editedSensor: EditedSensor) {
+export function d3LowerRightResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
   const d3LowerRightResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
+    isDragging.value = true
     select('body').style('cursor', 'nwse-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -287,17 +297,6 @@ export function d3LowerRightResize(editedSensor: EditedSensor) {
       .attr('cy', event.y)
   })
   d3LowerRightResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    // editSensor(event.subject.id, {
-    //   position: {
-    //     x: event.x - updatedRadius,
-    //     y: event.y - updatedRadius
-    //   }
-    // })
-
-    // editSensor(event.subject.id, {
-    //   radius: updatedRadius
-    // })
-
     editedSensor.id = event.subject.id
     editedSensor.position.x = event.x - updatedRadius
     editedSensor.position.y = event.y - updatedRadius
@@ -308,6 +307,7 @@ export function d3LowerRightResize(editedSensor: EditedSensor) {
     originalRadius = 0
 
     select('body').style('cursor', 'default')
+    isDragging.value = false
   })
   return d3LowerRightResize
 }

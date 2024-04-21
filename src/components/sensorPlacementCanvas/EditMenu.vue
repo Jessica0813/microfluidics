@@ -1,5 +1,5 @@
 <template>
-  <div ref="senosrFloatingRef" class="wrapper" id="sensor-menu-bar" v-show="isEditMenuOpen">
+  <div ref="sensorFloatingRef" class="wrapper" id="sensor-menu-bar" v-show="isEditMenuOpen">
     <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
@@ -52,7 +52,7 @@ const props = defineProps<{
 }>()
 const isMenuOpen = ref(false)
 
-const senosrFloatingRef = ref<HTMLElement | null>(null)
+const sensorFloatingRef = ref<HTMLDivElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(true)
 
@@ -83,7 +83,7 @@ watch(
       if (sensor) {
         selectedSensor.value = sensor
         const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-        useMenuPositionCalculatorForSensor(target, senosrFloatingRef.value).then((pos) => {
+        useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
           position.value = pos
         })
         isEditMenuOpen.value = true
@@ -97,7 +97,7 @@ watch(
   () => {
     if (selectedSensor.value.id !== '') {
       const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-      useMenuPositionCalculatorForSensor(target, senosrFloatingRef.value).then((pos) => {
+      useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
         position.value = pos
       })
     }
@@ -116,7 +116,7 @@ watch(
       } else {
         isEditMenuOpen.value = true
         const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-        useMenuPositionCalculatorForSensor(target, senosrFloatingRef.value).then((pos) => {
+        useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
           position.value = pos
         })
       }
@@ -128,16 +128,6 @@ function deleteSelectedElements() {
   if (props.selectedSensorId) {
     deleteSensorWithId(props.selectedSensorId)
   }
-}
-
-function isSensorMenuinView(sensorX: number, sensorY: number, width: number, height: number) {
-  const { x, y, k } = props.transform
-  const screenX = (sensorX + x) * k
-  const screenY = (sensorY + y) * k
-
-  if (props.designCanvasRef === null) return
-  const { left, top, right, bottom } = props.designCanvasRef.getBoundingClientRect()
-  return screenX > left - width && screenY > top - height && screenX < right && screenY < bottom
 }
 
 const d3Drag = drag<HTMLDivElement, any, any>()
@@ -163,17 +153,17 @@ d3Drag.on('end', (event: D3DragEvent<HTMLDivElement, any, any>) => {
 })
 d3Drag.filter(() => isDraggable.value)
 
-// watch(
-//   () => position.value,
-//   () => {
-//     if (floatingRef.value) {
-//       select(floatingRef.value).call(d3Drag)
-//     }
-//   },
-//   {
-//     deep: true
-//   }
-// )
+watch(
+  () => position.value,
+  () => {
+    if (sensorFloatingRef.value) {
+      select(sensorFloatingRef.value).call(d3Drag)
+    }
+  },
+  {
+    deep: true
+  }
+)
 </script>
 
 <style scoped>

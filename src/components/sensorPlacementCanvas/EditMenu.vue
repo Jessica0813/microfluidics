@@ -40,7 +40,6 @@ import type { D3Zoom } from '@/types/d3'
 import type { Sensor } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
-import { createState } from '@/composables/useStateCreation'
 
 const { findSensor, deleteSensorWithId } = useSensorStore()
 const { addState } = useStateStore()

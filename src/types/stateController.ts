@@ -11,13 +11,15 @@ export enum ActionType {
   DELETE_SENSOR = 'DELETE_SENSOR',
   MOVE_SENSOR = 'MOVE_SENSOR',
   RESIZE_SENSOR = 'RESIZE_SENSOR',
-  UPDATE_SENSOR_DATA = 'UPDATE_SENSOR_DATA',
+  UPDATE_SENSOR_NAME = 'UPDATE_SENSOR_NAME',
+  UPDATE_SENSOR_TYPE = 'UPDATE_SENSOR_TYPE',
   CREATE_EDGE = 'CREATE_EDGE',
   DELETE_EDGE = 'DELETE_EDGE',
   UPDATE_EDGE = 'UPDATE_EDGE'
 }
 
 export interface state {
+  objectName?: string
   objectPosition?: { x: number; y: number }
   objectType?: string
   objectRadius?: number

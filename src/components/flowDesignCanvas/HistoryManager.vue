@@ -151,10 +151,10 @@ function undo() {
       toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
-        name: state.objectId,
+        name: state.oldState.objectName || state.objectId,
         type: 'temperature',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
-        radius: 20,
+        radius: state.oldState.objectRadius || 20,
         selected: false
       }
       addSensor(sensor)
@@ -180,6 +180,22 @@ function undo() {
           y: state.oldState.objectPosition?.y || 0
         },
         radius: state.oldState.objectRadius || 20
+      })
+      toggleRecordState()
+      break
+    }
+    case ActionType.UPDATE_SENSOR_TYPE: {
+      toggleRecordState()
+      editSensor(state.objectId, {
+        type: state.oldState.objectType || 'temperature'
+      })
+      toggleRecordState()
+      break
+    }
+    case ActionType.UPDATE_SENSOR_NAME: {
+      toggleRecordState()
+      editSensor(state.objectId, {
+        name: state.oldState.objectName
       })
       toggleRecordState()
       break
@@ -313,6 +329,22 @@ function redo() {
           y: state.newState?.objectPosition?.y || 0
         },
         radius: state.newState?.objectRadius || 20
+      })
+      toggleRecordState()
+      break
+    }
+    case ActionType.UPDATE_SENSOR_TYPE: {
+      toggleRecordState()
+      editSensor(state.objectId, {
+        type: state.newState?.objectType || 'temperature'
+      })
+      toggleRecordState()
+      break
+    }
+    case ActionType.UPDATE_SENSOR_NAME: {
+      toggleRecordState()
+      editSensor(state.objectId, {
+        name: state.newState?.objectName
       })
       toggleRecordState()
       break

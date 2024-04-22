@@ -38,8 +38,12 @@ import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import { useSensorStore } from '@/stores/useSensorStore'
 import type { D3Zoom } from '@/types/d3'
 import type { Sensor } from '@/types/sensor'
+import { type StateController, ActionType } from '@/types/stateController'
+import { useStateStore } from '@/stores/useStateStore'
+import { createState } from '@/composables/useStateCreation'
 
 const { findSensor, deleteSensorWithId } = useSensorStore()
+const { addState } = useStateStore()
 const isEditMenuOpen = ref(false)
 
 const sensorType = ['temperature', 'speed']
@@ -55,6 +59,8 @@ const isMenuOpen = ref(false)
 const sensorFloatingRef = ref<HTMLDivElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(true)
+let oldType = 'temperature'
+let oldName = ''
 
 const selectedSensor = ref<Sensor>({
   id: '',
@@ -78,10 +84,14 @@ watch(
         radius: 20,
         selected: false
       }
+      oldType = 'temperature'
+      oldName = ''
     } else {
       const sensor = findSensor(newValue)
       if (sensor) {
         selectedSensor.value = sensor
+        oldType = sensor.type
+        oldName = sensor.name
         const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
         useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
           position.value = pos
@@ -124,9 +134,70 @@ watch(
   }
 )
 
+watch(
+  () => selectedSensor.value.type,
+  (newSelectedSensorType) => {
+    if (selectedSensor.value.id !== '' && oldType !== newSelectedSensorType) {
+      const state: StateController = {
+        type: ActionType.UPDATE_SENSOR_TYPE,
+        name: 'update sensor type ' + selectedSensor.value.id,
+        objectId: selectedSensor.value.id,
+        oldState: {
+          objectType: oldType,
+          data: ''
+        },
+        newState: {
+          objectType: newSelectedSensorType,
+          data: ''
+        }
+      }
+      addState(state)
+      oldType = newSelectedSensorType
+    }
+  }
+)
+
+watch(isMenuOpen, (newValue, oldValue) => {
+  if (
+    !newValue &&
+    oldValue &&
+    selectedSensor.value.id !== '' &&
+    oldName !== selectedSensor.value.name
+  ) {
+    const state: StateController = {
+      type: ActionType.UPDATE_SENSOR_NAME,
+      name: 'update sensor name ' + selectedSensor.value.id,
+      objectId: selectedSensor.value.id,
+      oldState: {
+        objectName: oldName,
+        data: ''
+      },
+      newState: {
+        objectName: selectedSensor.value.name,
+        data: ''
+      }
+    }
+    addState(state)
+    oldType = selectedSensor.value.name
+  }
+})
+
 function deleteSelectedElements() {
-  if (props.selectedSensorId) {
+  if (props.selectedSensorId !== '') {
+    const state: StateController = {
+      type: ActionType.DELETE_SENSOR,
+      name: 'delete sensor ' + selectedSensor.value.id,
+      objectId: selectedSensor.value.id,
+      oldState: {
+        objectType: selectedSensor.value.type,
+        objectName: selectedSensor.value.name,
+        objectPosition: selectedSensor.value.position,
+        objectRadius: selectedSensor.value.radius,
+        data: ''
+      }
+    }
     deleteSensorWithId(props.selectedSensorId)
+    addState(state)
   }
 }
 

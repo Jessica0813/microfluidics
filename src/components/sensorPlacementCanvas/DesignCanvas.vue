@@ -11,7 +11,6 @@
         ? '4px 4px 8px 2px rgba(128, 128, 128, 0.6)'
         : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
     }"
-    v-click-outside="removeAllSelectedSensors"
   >
     <EditMenu
       :selected-sensor-id="selectedSensorId"
@@ -219,7 +218,7 @@ onMounted(() => {
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
-      .attr('fill', (sensor) => (sensor.selected ? '#007bff' : '#BDBDBD'))
+      .attr('fill', (sensor) => (sensor.type === 'temperature' ? '#E0E0E0' : '#BDBDBD'))
 
     // add rect around circle
     sensorEnter
@@ -324,7 +323,7 @@ onMounted(() => {
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
-      .attr('fill', (sensor) => (sensor.selected ? '#007bff' : '#BDBDBD'))
+      .attr('fill', (sensor) => (sensor.type === 'temperature' ? '#E0E0E0' : '#BDBDBD'))
 
     sensorText
       .attr('x', (sensor) => sensor.position.x)

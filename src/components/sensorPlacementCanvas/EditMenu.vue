@@ -1,5 +1,10 @@
 <template>
-  <div ref="sensorFloatingRef" class="wrapper" id="sensor-menu-bar" v-show="isEditMenuOpen">
+  <div
+    ref="sensorFloatingRef"
+    class="wrapper sensor-edit-menu"
+    id="sensor-menu-bar"
+    v-show="isEditMenuOpen"
+  >
     <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>

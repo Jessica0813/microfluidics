@@ -88,7 +88,7 @@ import DesignCanvasControl from './DesignCanvasControl.vue'
 import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
-import EditMenu from './EditMenu.vue'
+import EditMenu from './SensorEditMenu.vue'
 
 const {
   sensors,

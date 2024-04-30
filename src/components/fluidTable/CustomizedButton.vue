@@ -1,14 +1,3 @@
-<script setup lang="ts">
-defineEmits(['onClick'])
-defineProps({
-  isCancelAction: {
-    type: Boolean,
-    default: false
-  },
-  buttonName: String
-})
-</script>
-
 <template>
   <v-btn
     class="text-white"
@@ -19,3 +8,14 @@ defineProps({
     >{{ buttonName }}</v-btn
   >
 </template>
+
+<script setup lang="ts">
+defineEmits(['onClick'])
+defineProps({
+  isCancelAction: {
+    type: Boolean,
+    default: false
+  },
+  buttonName: String
+})
+</script>

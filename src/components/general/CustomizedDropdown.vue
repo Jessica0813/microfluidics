@@ -1,16 +1,3 @@
-<script setup lang="ts">
-defineProps({
-  label: String,
-  items: Array as () => string[]
-})
-
-const selected = defineModel<string>('selected', { default: '' })
-
-const selectItem = (item: string) => {
-  selected.value = item
-}
-</script>
-
 <template>
   <div class="dropdown-menu">
     <button
@@ -24,6 +11,19 @@ const selectItem = (item: string) => {
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+defineProps({
+  label: String,
+  items: Array as () => string[]
+})
+
+const selected = defineModel<string>('selected', { default: '' })
+
+const selectItem = (item: string) => {
+  selected.value = item
+}
+</script>
 
 <style scoped>
 .dropdown-button {

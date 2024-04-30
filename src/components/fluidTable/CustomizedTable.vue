@@ -1,3 +1,84 @@
+<template>
+  <v-dialog v-model="isTableVisible" width="80%" min-height="80%" max-height="80%" scrollable>
+    <v-card class="pa-10">
+      <DeleteConfirmationDialog
+        v-model="dialogDelete"
+        @close="closeDeleteDialog"
+        @cancel="cancelItemDelete"
+        @confirm="confirmItemDelete"
+      />
+      <ItemCreateEditDialog
+        v-model:isDialogVisible="dialogCreateOrEdit"
+        v-model:nameInput="name"
+        v-model:colorInput="color"
+        v-model:viscosityInput="viscosity"
+        v-model:withParticle="withParticle"
+        v-model:particleSize="particleSize"
+        v-model:particleDensity="particleDensity"
+        @close="closeCreateOrEditDialog"
+        @cancel="cancelItemCreateOrEdit"
+        @save="confirmItemCreateOrEdit"
+        :itemIndex="createOrEditItemIndex"
+      />
+      <v-card-title class="d-flex align-center pe-2">
+        Fluids
+        <v-spacer></v-spacer>
+        <CustomizedButton buttonName="Add new item" @onClick="handleAddNewFluid" />
+      </v-card-title>
+
+      <v-divider></v-divider>
+      <v-data-table-virtual
+        :headers="headers"
+        :items="fluidStore.fluidTypes"
+        density="comfortable"
+        :hover="true"
+      >
+        <template v-slot:headers="{ columns }">
+          <tr class="bg-grey-lighten-3">
+            <template v-for="column in columns" :key="column.key">
+              <td class="">
+                <p class="font-weight-bold">{{ column.title }}</p>
+              </td>
+            </template>
+          </tr>
+        </template>
+        <template v-slot:item.color="{ item }">
+          <div
+            :style="{
+              width: '30px',
+              height: '15px',
+              borderRadius: '2px',
+              backgroundColor: item.color
+            }"
+          ></div>
+        </template>
+        <template v-slot:item.withParticle="{ item }">
+          <div>{{ item.withParticle === 'Yes' ? 'Yes' : 'No' }}</div>
+        </template>
+        <template v-slot:item.particleSize="{ item }">
+          <div>{{ item.withParticle === 'Yes' ? item.particleSize : '-' }}</div>
+        </template>
+        <template v-slot:item.particleDensity="{ item }">
+          <div>{{ item.withParticle === 'Yes' ? item.particleDensity : '-' }}</div>
+        </template>
+        <template v-slot:item.actions="{ item, index }">
+          <v-icon
+            size="small"
+            class="me-2"
+            color="grey-darken-3"
+            @click="handleEditFluid(index, item)"
+          >
+            mdi-pencil-outline
+          </v-icon>
+          <v-icon size="small" color="grey-darken-3" @click="deleteItem(index)">
+            mdi-delete-outline
+          </v-icon>
+        </template>
+      </v-data-table-virtual>
+    </v-card>
+  </v-dialog>
+</template>
+
 <script setup lang="ts">
 import { type Fluid } from '@/types/fluid'
 import { ref } from 'vue'
@@ -119,84 +200,3 @@ function handleEditFluid(index: number, fluid: Fluid) {
   createOrEditItemIndex.value = index
 }
 </script>
-
-<template>
-  <v-dialog v-model="isTableVisible" width="80%" min-height="80%" max-height="80%" scrollable>
-    <v-card class="pa-10">
-      <DeleteConfirmationDialog
-        v-model="dialogDelete"
-        @close="closeDeleteDialog"
-        @cancel="cancelItemDelete"
-        @confirm="confirmItemDelete"
-      />
-      <ItemCreateEditDialog
-        v-model:isDialogVisible="dialogCreateOrEdit"
-        v-model:nameInput="name"
-        v-model:colorInput="color"
-        v-model:viscosityInput="viscosity"
-        v-model:withParticle="withParticle"
-        v-model:particleSize="particleSize"
-        v-model:particleDensity="particleDensity"
-        @close="closeCreateOrEditDialog"
-        @cancel="cancelItemCreateOrEdit"
-        @save="confirmItemCreateOrEdit"
-        :itemIndex="createOrEditItemIndex"
-      />
-      <v-card-title class="d-flex align-center pe-2">
-        Fluids
-        <v-spacer></v-spacer>
-        <CustomizedButton buttonName="Add new item" @onClick="handleAddNewFluid" />
-      </v-card-title>
-
-      <v-divider></v-divider>
-      <v-data-table-virtual
-        :headers="headers"
-        :items="fluidStore.fluidTypes"
-        density="comfortable"
-        :hover="true"
-      >
-        <template v-slot:headers="{ columns }">
-          <tr class="bg-grey-lighten-3">
-            <template v-for="column in columns" :key="column.key">
-              <td class="">
-                <p class="font-weight-bold">{{ column.title }}</p>
-              </td>
-            </template>
-          </tr>
-        </template>
-        <template v-slot:item.color="{ item }">
-          <div
-            :style="{
-              width: '30px',
-              height: '15px',
-              borderRadius: '2px',
-              backgroundColor: item.color
-            }"
-          ></div>
-        </template>
-        <template v-slot:item.withParticle="{ item }">
-          <div>{{ item.withParticle === 'Yes' ? 'Yes' : 'No' }}</div>
-        </template>
-        <template v-slot:item.particleSize="{ item }">
-          <div>{{ item.withParticle === 'Yes' ? item.particleSize : '-' }}</div>
-        </template>
-        <template v-slot:item.particleDensity="{ item }">
-          <div>{{ item.withParticle === 'Yes' ? item.particleDensity : '-' }}</div>
-        </template>
-        <template v-slot:item.actions="{ item, index }">
-          <v-icon
-            size="small"
-            class="me-2"
-            color="grey-darken-3"
-            @click="handleEditFluid(index, item)"
-          >
-            mdi-pencil-outline
-          </v-icon>
-          <v-icon size="small" color="grey-darken-3" @click="deleteItem(index)">
-            mdi-delete-outline
-          </v-icon>
-        </template>
-      </v-data-table-virtual>
-    </v-card>
-  </v-dialog>
-</template>

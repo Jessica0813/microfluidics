@@ -1,13 +1,3 @@
-<script setup lang="ts">
-defineProps({
-  isFlowDesignCanvasOpen: {
-    type: Boolean,
-    default: true
-  }
-})
-defineEmits(['onFlowDesignClick', 'onSensorPlacementClick'])
-</script>
-
 <template>
   <div class="tab-bar elevation-1">
     <button
@@ -32,6 +22,16 @@ defineEmits(['onFlowDesignClick', 'onSensorPlacementClick'])
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+defineProps({
+  isFlowDesignCanvasOpen: {
+    type: Boolean,
+    default: true
+  }
+})
+defineEmits(['onFlowDesignClick', 'onSensorPlacementClick'])
+</script>
 
 <style scoped>
 .tab-bar {

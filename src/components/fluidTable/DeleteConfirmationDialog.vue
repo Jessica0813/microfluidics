@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import CustomizedButton from './CustomizedButton.vue'
-import { defineModel } from 'vue'
-
-const emit = defineEmits(['close', 'cancel', 'confirm'])
-const isDeleteDialogVisible = defineModel<boolean>()
-</script>
-
 <template>
   <v-dialog v-model="isDeleteDialogVisible" min-width="300" max-width="500" persistent>
     <v-card>
@@ -25,3 +17,11 @@ const isDeleteDialogVisible = defineModel<boolean>()
     </v-card>
   </v-dialog>
 </template>
+
+<script setup lang="ts">
+import CustomizedButton from './CustomizedButton.vue'
+import { defineModel } from 'vue'
+
+const emit = defineEmits(['close', 'cancel', 'confirm'])
+const isDeleteDialogVisible = defineModel<boolean>()
+</script>

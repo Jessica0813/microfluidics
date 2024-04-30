@@ -1,35 +1,3 @@
-<script setup lang="ts">
-import { computed, defineModel } from 'vue'
-import CustomizedButton from './CustomizedButton.vue'
-import { useFluidStore } from '@/stores/useFluidStore'
-import type { Fluid } from '@/types/fluid'
-import CustomizedColorInputVue from '../general/CustomizedColorInput.vue'
-
-const fluidStore = useFluidStore()
-
-const props = defineProps({
-  itemIndex: Number
-})
-
-const isDialogVisible = defineModel<boolean>('isDialogVisible')
-const nameInput = defineModel<string>('nameInput')
-const colorInput = defineModel<string>('colorInput', { default: '' })
-const viscosityInput = defineModel('viscosityInput', { default: 0 })
-const withParticle = defineModel<string>('withParticle', { default: 'No' })
-const particleSize = defineModel('particleSize', { default: 0 })
-const particleDensity = defineModel('particleDensity', { default: 0 })
-
-const emit = defineEmits(['close', 'cancel', 'save'])
-
-const isNameExisted = computed(() => {
-  const enteredName = nameInput.value?.trim().toLowerCase()
-  return fluidStore.fluidTypes.some(
-    (fluid: Fluid, index: number) =>
-      index !== props.itemIndex && fluid.name.toLowerCase() === enteredName
-  )
-})
-</script>
-
 <template>
   <v-dialog v-model="isDialogVisible" min-width="300" max-width="600" persistent>
     <v-card>
@@ -154,4 +122,35 @@ const isNameExisted = computed(() => {
     </v-card>
   </v-dialog>
 </template>
-@/stores/usefluidStore
+
+<script setup lang="ts">
+import { computed, defineModel } from 'vue'
+import CustomizedButton from './CustomizedButton.vue'
+import { useFluidStore } from '@/stores/useFluidStore'
+import type { Fluid } from '@/types/fluid'
+import CustomizedColorInputVue from '../general/CustomizedColorInput.vue'
+
+const fluidStore = useFluidStore()
+
+const props = defineProps({
+  itemIndex: Number
+})
+
+const isDialogVisible = defineModel<boolean>('isDialogVisible')
+const nameInput = defineModel<string>('nameInput')
+const colorInput = defineModel<string>('colorInput', { default: '' })
+const viscosityInput = defineModel('viscosityInput', { default: 0 })
+const withParticle = defineModel<string>('withParticle', { default: 'No' })
+const particleSize = defineModel('particleSize', { default: 0 })
+const particleDensity = defineModel('particleDensity', { default: 0 })
+
+const emit = defineEmits(['close', 'cancel', 'save'])
+
+const isNameExisted = computed(() => {
+  const enteredName = nameInput.value?.trim().toLowerCase()
+  return fluidStore.fluidTypes.some(
+    (fluid: Fluid, index: number) =>
+      index !== props.itemIndex && fluid.name.toLowerCase() === enteredName
+  )
+})
+</script>

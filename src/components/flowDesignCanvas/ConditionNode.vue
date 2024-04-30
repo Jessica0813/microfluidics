@@ -1,40 +1,3 @@
-<script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { Handle, Position, type NodeProps } from '@vue-flow/core'
-import { useVueFlow } from '@vue-flow/core'
-
-const { findNode } = useVueFlow()
-const { id, selected, data } = defineProps<NodeProps>()
-const isMenuOpen = ref<boolean>(false)
-const nodeIsHovered = ref<boolean>(false)
-
-const condition = computed(() => {
-  if (data === undefined || data.condition === undefined) {
-    return {
-      name: 'xxx',
-      sensor: 'color sensor',
-      operator: '=',
-      color: '#ffffff',
-      viscosity: 0
-    }
-  }
-  return data.condition
-})
-
-watch(isMenuOpen, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
-    const node = findNode(id)
-    if (node === undefined) {
-      return
-    }
-    if (node.data === undefined || node.data.condition !== condition.value) {
-      node.data.condition = condition.value
-    }
-    console.log(node)
-  }
-})
-</script>
-
 <template>
   <div
     :id="id"
@@ -93,6 +56,43 @@ watch(isMenuOpen, (newValue, oldValue) => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, watch, computed } from 'vue'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
+import { useVueFlow } from '@vue-flow/core'
+
+const { findNode } = useVueFlow()
+const { id, selected, data } = defineProps<NodeProps>()
+const isMenuOpen = ref<boolean>(false)
+const nodeIsHovered = ref<boolean>(false)
+
+const condition = computed(() => {
+  if (data === undefined || data.condition === undefined) {
+    return {
+      name: 'xxx',
+      sensor: 'color sensor',
+      operator: '=',
+      color: '#ffffff',
+      viscosity: 0
+    }
+  }
+  return data.condition
+})
+
+watch(isMenuOpen, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    const node = findNode(id)
+    if (node === undefined) {
+      return
+    }
+    if (node.data === undefined || node.data.condition !== condition.value) {
+      node.data.condition = condition.value
+    }
+    console.log(node)
+  }
+})
+</script>
 
 <style scoped>
 .wrap {

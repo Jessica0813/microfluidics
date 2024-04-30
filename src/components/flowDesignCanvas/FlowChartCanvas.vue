@@ -1,3 +1,42 @@
+<template>
+  <EditMenubar />
+  <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
+    <div class="side-panel">
+      <NodePanel />
+    </div>
+    <div class="top-bar">
+      <ZoomSlider />
+      <HistoryManager v-model:should-record-state="shouldRecordState" />
+      <UploadDownLoadControls />
+      <RightSideBar />
+    </div>
+    <VueFlow
+      @dragover="onDragOver"
+      :default-viewport="{ zoom: 1 }"
+      :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
+      :zoom-on-double-click="false"
+      :max-zoom="2"
+      :min-zoom="0.2"
+      @edge-update="onEdgeUpdate"
+    >
+      <Background style="background-color: #faf9f7" pattern-color="black" />
+      <template #node-process="processNodeProps">
+        <ProcessNode v-bind="processNodeProps" />
+      </template>
+      <template #node-condition="conditionNodeProps">
+        <ConditionNode v-bind="conditionNodeProps" />
+      </template>
+      <template #node-schedule="scheduleNodeProps">
+        <ScheduledProcessNode v-bind="scheduleNodeProps" />
+      </template>
+      <template #edge-custom="props">
+        <CustomEdge v-bind="props" />
+      </template>
+      <!-- <Controls /> -->
+    </VueFlow>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
@@ -295,42 +334,3 @@ onEdgesChange((edgesChange) => {
   })
 })
 </script>
-
-<template>
-  <EditMenubar />
-  <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
-    <div class="side-panel">
-      <NodePanel />
-    </div>
-    <div class="top-bar">
-      <ZoomSlider />
-      <HistoryManager v-model:should-record-state="shouldRecordState" />
-      <UploadDownLoadControls />
-      <RightSideBar />
-    </div>
-    <VueFlow
-      @dragover="onDragOver"
-      :default-viewport="{ zoom: 1 }"
-      :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
-      :zoom-on-double-click="false"
-      :max-zoom="2"
-      :min-zoom="0.2"
-      @edge-update="onEdgeUpdate"
-    >
-      <Background style="background-color: #faf9f7" pattern-color="black" />
-      <template #node-process="processNodeProps">
-        <ProcessNode v-bind="processNodeProps" />
-      </template>
-      <template #node-condition="conditionNodeProps">
-        <ConditionNode v-bind="conditionNodeProps" />
-      </template>
-      <template #node-schedule="scheduleNodeProps">
-        <ScheduledProcessNode v-bind="scheduleNodeProps" />
-      </template>
-      <template #edge-custom="props">
-        <CustomEdge v-bind="props" />
-      </template>
-      <!-- <Controls /> -->
-    </VueFlow>
-  </div>
-</template>

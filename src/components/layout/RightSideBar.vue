@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import TableConfigureButton from './TableConfigureButton.vue'
-</script>
-
 <template>
   <div class="vertical-button-group ml-2">
     <TableConfigureButton title="fluid table" />
@@ -13,6 +9,10 @@ import TableConfigureButton from './TableConfigureButton.vue'
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+import TableConfigureButton from './TableConfigureButton.vue'
+</script>
 
 <style scoped>
 .vertical-button-group {

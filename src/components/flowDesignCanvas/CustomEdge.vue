@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { SmoothStepEdge, useVueFlow } from '@vue-flow/core'
-import type { EdgeProps } from '@vue-flow/core'
-
-const { findEdge } = useVueFlow()
-
-const props = defineProps<EdgeProps>()
-
-console.log(findEdge(props.id))
-</script>
-
 <template>
   <SmoothStepEdge
     v-bind="props"
@@ -24,3 +13,14 @@ console.log(findEdge(props.id))
     :style="{ stroke: '757575', strokeWidth: 2 }"
   />
 </template>
+
+<script setup lang="ts">
+import { SmoothStepEdge, useVueFlow } from '@vue-flow/core'
+import type { EdgeProps } from '@vue-flow/core'
+
+const { findEdge } = useVueFlow()
+
+const props = defineProps<EdgeProps>()
+
+console.log(findEdge(props.id))
+</script>

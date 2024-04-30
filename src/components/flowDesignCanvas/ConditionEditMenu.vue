@@ -16,18 +16,6 @@
       </template>
       <CustomizedDropdown v-model:selected="condition.operator" :items="dynamicOperators" />
     </v-menu>
-    <!-- <v-menu
-      :close-on-content-click="false"
-      offset="10"
-      v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
-    >
-      <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
-          <v-icon size="small" color="#66615b">mdi-palette</v-icon>
-        </button>
-      </template>
-      <CustomizedColorInput v-model:color="condition.color" />
-    </v-menu> -->
     <CustomizedColorInput
       v-model:color="condition.color"
       v-if="condition.sensor === '' || condition.sensor === 'color sensor'"

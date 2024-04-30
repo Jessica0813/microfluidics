@@ -19,24 +19,6 @@
       <v-icon size="small" color="#66615b">mdi-image-filter-center-focus-weak</v-icon>
     </button>
   </div>
-  <!-- <div class="d-flex button-group ml-4">
-    <button
-      class="icon-button with-right-border"
-      title="delete"
-      :class="hasSensorSelected ? '' : 'disable-hover'"
-      :disabled="!hasSensorSelected"
-      @click="onDeleteSelectedSensor"
-    >
-      <v-icon size="small" :color="hasSensorSelected ? '#66615b' : '#c2c2be'"
-        >mdi-trash-can-outline</v-icon
-      >
-    </button>
-    <SensorEditMenu
-      :hasSensorSelected="hasSensorSelected"
-      v-model="menu"
-      :selected-sensor-id="selectedSensorId"
-    />
-  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -45,20 +27,13 @@ import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
-// import { useSensorStore } from '@/stores/useSensorStore'
-// import SensorEditMenu from './SensorEditMenu.vue'
-
-// const { deleteSelectedSensor } = useSensorStore()
 
 const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
-// const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
   selectedSensorId: string
 }>()
-
-// const menu = ref(false)
 
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
 const maxZoomReached = toRef(() => transform.value.k >= 2)
@@ -94,11 +69,6 @@ function resetView() {
     props.d3Zoom.transform(props.d3Selection, zoomIdentity)
   }
 }
-
-// function onDeleteSelectedSensor() {
-//   hasSensorSelected.value = false
-//   deleteSelectedSensor()
-// }
 </script>
 
 <style scoped>

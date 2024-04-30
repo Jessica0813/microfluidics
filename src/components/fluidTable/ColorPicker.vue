@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import { defineModel } from 'vue'
-
-const colorInput = defineModel<string>({ default: '' })
-</script>
-
 <template>
   <v-menu>
     <template v-slot:activator="{ props }">
@@ -23,3 +17,9 @@ const colorInput = defineModel<string>({ default: '' })
     <v-color-picker v-model="colorInput" show-swatches hide-sliders hide-inputs></v-color-picker>
   </v-menu>
 </template>
+
+<script setup lang="ts">
+import { defineModel } from 'vue'
+
+const colorInput = defineModel<string>({ default: '' })
+</script>

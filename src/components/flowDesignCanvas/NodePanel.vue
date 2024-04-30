@@ -1,12 +1,3 @@
-<script setup lang="ts">
-function onDragStart(event: DragEvent, nodeType: string) {
-  if (event.dataTransfer) {
-    event.dataTransfer.setData('application/vueflow', nodeType)
-    event.dataTransfer.effectAllowed = 'move'
-  }
-}
-</script>
-
 <template>
   <div class="panel text-center flex-column elevation-1">
     <div
@@ -37,6 +28,15 @@ function onDragStart(event: DragEvent, nodeType: string) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+function onDragStart(event: DragEvent, nodeType: string) {
+  if (event.dataTransfer) {
+    event.dataTransfer.setData('application/vueflow', nodeType)
+    event.dataTransfer.effectAllowed = 'move'
+  }
+}
+</script>
 
 <style scoped>
 .panel {

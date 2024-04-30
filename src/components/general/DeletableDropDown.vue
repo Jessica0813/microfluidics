@@ -1,29 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-defineProps({
-  items: Array as () => string[]
-})
-const targetRef = ref<HTMLElement | null>(null)
-const floatingRef = ref<HTMLElement | null>(null)
-const isMenuOpen = ref(false)
-
-const selected = defineModel<string>('selected', { default: '' })
-
-const selectItem = (item: string) => {
-  selected.value = item
-  isMenuOpen.value = false
-}
-const onClickOutside = () => {
-  isMenuOpen.value = false
-}
-
-const removeSelectedItem = () => {
-  selected.value = ''
-  isMenuOpen.value = false
-}
-</script>
-
 <template>
   <div
     style="position: relative"
@@ -74,6 +48,32 @@ const removeSelectedItem = () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+defineProps({
+  items: Array as () => string[]
+})
+const targetRef = ref<HTMLElement | null>(null)
+const floatingRef = ref<HTMLElement | null>(null)
+const isMenuOpen = ref(false)
+
+const selected = defineModel<string>('selected', { default: '' })
+
+const selectItem = (item: string) => {
+  selected.value = item
+  isMenuOpen.value = false
+}
+const onClickOutside = () => {
+  isMenuOpen.value = false
+}
+
+const removeSelectedItem = () => {
+  selected.value = ''
+  isMenuOpen.value = false
+}
+</script>
 
 <style scoped>
 .dropdown-button {

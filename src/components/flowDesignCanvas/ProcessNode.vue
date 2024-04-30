@@ -1,25 +1,3 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Handle, Position, type NodeProps } from '@vue-flow/core'
-
-const { id, selected, data } = defineProps<NodeProps>()
-const nodeIsHovered = ref(false)
-
-const flowControl = computed(() => {
-  if (data === undefined || data.flowControl === undefined) {
-    return {
-      inlet: 'inlet 1',
-      injection: 'pump',
-      fluid: 'water',
-      pressure: 0,
-      duration: 0,
-      flowrate: 0
-    }
-  }
-  return data.flowControl
-})
-</script>
-
 <template>
   <div
     @mouseover="nodeIsHovered = true"
@@ -76,6 +54,28 @@ const flowControl = computed(() => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
+
+const { id, selected, data } = defineProps<NodeProps>()
+const nodeIsHovered = ref(false)
+
+const flowControl = computed(() => {
+  if (data === undefined || data.flowControl === undefined) {
+    return {
+      inlet: 'inlet 1',
+      injection: 'pump',
+      fluid: 'water',
+      pressure: 0,
+      duration: 0,
+      flowrate: 0
+    }
+  }
+  return data.flowControl
+})
+</script>
 
 <style>
 .vue-flow__handle-top {

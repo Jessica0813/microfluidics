@@ -266,28 +266,4 @@ watch(
   background-color: white;
   cursor: all-scroll;
 }
-.bar {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
-  height: fit-content;
-}
-.customized-button {
-  display: flex;
-  padding: 4px;
-  justify-content: center;
-  align-items: center;
-  margin-right: 2px;
-}
-.customized-button:hover {
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-.bg {
-  background-color: white;
-  padding: 8px;
-}
 </style>

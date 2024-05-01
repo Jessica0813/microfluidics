@@ -44,6 +44,7 @@ import { useSensorStore } from '@/stores/useSensorStore'
 import type { Sensor } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
+import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
 const { findSensor, deleteSensorWithId } = useSensorStore()
 const { addState } = useStateStore()
@@ -56,6 +57,7 @@ const props = defineProps<{
   isZooming: boolean
 }>()
 const isMenuOpen = ref(false)
+const { getZooming } = useSensorCanvasStore()
 
 const sensorFloatingRef = ref<HTMLDivElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -120,6 +122,23 @@ watch(
 
 watch(
   () => props.isZooming,
+  (newValue) => {
+    if (selectedSensor.value.id !== '') {
+      if (newValue) {
+        isEditMenuOpen.value = false
+      } else {
+        isEditMenuOpen.value = true
+        const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+        useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
+          position.value = pos
+        })
+      }
+    }
+  }
+)
+
+watch(
+  () => getZooming(),
   (newValue) => {
     if (selectedSensor.value.id !== '') {
       if (newValue) {

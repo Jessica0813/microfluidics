@@ -11,6 +11,8 @@
       :thumb-size="14"
       :hide-details="true"
       @update:modelValue="zoomBySlider"
+      @start="setZooming(true)"
+      @end="setZooming(false)"
     ></v-slider>
     <button @click="zoomIn" class="button" :disabled="maxZoomReached">
       <IconZoomIn :color="maxZoomReached ? '#BDBDBD' : ''" />
@@ -27,6 +29,7 @@ import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
+import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
 const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 const props = defineProps<{
@@ -37,6 +40,8 @@ const props = defineProps<{
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
 const maxZoomReached = toRef(() => transform.value.k >= 2)
 
+const { setZooming } = useSensorCanvasStore()
+
 function zoomTo(value: number) {
   if (props.d3Zoom && props.d3Selection) {
     props.d3Zoom.scaleTo(props.d3Selection, value)
@@ -44,19 +49,30 @@ function zoomTo(value: number) {
 }
 
 function zoomIn() {
+  setZooming(true)
+
   transform.value.k += 0.1
   if (transform.value.k > 2) {
     transform.value.k = 2
   }
   zoomTo(transform.value.k)
+
+  setTimeout(function () {
+    setZooming(false)
+  }, 300)
 }
 
 function zoomOut() {
+  setZooming(true)
+
   transform.value.k -= 0.1
   if (transform.value.k < 0.2) {
     transform.value.k = 0.2
   }
   zoomTo(transform.value.k)
+  setTimeout(function () {
+    setZooming(false)
+  }, 10)
 }
 
 function zoomBySlider() {
@@ -64,9 +80,15 @@ function zoomBySlider() {
 }
 
 function resetView() {
+  setZooming(true)
+
   if (props.d3Zoom && props.d3Selection) {
     props.d3Zoom.transform(props.d3Selection, zoomIdentity)
   }
+
+  setTimeout(function () {
+    setZooming(false)
+  }, 10)
 }
 </script>
 

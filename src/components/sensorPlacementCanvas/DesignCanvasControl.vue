@@ -1,13 +1,7 @@
 <template>
   <div class="vertical-button-group elevation-1">
     <deletable-drop-down :items="layer" v-model:selected="selected" />
-    <ZoomSlider
-      v-model:transform="transform"
-      :d3-zoom="d3Zoom"
-      :d3-selection="d3Selection"
-      v-model:hasSensorSelected="hasSensorSelected"
-      :selected-sensor-id="selectedSensorId"
-    />
+    <ZoomSlider v-model:transform="transform" :d3-zoom="d3Zoom" :d3-selection="d3Selection" />
   </div>
 </template>
 
@@ -18,11 +12,9 @@ import ZoomSlider from './ZoomSlider.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 
 const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
-const hasSensorSelected = defineModel<boolean>('hasSensorSelected', { default: false })
 defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
-  selectedSensorId: string
 }>()
 
 const selected = ref('')

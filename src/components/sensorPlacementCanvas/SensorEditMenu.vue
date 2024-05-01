@@ -41,7 +41,6 @@ import type { D3DragEvent } from 'd3-drag'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 import { useSensorStore } from '@/stores/useSensorStore'
-import type { D3Zoom } from '@/types/d3'
 import type { Sensor } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
@@ -54,8 +53,6 @@ const sensorType = ['temperature', 'speed']
 const props = defineProps<{
   selectedSensorId: string
   designCanvasRef: HTMLElement | null
-  d3Zoom: D3Zoom | undefined
-  transform: { x: number; y: number; k: number }
   isZooming: boolean
 }>()
 const isMenuOpen = ref(false)
@@ -244,7 +241,7 @@ watch(
 <style scoped>
 .wrapper {
   position: fixed;
-  z-index: 3;
+  z-index: 5;
   display: flex;
   flex-direction: row;
   justify-content: center;

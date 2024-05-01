@@ -32,7 +32,6 @@ const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
-  selectedSensorId: string
 }>()
 
 const minZoomReached = toRef(() => transform.value.k <= 0.2)

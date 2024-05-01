@@ -11,11 +11,9 @@
         : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
     }"
   >
-    <EditMenu
+    <SensorEditMenu
       :selected-sensor-id="selectedSensorId"
       :design-canvas-ref="svg"
-      :d3-zoom="d3Zoom"
-      :transform="transform"
       :is-zooming="isZooming"
     />
     <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
@@ -42,8 +40,6 @@
         v-model:transform="transform"
         :d3-zoom="d3Zoom"
         :d3-selection="d3Selection"
-        v-model:hasSensorSelected="hasSensorSelected"
-        :selected-sensor-id="selectedSensorId"
       />
     </div>
     <button
@@ -87,7 +83,7 @@ import DesignCanvasControl from './DesignCanvasControl.vue'
 import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
-import EditMenu from './SensorEditMenu.vue'
+import SensorEditMenu from './SensorEditMenu.vue'
 
 const {
   sensors,

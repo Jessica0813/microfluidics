@@ -1,7 +1,6 @@
 <template>
   <div
     class="canvas"
-    @click="removeSelectedSensor"
     @dragover="onDragOver"
     @drop="onDrop"
     @mouseenter="isCanvasFocused = true"
@@ -20,7 +19,7 @@
       :is-zooming="isZooming"
     />
     <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
-    <svg ref="svg" width="100%" height="100%">
+    <svg ref="svg" width="100%" height="100%" @click="removeSelectedSensor">
       <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
           <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />
@@ -59,7 +58,7 @@
     </button>
     <button
       class="button-canvas-down"
-      @click.stop="isDesignCanvasVisible = !isDesignCanvasVisible"
+      @click.stop="onCanvasHideClick"
       v-if="isCanvasFocused && isDesignCanvasVisible"
     >
       <IconScreenSchrink />
@@ -156,6 +155,13 @@ function removeSelectedSensor() {
   } else {
     isDesignCanvasVisible.value = true
   }
+}
+
+function onCanvasHideClick() {
+  isDesignCanvasVisible.value = !isDesignCanvasVisible.value
+  removeAllSelectedSensors()
+  hasSensorSelected.value = false
+  selectedSensorId.value = ''
 }
 
 onMounted(() => {
@@ -388,6 +394,7 @@ onMounted(() => {
   position: absolute;
   bottom: 8px;
   right: 8px;
+  z-index: 5;
 }
 
 .sensor-panel {

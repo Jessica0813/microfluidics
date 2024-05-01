@@ -140,6 +140,8 @@ function onDragOver(event: any) {
 }
 
 function onDrop(event: any) {
+  const type = event.dataTransfer?.getData('application/desgin')
+  if (type !== 'temperature') return
   if (!svg.value) return
   const left = svg.value.getBoundingClientRect().left
   const top = svg.value.getBoundingClientRect().top

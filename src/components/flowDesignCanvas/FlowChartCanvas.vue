@@ -170,6 +170,7 @@ function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
 
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
+  if (type === '') return
 
   if (vueFlowRef.value === null) return
   const { left, top } = vueFlowRef.value.getBoundingClientRect()
@@ -186,6 +187,8 @@ function onDrop(event: any) {
     nodeId = getConditionNodeId()
   } else if (type === 'schedule') {
     nodeId = getProcessScheduleNodeId()
+  } else {
+    return
   }
 
   let newNode = {

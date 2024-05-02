@@ -1,6 +1,6 @@
 <template>
   <EditMenubar />
-  <div @drop="onDrop" style="width: 100%; height: 100%; position: relative">
+  <div style="width: 100%; height: 100%; position: relative">
     <div class="side-panel">
       <NodePanel />
     </div>
@@ -12,6 +12,7 @@
     </div>
     <VueFlow
       @dragover="onDragOver"
+      @drop="onDrop"
       :default-viewport="{ zoom: 1 }"
       :default-edge-options="{ markerEnd: 'arrow', updatable: true }"
       :zoom-on-double-click="false"

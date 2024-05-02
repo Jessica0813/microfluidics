@@ -58,21 +58,49 @@ const flowControl = ref({
   flowrate: 0
 })
 
-function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
-  const { x, y, zoom } = viewport.value
-  const screenX = (nodeX + x) * zoom
-  const screenY = (nodeY + y) * zoom
-
-  if (vueFlowRef.value === null) return
-  const { left, top, right, bottom } = vueFlowRef.value.getBoundingClientRect()
-  return screenX > left - width && screenY > top - height && screenX < right && screenY < bottom
-}
-
 const floatingRef = ref<HTMLDivElement | null>(null)
 const isMenuBarOpen = ref(false)
 const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
+
+function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
+  if (vueFlowRef.value === null) return
+
+  const { x, y, zoom } = viewport.value
+  const screenX = (nodeX + x) * zoom
+  const screenY = (nodeY + y) * zoom
+  const widthWithZoom = width * zoom
+  const heightWithZoom = height * zoom
+
+  const { left, top, right, bottom } = vueFlowRef.value.getBoundingClientRect()
+  return (
+    screenX + widthWithZoom > left &&
+    screenY + heightWithZoom > top &&
+    screenX < right &&
+    screenY < bottom
+  )
+}
+
+function showEditMenuBar() {
+  const node = findNode(selectedId.value!)
+
+  if (!node) {
+    return
+  }
+
+  if (
+    !isNodeinView(node.position.x, node.position.y, node.dimensions.width, node.dimensions.height)
+  ) {
+    return
+  }
+
+  const element = document.getElementById(selectedId.value!)
+  useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+    position.value = pos
+  })
+  isMenuBarOpen.value = true
+}
 
 watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
   if (
@@ -127,26 +155,6 @@ watch(
   }
 )
 
-function showEditMenuBar() {
-  const node = findNode(selectedId.value!)
-
-  if (!node) {
-    return
-  }
-
-  if (
-    !isNodeinView(node.position.x, node.position.y, node.dimensions.width, node.dimensions.height)
-  ) {
-    return
-  }
-
-  isMenuBarOpen.value = true
-  const element = document.getElementById(selectedId.value!)
-  useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-    position.value = pos
-  })
-}
-
 onNodeDragStart(() => {
   isMenuBarOpen.value = false
 })
@@ -172,12 +180,10 @@ onViewportChangeEnd(() => {
 watch(
   () => getZooming(),
   (newValue) => {
-    if (newValue) {
-      if (selectedId.value) {
+    if (selectedId.value) {
+      if (newValue) {
         isMenuBarOpen.value = false
-      }
-    } else {
-      if (selectedId.value) {
+      } else {
         showEditMenuBar()
       }
     }
@@ -223,7 +229,7 @@ watch(
 <style scoped>
 .wrapper {
   position: fixed;
-  z-index: 3;
+  z-index: 10;
   display: flex;
   flex-direction: row;
   justify-content: center;

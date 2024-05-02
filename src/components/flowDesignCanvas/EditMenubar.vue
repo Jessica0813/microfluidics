@@ -28,6 +28,7 @@ import EdgeEditMenu from './EdgeEditMenu.vue'
 import { select } from 'd3'
 import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 
 const {
   findNode,
@@ -40,6 +41,8 @@ const {
   viewport,
   vueFlowRef
 } = useVueFlow()
+
+const { getZooming } = useFlowChartCanvasStore()
 
 const flowControl = ref({
   id: '-1',
@@ -124,11 +127,7 @@ watch(
   }
 )
 
-onNodeDragStart(() => {
-  isMenuBarOpen.value = false
-})
-
-onNodeDragStop(() => {
+function showEditMenuBar() {
   const node = findNode(selectedId.value!)
 
   if (!node) {
@@ -146,6 +145,16 @@ onNodeDragStop(() => {
   useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
     position.value = pos
   })
+}
+
+onNodeDragStart(() => {
+  isMenuBarOpen.value = false
+})
+
+onNodeDragStop(() => {
+  if (selectedId.value) {
+    showEditMenuBar()
+  }
 })
 
 onViewportChangeStart(() => {
@@ -155,26 +164,25 @@ onViewportChangeStart(() => {
 })
 
 onViewportChangeEnd(() => {
-  const node = findNode(selectedId.value!)
-
-  if (!node) {
-    return
-  }
-
-  if (
-    !isNodeinView(node.position.x, node.position.y, node.dimensions.width, node.dimensions.height)
-  ) {
-    return
-  }
-
   if (selectedId.value) {
-    isMenuBarOpen.value = true
-    const element = document.getElementById(selectedId.value)
-    useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-      position.value = pos
-    })
+    showEditMenuBar()
   }
 })
+
+watch(
+  () => getZooming(),
+  (newValue) => {
+    if (newValue) {
+      if (selectedId.value) {
+        isMenuBarOpen.value = false
+      }
+    } else {
+      if (selectedId.value) {
+        showEditMenuBar()
+      }
+    }
+  }
+)
 
 const d3Drag = drag<HTMLDivElement, any, any>()
 let startOffsetX: number = 0

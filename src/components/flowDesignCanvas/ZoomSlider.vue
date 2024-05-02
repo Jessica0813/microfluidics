@@ -11,6 +11,8 @@
       :thumb-size="14"
       :hide-details="true"
       @update:modelValue="zoomBySlider"
+      @start="setZooming(true)"
+      @end="setZooming(false)"
     ></v-slider>
     <button @click="zoomIn" class="button" :disabled="maxZoomReached">
       <IconZoomIn :color="maxZoomReached ? '#BDBDBD' : ''" />
@@ -28,9 +30,11 @@ import { ref, watch, toRef } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 
 const { zoomTo, viewport, setViewport } = useVueFlow()
 
+const { setZooming } = useFlowChartCanvasStore()
 const zoom = ref(1)
 
 const minZoomReached = toRef(() => viewport.value.zoom <= 0.2)
@@ -44,19 +48,27 @@ watch(
 )
 
 function zoomIn() {
+  setZooming(true)
   zoom.value = zoom.value + 0.1
   if (zoom.value > 2) {
     zoom.value = 2
   }
   zoomTo(zoom.value)
+  setTimeout(function () {
+    setZooming(false)
+  }, 200)
 }
 
 function zoomOut() {
+  setZooming(true)
   zoom.value = zoom.value - 0.1
   if (zoom.value < 0.2) {
     zoom.value = 0.2
   }
   zoomTo(zoom.value)
+  setTimeout(function () {
+    setZooming(false)
+  }, 200)
 }
 
 function zoomBySlider() {
@@ -64,7 +76,11 @@ function zoomBySlider() {
 }
 
 function resetView() {
+  setZooming(true)
   setViewport({ zoom: 1, x: 0, y: 0 })
+  setTimeout(function () {
+    setZooming(false)
+  }, 200)
 }
 </script>
 

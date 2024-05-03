@@ -68,8 +68,8 @@ function isNodeinView(nodeX: number, nodeY: number, width: number, height: numbe
   if (vueFlowRef.value === null) return
 
   const { x, y, zoom } = viewport.value
-  const screenX = (nodeX + x) * zoom
-  const screenY = (nodeY + y) * zoom
+  const screenX = nodeX * zoom + x
+  const screenY = nodeY * zoom + y
   const widthWithZoom = width * zoom
   const heightWithZoom = height * zoom
 
@@ -197,7 +197,6 @@ let x: number = 0
 let y: number = 0
 d3Drag.on('start', (event: D3DragEvent<HTMLDivElement, any, any>) => {
   event.sourceEvent.preventDefault()
-  console.log(event)
   startOffsetX = event.x - position.value.x
   startOffsetY = event.y - position.value.y
 })
@@ -221,6 +220,7 @@ watch(
     }
   },
   {
+    immediate: true,
     deep: true
   }
 )

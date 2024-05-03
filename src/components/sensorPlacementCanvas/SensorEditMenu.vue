@@ -54,6 +54,7 @@ const sensorType = ['temperature', 'speed']
 const props = defineProps<{
   selectedSensorId: string
   designCanvasRef: HTMLElement | null
+  transform: { x: number; y: number; k: number }
   isZooming: boolean
 }>()
 const isMenuOpen = ref(false)
@@ -73,6 +74,38 @@ const selectedSensor = ref<Sensor>({
   radius: 20,
   selected: false
 })
+
+function isSensorinView(target: HTMLElement) {
+  if (props.designCanvasRef === null) {
+    return false
+  }
+
+  const x = target.getBoundingClientRect()
+
+  const targetLeft = x.left
+  const targetTop = x.top
+  const targetRight = x.right
+  const targetBottom = x.bottom
+
+  const { left, top, right, bottom } = props.designCanvasRef.getBoundingClientRect()
+  return targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
+}
+
+function showSensorEditMenu() {
+  const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+
+  if (!target) {
+    return
+  }
+
+  if (selectedSensor.value.id !== '' && !isSensorinView(target)) {
+    return
+  }
+  useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
+    position.value = pos
+  })
+  isEditMenuOpen.value = true
+}
 
 watch(
   () => props.selectedSensorId,
@@ -106,32 +139,13 @@ watch(
 )
 
 watch(
-  () => selectedSensor.value.position,
-  () => {
-    if (selectedSensor.value.id !== '') {
-      const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-      useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
-        position.value = pos
-      })
-    }
-  },
-  {
-    deep: true
-  }
-)
-
-watch(
   () => props.isZooming,
   (newValue) => {
     if (selectedSensor.value.id !== '') {
       if (newValue) {
         isEditMenuOpen.value = false
       } else {
-        isEditMenuOpen.value = true
-        const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-        useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
-          position.value = pos
-        })
+        showSensorEditMenu()
       }
     }
   }
@@ -144,11 +158,7 @@ watch(
       if (newValue) {
         isEditMenuOpen.value = false
       } else {
-        isEditMenuOpen.value = true
-        const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-        useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
-          position.value = pos
-        })
+        showSensorEditMenu()
       }
     }
   }
@@ -252,7 +262,8 @@ watch(
     }
   },
   {
-    deep: true
+    deep: true,
+    immediate: true
   }
 )
 </script>
@@ -260,7 +271,7 @@ watch(
 <style scoped>
 .wrapper {
   position: fixed;
-  z-index: 5;
+  z-index: 10;
   display: flex;
   flex-direction: row;
   justify-content: center;

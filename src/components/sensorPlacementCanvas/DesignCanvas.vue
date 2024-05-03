@@ -15,6 +15,7 @@
       :selected-sensor-id="selectedSensorId"
       :design-canvas-ref="svg"
       :is-zooming="isZooming"
+      :transform="transform"
     />
     <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
     <svg ref="svg" width="100%" height="100%" @click="removeSelectedSensor">

@@ -1,5 +1,6 @@
 <template>
   <div
+    class="new-node"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"
     :id="id"
@@ -128,5 +129,13 @@ const flowControl = computed(() => {
   width: 0;
   left: 0;
   opacity: 0;
+}
+
+.new-node {
+  animation: scaleIn 0.8s ease forwards;
+}
+
+.deleted-item {
+  animation: fadeOut 0.8s ease forwards;
 }
 </style>

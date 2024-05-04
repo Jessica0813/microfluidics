@@ -1,5 +1,6 @@
 <template>
   <div
+    class="new-node"
     :id="id"
     @mouseover="nodeIsHovered = true"
     @mouseout="nodeIsHovered = false"

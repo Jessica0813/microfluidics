@@ -1,5 +1,6 @@
 <template>
   <div
+    class="new-node"
     @click="unselectProcess"
     :id="id"
     @mouseover="nodeIsHovered = true"

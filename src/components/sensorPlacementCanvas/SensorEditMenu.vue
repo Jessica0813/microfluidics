@@ -228,6 +228,8 @@ function deleteSelectedElements() {
     }
     deleteSensorWithId(props.selectedSensorId)
     addState(state)
+    isEditMenuOpen.value = false
+    // props.selectedSensorId = ''
   }
 }
 

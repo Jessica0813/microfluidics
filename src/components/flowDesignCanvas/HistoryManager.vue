@@ -71,6 +71,22 @@ function undo() {
     shouldRecordState.value = true
     return
   }
+  if (Array.isArray(state.oldState) || typeof state.objectId !== 'string') {
+    if (Array.isArray(state.oldState) && Array.isArray(state.objectId)) {
+      switch (state.type) {
+        case ActionType.MOVE_MULTI_NODES:
+          for (let i = 0; i < state.objectId.length; i++) {
+            const node = findNode(state.objectId[i])
+            if (node) {
+              node.position = state.oldState[i].objectPosition || { x: 0, y: 0 }
+            }
+          }
+          break
+      }
+    }
+    shouldRecordState.value = true
+    return
+  }
   switch (state.type) {
     case ActionType.CREATE_NODE: {
       const node = findNode(state.objectId)
@@ -209,6 +225,30 @@ function redo() {
   shouldRecordState.value = false
   const state = redoState()
   if (!state) {
+    shouldRecordState.value = true
+    return
+  }
+  if (
+    Array.isArray(state.oldState) ||
+    Array.isArray(state.newState) ||
+    typeof state.objectId !== 'string'
+  ) {
+    if (
+      Array.isArray(state.oldState) &&
+      Array.isArray(state.objectId) &&
+      Array.isArray(state.newState)
+    ) {
+      switch (state.type) {
+        case ActionType.MOVE_MULTI_NODES:
+          for (let i = 0; i < state.objectId.length; i++) {
+            const node = findNode(state.objectId[i])
+            if (node) {
+              node.position = state.newState[i].objectPosition || { x: 0, y: 0 }
+            }
+          }
+          break
+      }
+    }
     shouldRecordState.value = true
     return
   }

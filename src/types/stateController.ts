@@ -15,7 +15,12 @@ export enum ActionType {
   UPDATE_SENSOR_TYPE = 'UPDATE_SENSOR_TYPE',
   CREATE_EDGE = 'CREATE_EDGE',
   DELETE_EDGE = 'DELETE_EDGE',
-  UPDATE_EDGE = 'UPDATE_EDGE'
+  UPDATE_EDGE = 'UPDATE_EDGE',
+  MOVE_MULTI_NODES = 'MOVE_MULTI_NODES',
+  DELETE_MULTI_NODES = 'DELETE_MULTI_NODES',
+  MOVE_MULTI_SENSORS = 'MOVE_MULTI_SENSORS',
+  DELETE_MULTI_SENSORS = 'DELETE_MULTI_SENSORS',
+  DELETE_MULTI_EDGES = 'DELETE_MULTI_EDGES'
 }
 
 export interface state {
@@ -32,7 +37,7 @@ export interface state {
 export interface StateController {
   type: ActionType
   name: string
-  objectId: string
-  oldState: state
-  newState?: state
+  objectId: string | string[]
+  oldState: state | state[]
+  newState?: state | state[]
 }

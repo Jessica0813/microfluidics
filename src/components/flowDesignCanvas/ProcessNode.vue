@@ -134,8 +134,4 @@ const flowControl = computed(() => {
 .new-node {
   animation: scaleIn 0.8s ease forwards;
 }
-
-.deleted-item {
-  animation: fadeOut 0.8s ease forwards;
-}
 </style>

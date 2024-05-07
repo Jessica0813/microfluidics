@@ -220,7 +220,6 @@ onMounted(() => {
     sensorEnter
       .append('circle')
       .attr('class', 'sensor')
-      .attr('class', 'new-creation')
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
@@ -310,7 +309,6 @@ onMounted(() => {
     sensorEnter
       .append('text')
       .attr('class', 'sensor-label')
-      .attr('class', 'new-creation')
       .attr('x', (sensor) => sensor.position.x)
       .attr('y', (sensor) => sensor.position.y)
       .attr('dy', (sensor) => -sensor.radius - 5) // Adjust the text position based on your preference

@@ -268,8 +268,8 @@ onNodesChange((nodesChange) => {
   if (!shouldRecordState.value) {
     return
   }
-  // loop through all nodeChange
-  nodesChange.forEach((change) => {
+  if (nodesChange.length === 1) {
+    const change = nodesChange[0]
     if (change.type === 'position' && change.dragging === false) {
       const node = findNode(change.id)
       const state: StateController = {
@@ -287,10 +287,38 @@ onNodesChange((nodesChange) => {
       }
       addState(state)
     }
-    // else if (change.type === 'dimensions' && change.id.includes('schedule_')) {
-    //   console.log('Node resize', change)
-    // }
-  })
+  } else if (nodesChange.length > 1) {
+    let state: StateController = {
+      type: ActionType.MOVE_MULTI_NODES,
+      name: 'move multiple nodes',
+      objectId: [],
+      oldState: [],
+      newState: []
+    }
+    nodesChange.forEach((change) => {
+      if (change.type === 'position' && change.dragging === false) {
+        const node = findNode(change.id)
+        if (
+          Array.isArray(state.objectId) &&
+          Array.isArray(state.oldState) &&
+          Array.isArray(state.newState)
+        ) {
+          state.objectId.push(change.id)
+          state.oldState.push({
+            objectPosition: { x: change.from.x, y: change.from.y },
+            data: ''
+          })
+          state.newState.push({
+            objectPosition: { x: node?.position.x || 0, y: node?.position.y || 0 },
+            data: ''
+          })
+        }
+      }
+    })
+    if (state.objectId.length > 0) {
+      addState(state)
+    }
+  }
 })
 
 onEdgesChange((edgesChange) => {

@@ -425,6 +425,6 @@ onMounted(() => {
 
 <style>
 .new-creation {
-  animation: fadeIn 1s ease forwards;
+  animation: fadeIn 1s ease-in;
 }
 </style>

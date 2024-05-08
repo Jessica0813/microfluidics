@@ -47,9 +47,9 @@ import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
-import { createState } from '@/composables/useStateCreation'
+import { createDeleteNodeState } from '@/composables/useStateCreation'
 
-const { findNode, removeNodes } = useVueFlow()
+const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 
 const props = defineProps<{
@@ -144,11 +144,16 @@ watch(
 )
 
 function deleteSelectedElements() {
-  const node = findNode(props.id)
-  if (node) {
-    removeNodes([node])
-    const state = createState(node, ActionType.DELETE_NODE)
-    addState(state)
+  if (props.id !== null) {
+    const node = findNode(props.id)
+    if (!node) {
+      return
+    }
+    let connectedEdges = getConnectedEdges(props.id)
+    const state = createDeleteNodeState([node], connectedEdges, removeNodes, removeEdges, findNode)
+    if (state) {
+      addState(state)
+    }
   }
 }
 </script>

@@ -84,10 +84,10 @@ import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
-import { createState } from '@/composables/useStateCreation'
 import type { FlowControlProcess } from '@/types/flowControl'
+import { createDeleteNodeState } from '@/composables/useStateCreation'
 
-const { findNode, removeNodes } = useVueFlow()
+const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
@@ -222,11 +222,16 @@ watch(isMenuOpen, (newValue, oldValue) => {
 })
 
 function deleteSelectedElements() {
-  const node = findNode(props.id)
-  if (node) {
-    removeNodes([node])
-    const state = createState(node, ActionType.DELETE_NODE)
-    addState(state)
+  if (props.id !== null) {
+    const node = findNode(props.id)
+    if (!node) {
+      return
+    }
+    let connectedEdges = getConnectedEdges(props.id)
+    const state = createDeleteNodeState([node], connectedEdges, removeNodes, removeEdges, findNode)
+    if (state) {
+      addState(state)
+    }
   }
 }
 </script>

@@ -85,7 +85,7 @@ function undo() {
         }
         case ActionType.DELETE_MULTI_ElEMENTS: {
           if (state.oldState.length === state.objectId.length) {
-            for (let i = 0; i < state.objectId.length; i++) {
+            for (let i = state.objectId.length - 1; i >= 0; i--) {
               if (
                 state.objectId[i].includes('process') ||
                 state.objectId[i].includes('condition') ||

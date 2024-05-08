@@ -19,6 +19,7 @@
       :max-zoom="2"
       :min-zoom="0.2"
       @edge-update="onEdgeUpdate"
+      :delete-key-code="null"
     >
       <Background style="background-color: #faf9f7" pattern-color="black" />
       <template #node-process="processNodeProps">
@@ -56,6 +57,7 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { ref } from 'vue'
 import HistoryManager from './HistoryManager.vue'
+import hotkeys from 'hotkeys-js'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -100,7 +102,10 @@ const {
   vueFlowRef,
   onNodesChange,
   onEdgesChange,
-  findEdge
+  findEdge,
+  getSelectedElements,
+  removeNodes,
+  removeEdges
 } = useVueFlow()
 
 const shouldRecordState = ref(true)
@@ -341,28 +346,115 @@ onEdgesChange((edgesChange) => {
       }
       addState(state)
     } else if (change.type === 'remove') {
-      const edge = findEdge(change.id)
-      const state: StateController = {
-        type: ActionType.DELETE_EDGE,
-        name: 'delete edge ' + change.id,
-        objectId: change.id,
-        oldState: {
-          data: '',
-          source: change.source,
-          target: change.target,
-          sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
-          targetHandleId: change.targetHandle ? change.targetHandle : ''
-        },
-        newState: {
-          data: '',
-          source: edge?.source || '',
-          target: edge?.target || '',
-          sourceHandleId: edge?.sourceHandle || '',
-          targetHandleId: edge?.targetHandle || ''
-        }
-      }
-      addState(state)
+      // const edge = findEdge(change.id)
+      // const state: StateController = {
+      //   type: ActionType.DELETE_EDGE,
+      //   name: 'delete edge ' + change.id,
+      //   objectId: change.id,
+      //   oldState: {
+      //     data: '',
+      //     source: change.source,
+      //     target: change.target,
+      //     sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
+      //     targetHandleId: change.targetHandle ? change.targetHandle : ''
+      //   },
+      //   newState: {
+      //     data: '',
+      //     source: edge?.source || '',
+      //     target: edge?.target || '',
+      //     sourceHandleId: edge?.sourceHandle || '',
+      //     targetHandleId: edge?.targetHandle || ''
+      //   }
+      // }
+      // addState(state)
     }
   })
+})
+
+hotkeys('backspace,del,delete', function (event) {
+  event.preventDefault()
+  if (getSelectedElements.value.length === 1) {
+    if (
+      getSelectedElements.value[0].type === 'process' ||
+      getSelectedElements.value[0].type === 'condition' ||
+      getSelectedElements.value[0].type === 'schedule'
+    ) {
+      const node = findNode(getSelectedElements.value[0].id)
+      if (node) {
+        const state: StateController = {
+          type: ActionType.DELETE_NODE,
+          name: 'delete node ' + node.id,
+          objectId: node.id,
+          oldState: {
+            objectPosition: node.position,
+            objectType: node.type,
+            data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
+          }
+        }
+        addState(state)
+        removeNodes([node])
+      }
+    } else if (getSelectedElements.value[0].type === 'custom') {
+      const edge = findEdge(getSelectedElements.value[0].id)
+      if (edge) {
+        const state: StateController = {
+          type: ActionType.DELETE_EDGE,
+          name: 'delete edge ' + edge.id,
+          objectId: edge.id,
+          oldState: {
+            data: '',
+            source: edge.source,
+            target: edge.target,
+            sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
+            targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+          }
+        }
+        addState(state)
+        removeEdges([edge])
+      }
+    }
+  } else if (getSelectedElements.value.length > 1) {
+    let state: StateController = {
+      type: ActionType.DELETE_MULTI_ElEMENTS,
+      name: 'delete multiple elements',
+      objectId: [],
+      oldState: [],
+      newState: []
+    }
+    getSelectedElements.value.forEach((element) => {
+      if (
+        element.type === 'process' ||
+        element.type === 'condition' ||
+        element.type === 'schedule'
+      ) {
+        const node = findNode(element.id)
+        if (node && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
+          state.objectId.push(node.id)
+          state.oldState.push({
+            objectPosition: node.position,
+            objectType: node.type,
+            data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
+          })
+          removeNodes([node])
+        }
+      } else if (element.type === 'custom') {
+        const edge = findEdge(getSelectedElements.value[0].id)
+        if (edge && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
+          state.objectId.push(edge.id)
+          state.oldState.push({
+            data: '',
+            source: edge.source,
+            target: edge.target,
+            sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
+            targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+          })
+          removeEdges([edge])
+        }
+      }
+    })
+    if (state.objectId.length > 0) {
+      addState(state)
+    }
+  }
 })
 </script>

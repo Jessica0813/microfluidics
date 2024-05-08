@@ -74,7 +74,7 @@ function undo() {
   if (Array.isArray(state.oldState) || typeof state.objectId !== 'string') {
     if (Array.isArray(state.oldState) && Array.isArray(state.objectId)) {
       switch (state.type) {
-        case ActionType.MOVE_MULTI_NODES:
+        case ActionType.MOVE_MULTI_NODES: {
           for (let i = 0; i < state.objectId.length; i++) {
             const node = findNode(state.objectId[i])
             if (node) {
@@ -82,6 +82,41 @@ function undo() {
             }
           }
           break
+        }
+        case ActionType.DELETE_MULTI_ElEMENTS: {
+          if (state.oldState.length === state.objectId.length) {
+            for (let i = 0; i < state.objectId.length; i++) {
+              if (
+                state.objectId[i].includes('process') ||
+                state.objectId[i].includes('condition') ||
+                state.objectId[i].includes('schedule')
+              ) {
+                const node = {
+                  id: state.objectId[i],
+                  type: state.oldState[i].objectType || 'process',
+                  position: state.oldState[i].objectPosition || { x: 0, y: 0 },
+                  data: state.oldState[i].data
+                }
+                addNodes([node])
+              } else if (state.objectId[i].includes('edge')) {
+                const edge = {
+                  source: state.oldState[i].source || '',
+                  target: state.oldState[i].target || '',
+                  sourceHandle: state.oldState[i].sourceHandleId,
+                  targetHandle: state.oldState[i].targetHandleId
+                }
+                if (state.objectId[i].includes('edgeTrue')) {
+                  addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: 'Yes' }])
+                } else if (state.objectId[i].includes('edgeFalse')) {
+                  addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: 'No' }])
+                } else if (state.objectId[i].includes('edge')) {
+                  addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: '' }])
+                }
+              }
+            }
+          }
+          break
+        }
       }
     }
     shouldRecordState.value = true
@@ -239,7 +274,7 @@ function redo() {
       Array.isArray(state.newState)
     ) {
       switch (state.type) {
-        case ActionType.MOVE_MULTI_NODES:
+        case ActionType.MOVE_MULTI_NODES: {
           for (let i = 0; i < state.objectId.length; i++) {
             const node = findNode(state.objectId[i])
             if (node) {
@@ -247,6 +282,29 @@ function redo() {
             }
           }
           break
+        }
+        case ActionType.DELETE_MULTI_ElEMENTS: {
+          if (state.oldState.length === state.objectId.length) {
+            for (let i = 0; i < state.objectId.length; i++) {
+              if (
+                state.objectId[i].includes('process') ||
+                state.objectId[i].includes('condition') ||
+                state.objectId[i].includes('schedule')
+              ) {
+                const node = findNode(state.objectId[i])
+                if (node) {
+                  removeNodes([node])
+                }
+              } else if (state.objectId[i].includes('edge')) {
+                const edge = findEdge(state.objectId[i])
+                if (edge) {
+                  removeEdges([edge])
+                }
+              }
+            }
+          }
+          break
+        }
       }
     }
     shouldRecordState.value = true

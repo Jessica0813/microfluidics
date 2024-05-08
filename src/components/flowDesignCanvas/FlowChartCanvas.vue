@@ -345,28 +345,6 @@ onEdgesChange((edgesChange) => {
         }
       }
       addState(state)
-    } else if (change.type === 'remove') {
-      // const edge = findEdge(change.id)
-      // const state: StateController = {
-      //   type: ActionType.DELETE_EDGE,
-      //   name: 'delete edge ' + change.id,
-      //   objectId: change.id,
-      //   oldState: {
-      //     data: '',
-      //     source: change.source,
-      //     target: change.target,
-      //     sourceHandleId: change.sourceHandle ? change.sourceHandle : '',
-      //     targetHandleId: change.targetHandle ? change.targetHandle : ''
-      //   },
-      //   newState: {
-      //     data: '',
-      //     source: edge?.source || '',
-      //     target: edge?.target || '',
-      //     sourceHandleId: edge?.sourceHandle || '',
-      //     targetHandleId: edge?.targetHandle || ''
-      //   }
-      // }
-      // addState(state)
     }
   })
 })

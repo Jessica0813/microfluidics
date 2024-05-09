@@ -53,6 +53,7 @@ import { ActionType } from '@/types/stateController'
 import type { Connection } from '@vue-flow/core'
 import { useSensorStore } from '@/stores/useSensorStore'
 import type { Sensor } from '@/types/sensor'
+import hotkeys from 'hotkeys-js'
 
 const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = useStateStore()
 
@@ -463,6 +464,16 @@ function redoToStep(index: number) {
     redo()
   }
 }
+
+hotkeys('ctrl+z, command+z', function (event) {
+  event.preventDefault()
+  undo()
+})
+
+hotkeys('ctrl+y, command+y', function (event) {
+  event.preventDefault()
+  redo()
+})
 </script>
 
 <style scoped>

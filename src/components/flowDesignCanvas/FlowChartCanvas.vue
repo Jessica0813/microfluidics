@@ -58,7 +58,12 @@ import { useStateStore } from '@/stores/useStateStore'
 import { ref } from 'vue'
 import HistoryManager from './HistoryManager.vue'
 import hotkeys from 'hotkeys-js'
-import { createDeleteNodeState } from '@/composables/useStateCreation'
+import {
+  createDeleteNodeState,
+  createDeleteEdgeState,
+  createDeleteMultiEdgesState,
+  createDeleteMultiNodesState
+} from '@/composables/useStateCreation'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -103,8 +108,6 @@ const {
   vueFlowRef,
   onNodesChange,
   onEdgesChange,
-  findEdge,
-  getSelectedElements,
   getSelectedEdges,
   getSelectedNodes,
   removeNodes,
@@ -361,142 +364,30 @@ hotkeys('backspace,del,delete', function (event) {
       getSelectedNodes.value,
       connectedEdges,
       removeNodes,
-      removeEdges,
-      findNode
+      removeEdges
     )
     if (state) {
       addState(state)
     }
   } else if (getSelectedNodes.value.length === 0 && getSelectedEdges.value.length === 1) {
-    const edge = findEdge(getSelectedElements.value[0].id)
-    if (edge) {
-      const state: StateController = {
-        type: ActionType.DELETE_EDGE,
-        name: 'delete edge ' + edge.id,
-        objectId: edge.id,
-        oldState: {
-          data: '',
-          source: edge.source,
-          target: edge.target,
-          sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
-        }
-      }
+    const state = createDeleteEdgeState(getSelectedEdges.value, removeEdges)
+    if (state) {
       addState(state)
-      removeEdges([edge])
     }
   } else if (getSelectedNodes.value.length === 0 && getSelectedEdges.value.length > 1) {
-    let state: StateController = {
-      type: ActionType.DELETE_MULTI_ElEMENTS,
-      name: 'delete multiple elements',
-      objectId: [],
-      oldState: [],
-      newState: []
-    }
-    getSelectedEdges.value.forEach((element) => {
-      const edge = findEdge(element.id)
-      if (edge && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-        state.objectId.push(edge.id)
-        state.oldState.push({
-          data: '',
-          source: edge.source,
-          target: edge.target,
-          sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
-        })
-        removeEdges([edge])
-      }
-    })
-    if (state.objectId.length > 0) {
+    const state = createDeleteMultiEdgesState(getSelectedEdges.value, removeEdges)
+    if (state) {
       addState(state)
     }
-  } else if (getSelectedNodes.value.length > 1 && getSelectedEdges.value.length === 0) {
-    let state: StateController = {
-      type: ActionType.DELETE_MULTI_ElEMENTS,
-      name: 'delete multiple elements',
-      objectId: [],
-      oldState: [],
-      newState: []
-    }
-    let connectedEdges = getConnectedEdges(getSelectedNodes.value)
-    connectedEdges.forEach((edge) => {
-      if (edge && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-        state.objectId.push(edge.id)
-        state.oldState.push({
-          data: '',
-          source: edge.source,
-          target: edge.target,
-          sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
-        })
-        removeEdges([edge])
-      }
-    })
-    getSelectedNodes.value.forEach((element) => {
-      const node = findNode(element.id)
-      if (node && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-        state.objectId.push(node.id)
-        state.oldState.push({
-          objectPosition: node.position,
-          objectType: node.type,
-          data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
-        })
-        removeNodes([node])
-      }
-    })
-    if (state.objectId.length > 0) {
-      addState(state)
-    }
-  } else if (getSelectedNodes.value.length > 1 && getSelectedEdges.value.length !== 0) {
-    let connectedEdges = getConnectedEdges(getSelectedNodes.value)
-    let state: StateController = {
-      type: ActionType.DELETE_MULTI_ElEMENTS,
-      name: 'delete multiple elements',
-      objectId: [],
-      oldState: [],
-      newState: []
-    }
-    getSelectedEdges.value.forEach((element) => {
-      const edge = findEdge(element.id)
-      if (edge && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-        connectedEdges = connectedEdges.filter((item) => item !== edge)
-        state.objectId.push(edge.id)
-        state.oldState.push({
-          data: '',
-          source: edge.source,
-          target: edge.target,
-          sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
-        })
-        removeEdges([edge])
-      }
-    })
-    connectedEdges.forEach((edge) => {
-      if (edge && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-        state.objectId.push(edge.id)
-        state.oldState.push({
-          data: '',
-          source: edge.source,
-          target: edge.target,
-          sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
-        })
-        removeEdges([edge])
-      }
-    })
-    getSelectedNodes.value.forEach((element) => {
-      const node = findNode(element.id)
-      if (node && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-        state.objectId.push(node.id)
-        state.oldState.push({
-          objectPosition: node.position,
-          objectType: node.type,
-          data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
-        })
-        removeNodes([node])
-      }
-    })
-    if (state.objectId.length > 0) {
+  } else if (getSelectedNodes.value.length >= 1) {
+    const state = createDeleteMultiNodesState(
+      getSelectedNodes.value,
+      getSelectedEdges.value,
+      removeNodes,
+      removeEdges,
+      getConnectedEdges
+    )
+    if (state) {
       addState(state)
     }
   }

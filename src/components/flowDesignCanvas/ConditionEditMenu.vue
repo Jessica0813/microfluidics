@@ -150,7 +150,7 @@ function deleteSelectedElements() {
       return
     }
     let connectedEdges = getConnectedEdges(props.id)
-    const state = createDeleteNodeState([node], connectedEdges, removeNodes, removeEdges, findNode)
+    const state = createDeleteNodeState([node], connectedEdges, removeNodes, removeEdges)
     if (state) {
       addState(state)
     }

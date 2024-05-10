@@ -87,7 +87,6 @@ import SensorEditMenu from './SensorEditMenu.vue'
 
 const {
   sensors,
-  selectedSensor,
   onSelectSensor,
   removeAllSelectedSensors,
   addSensor,
@@ -99,7 +98,7 @@ const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-const selectedSensorId = ref(selectedSensor[0]?.id || '')
+const selectedSensorId = ref('')
 
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)

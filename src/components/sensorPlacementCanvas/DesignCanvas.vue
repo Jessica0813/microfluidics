@@ -79,7 +79,6 @@ import {
   d3LowerRightResize,
   d3Drag
 } from '@/composables/useSensorDragandResize'
-import type { EditedSensor } from '@/composables/useSensorDragandResize'
 import DesignCanvasControl from './DesignCanvasControl.vue'
 import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
@@ -89,7 +88,6 @@ import SensorEditMenu from './SensorEditMenu.vue'
 const {
   sensors,
   selectedSensor,
-  editSensor,
   onSelectSensor,
   removeAllSelectedSensors,
   addSensor,
@@ -102,31 +100,13 @@ const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
 const selectedSensorId = ref(selectedSensor[0]?.id || '')
-const editedSensor = ref<EditedSensor>({
-  id: '',
-  position: { x: 0, y: 0 },
-  radius: 0
-})
+
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
 
 const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
 const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
 const isZooming = ref(false)
-
-watch(
-  () => editedSensor.value,
-  (newValue) => {
-    editSensor(newValue.id, {
-      position: {
-        x: newValue.position.x,
-        y: newValue.position.y
-      },
-      radius: newValue.radius
-    })
-  },
-  { deep: true }
-)
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -248,7 +228,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('fill', '#BDBDBD')
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
-      .call(d3UpperLeftResize(editedSensor.value, isZooming))
+      .call(d3UpperLeftResize(isZooming))
       .on('mouseover', () => {
         select('body').style('cursor', 'nwse-resize')
       })
@@ -264,7 +244,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
-      .call(d3UpperRightResize(editedSensor.value, isZooming))
+      .call(d3UpperRightResize(isZooming))
       .on('mouseover', () => {
         select('body').style('cursor', 'nesw-resize')
       })
@@ -280,7 +260,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
-      .call(d3LowerLeftResize(editedSensor.value, isZooming))
+      .call(d3LowerLeftResize(isZooming))
       .on('mouseover', () => {
         select('body').style('cursor', 'nesw-resize')
       })
@@ -296,7 +276,7 @@ onMounted(() => {
       .attr('r', 4)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
       .attr('fill', '#BDBDBD')
-      .call(d3LowerRightResize(editedSensor.value, isZooming))
+      .call(d3LowerRightResize(isZooming))
       .on('mouseover', () => {
         select('body').style('cursor', 'nwse-resize')
       })
@@ -315,7 +295,7 @@ onMounted(() => {
       .style('font-size', 12)
       .text((sensor) => sensor.name)
 
-    sensorEnter.call(d3Drag(editedSensor.value, isZooming)).on('click', (event, sensor) => {
+    sensorEnter.call(d3Drag(isZooming)).on('click', (event, sensor) => {
       event.stopPropagation()
       if (event.metaKey || event.ctrlKey) {
         // Your action here
@@ -376,10 +356,7 @@ onMounted(() => {
   }
 
   // Watch for changes in the sensors array and update the visualization
-  watch(() => sensors, updateCirclesWithText, { deep: true })
-
-  // Initial update
-  updateCirclesWithText()
+  watch(() => sensors, updateCirclesWithText, { deep: true, immediate: true })
 })
 </script>
 

@@ -2,14 +2,10 @@ import { drag, select } from 'd3'
 import { type D3DragEvent } from 'd3-drag'
 import { type Sensor } from '@/types/sensor'
 import { type Ref } from 'vue'
+import { useSensorStore } from '@/stores/useSensorStore'
 
-export interface EditedSensor {
-  id: string
-  position: { x: number; y: number }
-  radius: number
-}
-
-export function d3Drag(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
+export function d3Drag(isDragging: Ref<boolean>) {
+  const { editSensor } = useSensorStore()
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
   let startOffsetY: number = 0
@@ -50,10 +46,13 @@ export function d3Drag(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
       .attr('cy', event.y - startOffsetY + event.subject.radius)
   })
   d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
-    editedSensor.id = event.subject.id
-    editedSensor.position.x = event.x - startOffsetX
-    editedSensor.position.y = event.y - startOffsetY
-    editedSensor.radius = event.subject.radius
+    editSensor(event.subject.id, {
+      position: {
+        x: event.x - startOffsetX,
+        y: event.y - startOffsetY
+      },
+      radius: event.subject.radius
+    })
     select('body').style('cursor', 'default')
     isDragging.value = false
   })
@@ -64,7 +63,8 @@ let startPositionX = 0
 let originalRadius = 0
 let updatedRadius = 0
 
-export function d3UpperLeftResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
+export function d3UpperLeftResize(isDragging: Ref<boolean>) {
+  const { editSensor } = useSensorStore()
   const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -111,10 +111,13 @@ export function d3UpperLeftResize(editedSensor: EditedSensor, isDragging: Ref<bo
       .attr('cy', event.y + updatedRadius * 2)
   })
   d3UpperLeftResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    editedSensor.id = event.subject.id
-    editedSensor.position.x = event.x + updatedRadius
-    editedSensor.position.y = event.y + updatedRadius
-    editedSensor.radius = updatedRadius
+    editSensor(event.subject.id, {
+      position: {
+        x: event.x + updatedRadius,
+        y: event.y + updatedRadius
+      },
+      radius: updatedRadius
+    })
 
     updatedRadius = 0
     startPositionX = 0
@@ -127,7 +130,8 @@ export function d3UpperLeftResize(editedSensor: EditedSensor, isDragging: Ref<bo
   return d3UpperLeftResize
 }
 
-export function d3UpperRightResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
+export function d3UpperRightResize(isDragging: Ref<boolean>) {
+  const { editSensor } = useSensorStore()
   const d3UpperRightResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -173,10 +177,13 @@ export function d3UpperRightResize(editedSensor: EditedSensor, isDragging: Ref<b
       .attr('cy', event.y + updatedRadius * 2)
   })
   d3UpperRightResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    editedSensor.id = event.subject.id
-    editedSensor.position.x = event.x - updatedRadius
-    editedSensor.position.y = event.y + updatedRadius
-    editedSensor.radius = updatedRadius
+    editSensor(event.subject.id, {
+      position: {
+        x: event.x - updatedRadius,
+        y: event.y + updatedRadius
+      },
+      radius: updatedRadius
+    })
 
     updatedRadius = 0
     startPositionX = 0
@@ -188,7 +195,8 @@ export function d3UpperRightResize(editedSensor: EditedSensor, isDragging: Ref<b
   return d3UpperRightResize
 }
 
-export function d3LowerLeftResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
+export function d3LowerLeftResize(isDragging: Ref<boolean>) {
+  const { editSensor } = useSensorStore()
   const d3LowerLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -235,10 +243,13 @@ export function d3LowerLeftResize(editedSensor: EditedSensor, isDragging: Ref<bo
       .attr('cy', event.y)
   })
   d3LowerLeftResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    editedSensor.id = event.subject.id
-    editedSensor.position.x = event.x + updatedRadius
-    editedSensor.position.y = event.y - updatedRadius
-    editedSensor.radius = updatedRadius
+    editSensor(event.subject.id, {
+      position: {
+        x: event.x + updatedRadius,
+        y: event.y - updatedRadius
+      },
+      radius: updatedRadius
+    })
 
     updatedRadius = 0
     startPositionX = 0
@@ -250,7 +261,8 @@ export function d3LowerLeftResize(editedSensor: EditedSensor, isDragging: Ref<bo
   return d3LowerLeftResize
 }
 
-export function d3LowerRightResize(editedSensor: EditedSensor, isDragging: Ref<boolean>) {
+export function d3LowerRightResize(isDragging: Ref<boolean>) {
+  const { editSensor } = useSensorStore()
   const d3LowerRightResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -297,10 +309,13 @@ export function d3LowerRightResize(editedSensor: EditedSensor, isDragging: Ref<b
       .attr('cy', event.y)
   })
   d3LowerRightResize.on('end', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    editedSensor.id = event.subject.id
-    editedSensor.position.x = event.x - updatedRadius
-    editedSensor.position.y = event.y - updatedRadius
-    editedSensor.radius = updatedRadius
+    editSensor(event.subject.id, {
+      position: {
+        x: event.x - updatedRadius,
+        y: event.y - updatedRadius
+      },
+      radius: updatedRadius
+    })
 
     updatedRadius = 0
     startPositionX = 0

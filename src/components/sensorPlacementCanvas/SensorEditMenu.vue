@@ -131,7 +131,8 @@ watch(
       oldType = 'temperature'
       oldName = ''
     }
-  }
+  },
+  { deep: true }
 )
 
 watch(

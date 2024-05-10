@@ -86,58 +86,23 @@ export const useSensorStore = defineStore('sensor', () => {
     if (sensorIndex !== -1) {
       const sensor = sensors.value[sensorIndex]
       if (shouldRecordState.value) {
-        if (
-          updatedSensor.position !== undefined &&
-          updatedSensor.radius !== undefined &&
-          Math.abs(updatedSensor.position.x - sensor.position.x) >= tolerance &&
-          Math.abs(updatedSensor.position.y - sensor.position.y) >= tolerance &&
-          Math.abs(updatedSensor.radius - sensor.radius) >= tolerance
-        ) {
-          const state: StateController = {
-            type: ActionType.RESIZE_SENSOR,
-            name: 'resize sensor ' + sensor.name,
-            objectId: sensor.id,
-            oldState: {
-              objectPosition: sensor.position,
-              objectType: sensor.type,
-              objectRadius: sensor.radius,
-              data: ''
-            },
-            newState: {
-              objectPosition: updatedSensor.position,
-              objectType: sensor.type,
-              objectRadius: updatedSensor.radius,
-              data: ''
-            }
-          }
-          addState(state)
-        } else if (
-          updatedSensor.position !== undefined &&
-          Math.abs(updatedSensor.position.x - sensor.position.x) >= tolerance &&
-          Math.abs(updatedSensor.position.y - sensor.position.y) >= tolerance
-        ) {
-          const state: StateController = {
-            type: ActionType.MOVE_SENSOR,
-            name: 'move sensor ' + sensor.name,
-            objectId: sensor.id,
-            oldState: {
-              objectPosition: sensor.position,
-              objectType: sensor.type,
-              objectRadius: sensor.radius,
-              data: ''
-            },
-            newState: {
-              objectPosition: updatedSensor.position,
-              objectType: sensor.type,
-              objectRadius: sensor.radius,
-              data: ''
-            }
-          }
-          addState(state)
-        }
+        addSensorChangeState(updatedSensor, sensor, tolerance, addState)
       }
-      // If the sensor with the given id is found, update it
       Object.assign(sensors.value[sensorIndex], updatedSensor)
+    }
+  }
+
+  function editMultiSensors(id: string[], updatedSensors: Partial<Sensor>[]) {
+    // get all sensors form sensors array with id
+    const sensorsWitholdData = sensors.value.filter((sensor) => id.includes(sensor.id))
+    for (let i = 0; i < id.length; i++) {
+      const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id[i])
+      if (sensorIndex !== -1) {
+        Object.assign(sensors.value[sensorIndex], updatedSensors[i])
+      }
+    }
+    if (shouldRecordState.value) {
+      addMultiSensorsChangeState(id, updatedSensors, sensorsWitholdData, tolerance, addState)
     }
   }
 
@@ -179,6 +144,8 @@ export const useSensorStore = defineStore('sensor', () => {
   return {
     sensors,
     selectedSensor,
+    toggleRecordState,
+    toggleMetaKeyPressed,
     getSensorId,
     addSensor,
     deleteSelectedSensor,
@@ -187,8 +154,146 @@ export const useSensorStore = defineStore('sensor', () => {
     findSensor,
     onSelectSensor,
     removeAllSelectedSensors,
-    toggleRecordState,
-    toggleMetaKeyPressed,
     getSelectedSensors
   }
 })
+
+function addSensorChangeState(
+  updatedSensor: Partial<Sensor>,
+  sensor: Sensor,
+  tolerance: number,
+  addState: (state: StateController) => void
+) {
+  if (
+    updatedSensor.position !== undefined &&
+    updatedSensor.radius !== undefined &&
+    (Math.abs(updatedSensor.position.x - sensor.position.x) >= tolerance ||
+      Math.abs(updatedSensor.position.y - sensor.position.y) >= tolerance ||
+      Math.abs(updatedSensor.radius - sensor.radius) >= tolerance)
+  ) {
+    const state: StateController = {
+      type: ActionType.RESIZE_SENSOR,
+      name: 'resize sensor ' + sensor.name,
+      objectId: sensor.id,
+      oldState: {
+        objectPosition: sensor.position,
+        objectType: sensor.type,
+        objectRadius: sensor.radius,
+        data: ''
+      },
+      newState: {
+        objectPosition: updatedSensor.position,
+        objectType: sensor.type,
+        objectRadius: updatedSensor.radius,
+        data: ''
+      }
+    }
+    addState(state)
+  } else if (
+    updatedSensor.position !== undefined &&
+    (Math.abs(updatedSensor.position.x - sensor.position.x) >= tolerance ||
+      Math.abs(updatedSensor.position.y - sensor.position.y) >= tolerance)
+  ) {
+    const state: StateController = {
+      type: ActionType.MOVE_SENSOR,
+      name: 'move sensor ' + sensor.name,
+      objectId: sensor.id,
+      oldState: {
+        objectPosition: sensor.position,
+        objectType: sensor.type,
+        objectRadius: sensor.radius,
+        data: ''
+      },
+      newState: {
+        objectPosition: updatedSensor.position,
+        objectType: sensor.type,
+        objectRadius: sensor.radius,
+        data: ''
+      }
+    }
+    addState(state)
+  }
+}
+
+function addMultiSensorsChangeState(
+  id: string[],
+  updatedSensor: Partial<Sensor>[],
+  sensors: Sensor[],
+  tolerance: number,
+  addState: (state: StateController) => void
+) {
+  if (updatedSensor[0].radius !== undefined) {
+    const state: StateController = {
+      type: ActionType.Resize_MUlTI_SENSORS,
+      name: 'resize multiple sensors',
+      objectId: [],
+      oldState: [],
+      newState: []
+    }
+
+    for (let i = 0; i < id.length; i++) {
+      if (
+        updatedSensor[i].position !== undefined &&
+        updatedSensor[i].radius !== undefined &&
+        (Math.abs(updatedSensor[i].position!.x - sensors[i].position.x) >= tolerance ||
+          Math.abs(updatedSensor[i].position!.y - sensors[i].position.y) >= tolerance ||
+          Math.abs(updatedSensor[i].radius! - sensors[i].radius) >= tolerance) &&
+        Array.isArray(state.objectId) &&
+        Array.isArray(state.oldState) &&
+        Array.isArray(state.newState)
+      ) {
+        state.objectId.push(id[i])
+        state.oldState.push({
+          objectPosition: sensors[i].position,
+          objectType: sensors[i].type,
+          objectRadius: sensors[i].radius,
+          data: ''
+        })
+        state.newState.push({
+          objectPosition: updatedSensor[i].position!,
+          objectType: sensors[i].type,
+          objectRadius: updatedSensor[i].radius!,
+          data: ''
+        })
+      }
+    }
+    if (state.objectId.length > 0) {
+      addState(state)
+    }
+  } else {
+    const state: StateController = {
+      type: ActionType.MOVE_MULTI_SENSORS,
+      name: 'move multiple sensors',
+      objectId: [],
+      oldState: [],
+      newState: []
+    }
+    for (let i = 0; i < id.length; i++) {
+      if (
+        updatedSensor[i].position !== undefined &&
+        (Math.abs(updatedSensor[i].position!.x - sensors[i].position.x) >= tolerance ||
+          Math.abs(updatedSensor[i].position!.y - sensors[i].position.y) >= tolerance) &&
+        Array.isArray(state.objectId) &&
+        Array.isArray(state.oldState) &&
+        Array.isArray(state.newState)
+      ) {
+        state.objectId.push(id[i])
+        state.oldState.push({
+          objectPosition: sensors[i].position,
+          objectType: sensors[i].type,
+          objectRadius: sensors[i].radius,
+          data: ''
+        })
+        state.newState.push({
+          objectPosition: updatedSensor[i].position!,
+          objectType: sensors[i].type,
+          objectRadius: sensors[i].radius,
+          data: ''
+        })
+      }
+    }
+    if (state.objectId.length > 0) {
+      addState(state)
+    }
+  }
+}

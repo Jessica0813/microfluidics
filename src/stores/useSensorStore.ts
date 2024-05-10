@@ -15,7 +15,13 @@ export const useSensorStore = defineStore('sensor', () => {
 
   const shouldRecordState = ref(true)
 
+  const isMetaKeyPressed = ref(false)
+
   let sensorId = 0
+
+  function toggleMetaKeyPressed(value: boolean) {
+    isMetaKeyPressed.value = value
+  }
 
   function getSensorId() {
     return `sensor_${sensorId++}`
@@ -140,7 +146,7 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function onSelectSensor(id: string) {
-    if (selectedSensor.value.length !== 0) {
+    if (!isMetaKeyPressed.value) {
       removeAllSelectedSensors()
     }
     const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id)
@@ -148,6 +154,10 @@ export const useSensorStore = defineStore('sensor', () => {
     if (sensorIndex !== -1) {
       sensors.value[sensorIndex].selected = true
       selectedSensor.value.push(sensors.value[sensorIndex])
+    }
+
+    if (isMetaKeyPressed.value) {
+      isMetaKeyPressed.value = false
     }
   }
 
@@ -162,6 +172,10 @@ export const useSensorStore = defineStore('sensor', () => {
     selectedSensor.value = []
   }
 
+  function getSelectedSensors() {
+    return selectedSensor.value
+  }
+
   return {
     sensors,
     selectedSensor,
@@ -173,6 +187,8 @@ export const useSensorStore = defineStore('sensor', () => {
     findSensor,
     onSelectSensor,
     removeAllSelectedSensors,
-    toggleRecordState
+    toggleRecordState,
+    toggleMetaKeyPressed,
+    getSelectedSensors
   }
 })

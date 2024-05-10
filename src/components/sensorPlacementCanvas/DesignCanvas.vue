@@ -93,13 +93,14 @@ const {
   onSelectSensor,
   removeAllSelectedSensors,
   addSensor,
-  getSensorId
+  getSensorId,
+  toggleMetaKeyPressed,
+  getSelectedSensors
 } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-const hasSensorSelected = ref(selectedSensor.length > 0)
 const selectedSensorId = ref(selectedSensor[0]?.id || '')
 const editedSensor = ref<EditedSensor>({
   id: '',
@@ -147,7 +148,6 @@ function onDrop(event: any) {
 function removeSelectedSensor() {
   if (isDesignCanvasVisible.value) {
     removeAllSelectedSensors()
-    hasSensorSelected.value = false
     selectedSensorId.value = ''
   } else {
     isDesignCanvasVisible.value = true
@@ -157,7 +157,6 @@ function removeSelectedSensor() {
 function onCanvasHideClick() {
   isDesignCanvasVisible.value = !isDesignCanvasVisible.value
   removeAllSelectedSensors()
-  hasSensorSelected.value = false
   selectedSensorId.value = ''
 }
 
@@ -318,9 +317,18 @@ onMounted(() => {
 
     sensorEnter.call(d3Drag(editedSensor.value, isZooming)).on('click', (event, sensor) => {
       event.stopPropagation()
-      hasSensorSelected.value = true
+      if (event.metaKey || event.ctrlKey) {
+        // Your action here
+        toggleMetaKeyPressed(true)
+      }
+
       onSelectSensor(sensor.id)
-      selectedSensorId.value = sensor.id
+
+      if (getSelectedSensors().length > 1) {
+        selectedSensorId.value = ''
+      } else {
+        selectedSensorId.value = sensor.id
+      }
     })
 
     // Update

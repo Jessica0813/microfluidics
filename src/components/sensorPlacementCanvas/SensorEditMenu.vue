@@ -46,13 +46,12 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
-const { findSensor, deleteSensorWithId } = useSensorStore()
+const { deleteSensorWithId, getSelectedSensors } = useSensorStore()
 const { addState } = useStateStore()
 const isEditMenuOpen = ref(false)
 
 const sensorType = ['temperature', 'speed']
 const props = defineProps<{
-  selectedSensorId: string
   designCanvasRef: HTMLElement | null
   transform: { x: number; y: number; k: number }
   isZooming: boolean
@@ -108,9 +107,18 @@ function showSensorEditMenu() {
 }
 
 watch(
-  () => props.selectedSensorId,
+  () => getSelectedSensors(),
   (newValue) => {
-    if (newValue === '') {
+    if (newValue.length === 1) {
+      selectedSensor.value = newValue[0]
+      oldType = newValue[0].type
+      oldName = newValue[0].name
+      const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+      useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
+        position.value = pos
+      })
+      isEditMenuOpen.value = true
+    } else {
       isEditMenuOpen.value = false
       selectedSensor.value = {
         id: '',
@@ -122,18 +130,6 @@ watch(
       }
       oldType = 'temperature'
       oldName = ''
-    } else {
-      const sensor = findSensor(newValue)
-      if (sensor) {
-        selectedSensor.value = sensor
-        oldType = sensor.type
-        oldName = sensor.name
-        const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-        useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
-          position.value = pos
-        })
-        isEditMenuOpen.value = true
-      }
     }
   }
 )
@@ -213,7 +209,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
 })
 
 function deleteSelectedElements() {
-  if (props.selectedSensorId !== '') {
+  if (getSelectedSensors().length === 1) {
     const state: StateController = {
       type: ActionType.DELETE_SENSOR,
       name: 'delete sensor ' + selectedSensor.value.id,
@@ -226,10 +222,9 @@ function deleteSelectedElements() {
         data: ''
       }
     }
-    deleteSensorWithId(props.selectedSensorId)
+    deleteSensorWithId(getSelectedSensors()[0].id)
     addState(state)
     isEditMenuOpen.value = false
-    // props.selectedSensorId = ''
   }
 }
 

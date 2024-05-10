@@ -11,12 +11,7 @@
         : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
     }"
   >
-    <SensorEditMenu
-      :selected-sensor-id="selectedSensorId"
-      :design-canvas-ref="svg"
-      :is-zooming="isZooming"
-      :transform="transform"
-    />
+    <SensorEditMenu :design-canvas-ref="svg" :is-zooming="isZooming" :transform="transform" />
     <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
     <svg ref="svg" width="100%" height="100%" @click="removeSelectedSensor">
       <defs>
@@ -91,14 +86,12 @@ const {
   removeAllSelectedSensors,
   addSensor,
   getSensorId,
-  toggleMetaKeyPressed,
-  getSelectedSensors
+  toggleMetaKeyPressed
 } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-const selectedSensorId = ref('')
 
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
@@ -127,7 +120,6 @@ function onDrop(event: any) {
 function removeSelectedSensor() {
   if (isDesignCanvasVisible.value) {
     removeAllSelectedSensors()
-    selectedSensorId.value = ''
   } else {
     isDesignCanvasVisible.value = true
   }
@@ -136,7 +128,6 @@ function removeSelectedSensor() {
 function onCanvasHideClick() {
   isDesignCanvasVisible.value = !isDesignCanvasVisible.value
   removeAllSelectedSensors()
-  selectedSensorId.value = ''
 }
 
 onMounted(() => {
@@ -297,17 +288,10 @@ onMounted(() => {
     sensorEnter.call(d3Drag(isZooming)).on('click', (event, sensor) => {
       event.stopPropagation()
       if (event.metaKey || event.ctrlKey) {
-        // Your action here
         toggleMetaKeyPressed(true)
       }
 
       onSelectSensor(sensor.id)
-
-      if (getSelectedSensors().length > 1) {
-        selectedSensorId.value = ''
-      } else {
-        selectedSensorId.value = sensor.id
-      }
     })
 
     // Update

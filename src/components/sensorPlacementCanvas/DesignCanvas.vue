@@ -207,8 +207,6 @@ onMounted(() => {
       .attr('stroke-width', 1)
       .attr('display', (sensor) => (sensor.selected ? 'block' : 'none'))
 
-    // add four dots around the rect corner
-
     //add hover effect
     sensorEnter
       .append('circle')

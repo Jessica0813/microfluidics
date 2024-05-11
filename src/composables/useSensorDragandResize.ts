@@ -5,17 +5,31 @@ import { type Ref } from 'vue'
 import { useSensorStore } from '@/stores/useSensorStore'
 
 export function d3Drag(isDragging: Ref<boolean>) {
-  const { editSensor, getSelectedSensors } = useSensorStore()
+  const { editSensor, getSelectedSensors, editMultiSensors, onSelectSensor } = useSensorStore()
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
   let startOffsetY: number = 0
+  let offsetXList: number[] = []
+  let offsetYList: number[] = []
+  let isClicking = false
   d3Drag.on('start', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
+    isClicking = true
     isDragging.value = true
+    select('body').style('cursor', 'grabbing')
+
     startOffsetX = event.x - event.subject.position.x
     startOffsetY = event.y - event.subject.position.y
-    select('body').style('cursor', 'grabbing')
+
+    for (let i = 0; i < getSelectedSensors().length; i++) {
+      if (getSelectedSensors()[i] === event.subject.id) {
+        continue
+      }
+      offsetXList.push(event.x - getSelectedSensors()[i].position.x)
+      offsetYList.push(event.y - getSelectedSensors()[i].position.y)
+    }
   })
   d3Drag.on('drag', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
+    isClicking = false
     select(`#sensor-${event.subject.id}`)
       .select('.sensor')
       .attr('cx', event.x - startOffsetX)
@@ -44,14 +58,68 @@ export function d3Drag(isDragging: Ref<boolean>) {
       .select('.lower-right-dot')
       .attr('cx', event.x - startOffsetX + event.subject.radius)
       .attr('cy', event.y - startOffsetY + event.subject.radius)
+
+    for (let i = 0; i < getSelectedSensors().length; i++) {
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.sensor')
+        .attr('cx', event.x - offsetXList[i])
+        .attr('cy', event.y - offsetYList[i])
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.sensor-label')
+        .attr('x', event.x - offsetXList[i])
+        .attr('y', event.y - offsetYList[i])
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.sensor-rect')
+        .attr('x', event.x - offsetXList[i] - getSelectedSensors()[i].radius)
+        .attr('y', event.y - offsetYList[i] - getSelectedSensors()[i].radius)
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.upper-left-dot')
+        .attr('cx', event.x - offsetXList[i] - getSelectedSensors()[i].radius)
+        .attr('cy', event.y - offsetYList[i] - getSelectedSensors()[i].radius)
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.upper-right-dot')
+        .attr('cx', event.x - offsetXList[i] + getSelectedSensors()[i].radius)
+        .attr('cy', event.y - offsetYList[i] - getSelectedSensors()[i].radius)
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.lower-left-dot')
+        .attr('cx', event.x - offsetXList[i] - getSelectedSensors()[i].radius)
+        .attr('cy', event.y - offsetYList[i] + getSelectedSensors()[i].radius)
+      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .select('.lower-right-dot')
+        .attr('cx', event.x - offsetXList[i] + getSelectedSensors()[i].radius)
+        .attr('cy', event.y - offsetYList[i] + getSelectedSensors()[i].radius)
+    }
   })
   d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
-    editSensor(event.subject.id, {
-      position: {
-        x: event.x - startOffsetX,
-        y: event.y - startOffsetY
-      }
-    })
+    if (isClicking) {
+      isClicking = false
+      isDragging.value = false
+      select('body').style('cursor', 'default')
+      return
+    }
+
+    if (getSelectedSensors().length <= 1) {
+      editSensor(event.subject.id, {
+        position: {
+          x: event.x - startOffsetX,
+          y: event.y - startOffsetY
+        }
+      })
+    } else {
+      const idList = getSelectedSensors().map((sensor) => sensor.id)
+      const updatedPosition = getSelectedSensors().map((sensor, index) => {
+        return {
+          position: {
+            x: event.x - offsetXList[index],
+            y: event.y - offsetYList[index]
+          }
+        }
+      })
+      editMultiSensors(idList, updatedPosition)
+    }
+
+    offsetXList = []
+    offsetYList = []
     select('body').style('cursor', 'default')
     isDragging.value = false
   })
@@ -63,7 +131,7 @@ let originalRadius = 0
 let updatedRadius = 0
 
 export function d3UpperLeftResize(isDragging: Ref<boolean>) {
-  const { editSensor, getSelectedSensors } = useSensorStore()
+  const { editSensor } = useSensorStore()
   const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -126,7 +194,7 @@ export function d3UpperLeftResize(isDragging: Ref<boolean>) {
 }
 
 export function d3UpperRightResize(isDragging: Ref<boolean>) {
-  const { editSensor, getSelectedSensors } = useSensorStore()
+  const { editSensor } = useSensorStore()
   const d3UpperRightResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -187,7 +255,7 @@ export function d3UpperRightResize(isDragging: Ref<boolean>) {
 }
 
 export function d3LowerLeftResize(isDragging: Ref<boolean>) {
-  const { editSensor, getSelectedSensors } = useSensorStore()
+  const { editSensor } = useSensorStore()
   const d3LowerLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true
@@ -249,7 +317,7 @@ export function d3LowerLeftResize(isDragging: Ref<boolean>) {
 }
 
 export function d3LowerRightResize(isDragging: Ref<boolean>) {
-  const { editSensor, getSelectedSensors } = useSensorStore()
+  const { editSensor } = useSensorStore()
   const d3LowerRightResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     isDragging.value = true

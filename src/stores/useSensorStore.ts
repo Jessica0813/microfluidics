@@ -93,16 +93,15 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function editMultiSensors(id: string[], updatedSensors: Partial<Sensor>[]) {
-    // get all sensors form sensors array with id
     const sensorsWitholdData = sensors.value.filter((sensor) => id.includes(sensor.id))
+    if (shouldRecordState.value) {
+      addMultiSensorsChangeState(id, updatedSensors, sensorsWitholdData, tolerance, addState)
+    }
     for (let i = 0; i < id.length; i++) {
       const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === id[i])
       if (sensorIndex !== -1) {
         Object.assign(sensors.value[sensorIndex], updatedSensors[i])
       }
-    }
-    if (shouldRecordState.value) {
-      addMultiSensorsChangeState(id, updatedSensors, sensorsWitholdData, tolerance, addState)
     }
   }
 
@@ -154,7 +153,8 @@ export const useSensorStore = defineStore('sensor', () => {
     findSensor,
     onSelectSensor,
     removeAllSelectedSensors,
-    getSelectedSensors
+    getSelectedSensors,
+    editMultiSensors
   }
 })
 
@@ -269,10 +269,11 @@ function addMultiSensorsChangeState(
       newState: []
     }
     for (let i = 0; i < id.length; i++) {
+      const x = updatedSensor[i].position?.x || 0
+      const y = updatedSensor[i].position?.y || 0
       if (
-        updatedSensor[i].position !== undefined &&
-        (Math.abs(updatedSensor[i].position!.x - sensors[i].position.x) >= tolerance ||
-          Math.abs(updatedSensor[i].position!.y - sensors[i].position.y) >= tolerance) &&
+        (Math.abs(x - sensors[i].position.x) >= tolerance ||
+          Math.abs(y - sensors[i].position.y) >= tolerance) &&
         Array.isArray(state.objectId) &&
         Array.isArray(state.oldState) &&
         Array.isArray(state.newState)

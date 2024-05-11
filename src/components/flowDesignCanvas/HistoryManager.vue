@@ -118,6 +118,19 @@ function undo() {
           }
           break
         }
+        case ActionType.MOVE_MULTI_SENSORS: {
+          toggleRecordState()
+          for (let i = 0; i < state.objectId.length; i++) {
+            editSensor(state.objectId[i], {
+              position: {
+                x: state.oldState[i].objectPosition?.x || 0,
+                y: state.oldState[i].objectPosition?.y || 0
+              }
+            })
+          }
+          toggleRecordState()
+          break
+        }
       }
     }
     shouldRecordState.value = true
@@ -304,6 +317,19 @@ function redo() {
               }
             }
           }
+          break
+        }
+        case ActionType.MOVE_MULTI_SENSORS: {
+          toggleRecordState()
+          for (let i = 0; i < state.objectId.length; i++) {
+            editSensor(state.objectId[i], {
+              position: {
+                x: state.newState[i].objectPosition?.x || 0,
+                y: state.newState[i].objectPosition?.y || 0
+              }
+            })
+          }
+          toggleRecordState()
           break
         }
       }

@@ -79,6 +79,7 @@ import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
 import SensorEditMenu from './SensorEditMenu.vue'
+import hotkeys from 'hotkeys-js'
 
 const {
   sensors,
@@ -86,7 +87,10 @@ const {
   removeAllSelectedSensors,
   addSensor,
   getSensorId,
-  toggleMetaKeyPressed
+  toggleMetaKeyPressed,
+  getSelectedSensors,
+  editSensor,
+  editMultiSensors
 } = useSensorStore()
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
@@ -129,6 +133,56 @@ function onCanvasHideClick() {
   isDesignCanvasVisible.value = !isDesignCanvasVisible.value
   removeAllSelectedSensors()
 }
+
+hotkeys('up, down, left, right', (event, handler) => {
+  event.preventDefault()
+  if (getSelectedSensors().length === 1) {
+    const sensor = getSelectedSensors()[0]
+    let updatedSensor = {
+      x: sensor.position.x,
+      y: sensor.position.y
+    }
+    if (handler.key === 'up') {
+      console.log(2222)
+      updatedSensor.y -= 1
+    } else if (handler.key === 'down') {
+      updatedSensor.y += 1
+    } else if (handler.key === 'left') {
+      updatedSensor.x -= 1
+    } else if (handler.key === 'right') {
+      updatedSensor.x += 1
+    }
+    editSensor(sensor.id, { position: updatedSensor })
+  } else if (getSelectedSensors().length > 1) {
+    const idList = getSelectedSensors().map((sensor) => sensor.id)
+    const updatedSensorList = getSelectedSensors().map((sensor) => {
+      return {
+        position: {
+          x: sensor.position.x,
+          y: sensor.position.y
+        }
+      }
+    })
+    if (handler.key === 'up') {
+      updatedSensorList.forEach((sensor) => {
+        sensor.position.y -= 1
+      })
+    } else if (handler.key === 'down') {
+      updatedSensorList.forEach((sensor) => {
+        sensor.position.y += 1
+      })
+    } else if (handler.key === 'left') {
+      updatedSensorList.forEach((sensor) => {
+        sensor.position.x -= 1
+      })
+    } else if (handler.key === 'right') {
+      updatedSensorList.forEach((sensor) => {
+        sensor.position.x += 1
+      })
+    }
+    editMultiSensors(idList, updatedSensorList)
+  }
+})
 
 onMounted(() => {
   if (!svg.value) return

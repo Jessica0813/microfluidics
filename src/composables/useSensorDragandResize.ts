@@ -5,7 +5,7 @@ import { type Ref } from 'vue'
 import { useSensorStore } from '@/stores/useSensorStore'
 
 export function d3Drag(isDragging: Ref<boolean>) {
-  const { editSensor, getSelectedSensors, editMultiSensors, onSelectSensor } = useSensorStore()
+  const { editSensor, getSelectedSensors, editMultiSensors } = useSensorStore()
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
   let startOffsetY: number = 0
@@ -93,6 +93,10 @@ export function d3Drag(isDragging: Ref<boolean>) {
   d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
     if (isClicking) {
       isClicking = false
+      startOffsetX = 0
+      startOffsetY = 0
+      offsetXList = []
+      offsetYList = []
       isDragging.value = false
       select('body').style('cursor', 'default')
       return
@@ -118,10 +122,12 @@ export function d3Drag(isDragging: Ref<boolean>) {
       editMultiSensors(idList, updatedPosition)
     }
 
+    startOffsetX = 0
+    startOffsetY = 0
     offsetXList = []
     offsetYList = []
-    select('body').style('cursor', 'default')
     isDragging.value = false
+    select('body').style('cursor', 'default')
   })
   return d3Drag
 }

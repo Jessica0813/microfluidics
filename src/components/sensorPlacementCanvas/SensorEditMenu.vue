@@ -236,7 +236,6 @@ let x: number = 0
 let y: number = 0
 d3Drag.on('start', (event: D3DragEvent<HTMLDivElement, any, any>) => {
   event.sourceEvent.preventDefault()
-  console.log(event)
   startOffsetX = event.x - position.value.x
   startOffsetY = event.y - position.value.y
 })

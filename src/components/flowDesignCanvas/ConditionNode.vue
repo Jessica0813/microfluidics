@@ -90,7 +90,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
     if (node.data === undefined || node.data.condition !== condition.value) {
       node.data.condition = condition.value
     }
-    console.log(node)
   }
 })
 </script>

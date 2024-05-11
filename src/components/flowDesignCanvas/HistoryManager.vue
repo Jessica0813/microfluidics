@@ -467,12 +467,16 @@ function redoToStep(index: number) {
 
 hotkeys('ctrl+z, command+z', function (event) {
   event.preventDefault()
-  undo()
+  if (isUndoable()) {
+    undo()
+  }
 })
 
 hotkeys('ctrl+y, command+y', function (event) {
   event.preventDefault()
-  redo()
+  if (isRedoable()) {
+    redo()
+  }
 })
 </script>
 

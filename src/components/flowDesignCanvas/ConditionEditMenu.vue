@@ -109,7 +109,6 @@ watch(
         }
         addState(state)
         oldCondition = Object.assign({}, newCondition)
-        console.log(oldCondition)
       }
     }
   },

@@ -131,6 +131,22 @@ function undo() {
           toggleRecordState()
           break
         }
+        case ActionType.DELETE_MULTI_SENSORS: {
+          toggleRecordState()
+          for (let i = 0; i < state.objectId.length; i++) {
+            const sensor: Sensor = {
+              id: state.objectId[i],
+              name: state.oldState[i].objectName || state.objectId[i],
+              type: 'temperature',
+              position: state.oldState[i].objectPosition || { x: 0, y: 0 },
+              radius: state.oldState[i].objectRadius || 20,
+              selected: false
+            }
+            addSensor(sensor)
+          }
+          toggleRecordState()
+          break
+        }
       }
     }
     shouldRecordState.value = true
@@ -331,6 +347,11 @@ function redo() {
           }
           toggleRecordState()
           break
+        }
+        case ActionType.DELETE_MULTI_SENSORS: {
+          for (let i = 0; i < state.objectId.length; i++) {
+            deleteSensorWithId(state.objectId[i])
+          }
         }
       }
     }

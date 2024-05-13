@@ -53,8 +53,11 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function deleteSelectedSensor() {
-    selectedSensor.value.forEach((sensor) => {
-      const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
+    if (selectedSensor.value.length === 1) {
+      const sensorIndex = sensors.value.findIndex(
+        (sensor) => sensor.id === selectedSensor.value[0].id
+      )
+      const sensor = selectedSensor.value[0]
       if (sensorIndex !== -1) {
         const state: StateController = {
           type: ActionType.DELETE_SENSOR,
@@ -70,7 +73,31 @@ export const useSensorStore = defineStore('sensor', () => {
         addState(state)
         sensors.value.splice(sensorIndex, 1)
       }
-    })
+    } else if (selectedSensor.value.length > 1) {
+      const state: StateController = {
+        type: ActionType.DELETE_MULTI_SENSORS,
+        name: 'delete multiple sensors',
+        objectId: [],
+        oldState: [],
+        newState: []
+      }
+      selectedSensor.value.forEach((sensor) => {
+        const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
+        if (sensorIndex !== -1 && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
+          state.objectId.push(sensor.id)
+          state.oldState.push({
+            objectPosition: sensor.position,
+            objectType: sensor.type,
+            objectRadius: sensor.radius,
+            data: ''
+          })
+          sensors.value.splice(sensorIndex, 1)
+        }
+      })
+      if (state.objectId.length > 0) {
+        addState(state)
+      }
+    }
     selectedSensor.value = []
   }
 

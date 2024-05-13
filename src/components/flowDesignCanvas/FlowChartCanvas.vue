@@ -64,6 +64,9 @@ import {
   createDeleteMultiEdgesState,
   createDeleteMultiNodesState
 } from '@/composables/useStateCreation'
+import { useSensorStore } from '@/stores/useSensorStore'
+
+const { getSelectedSensors, deleteSelectedSensor } = useSensorStore()
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -390,6 +393,10 @@ hotkeys('backspace,del,delete', function (event) {
     if (state) {
       addState(state)
     }
+  }
+
+  if (getSelectedSensors().length > 0) {
+    deleteSelectedSensor()
   }
 })
 </script>

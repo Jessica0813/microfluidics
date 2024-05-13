@@ -25,7 +25,7 @@
         </template>
         <CustomizedTextInput v-model:text="selectedSensor.name" />
       </v-menu>
-      <button class="customized-button" @click="deleteSelectedElements">
+      <button class="customized-button" @click="deleteSelectedSensor">
         <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
       </button>
     </div>
@@ -46,7 +46,7 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
-const { deleteSensorWithId, getSelectedSensors } = useSensorStore()
+const { getSelectedSensors, deleteSelectedSensor } = useSensorStore()
 const { addState } = useStateStore()
 const isEditMenuOpen = ref(false)
 
@@ -208,26 +208,6 @@ watch(isMenuOpen, (newValue, oldValue) => {
     oldType = selectedSensor.value.name
   }
 })
-
-function deleteSelectedElements() {
-  if (getSelectedSensors().length === 1) {
-    const state: StateController = {
-      type: ActionType.DELETE_SENSOR,
-      name: 'delete sensor ' + selectedSensor.value.id,
-      objectId: selectedSensor.value.id,
-      oldState: {
-        objectType: selectedSensor.value.type,
-        objectName: selectedSensor.value.name,
-        objectPosition: selectedSensor.value.position,
-        objectRadius: selectedSensor.value.radius,
-        data: ''
-      }
-    }
-    deleteSensorWithId(getSelectedSensors()[0].id)
-    addState(state)
-    isEditMenuOpen.value = false
-  }
-}
 
 const d3Drag = drag<HTMLDivElement, any, any>()
 let startOffsetX: number = 0

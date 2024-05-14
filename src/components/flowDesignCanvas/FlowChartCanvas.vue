@@ -65,8 +65,7 @@ import {
   createDeleteMultiNodesState
 } from '@/composables/useStateCreation'
 import { useSensorStore } from '@/stores/useSensorStore'
-
-const { getSelectedSensors, deleteSelectedSensor } = useSensorStore()
+import { useClipboardStore } from '@/stores/useClipboardStore'
 
 let processNodeId = 1
 let conditionNodeId = 1
@@ -117,6 +116,10 @@ const {
   removeEdges,
   getConnectedEdges
 } = useVueFlow()
+
+const { copyToClipboard, pasteFromClipboard } = useClipboardStore()
+
+const { getSelectedSensors, deleteSelectedSensor, addSensor } = useSensorStore()
 
 const shouldRecordState = ref(true)
 
@@ -398,5 +401,52 @@ hotkeys('backspace,del,delete', function (event) {
   if (getSelectedSensors().length > 0) {
     deleteSelectedSensor()
   }
+})
+
+hotkeys('command+c', function (event) {
+  event.preventDefault()
+  let selectedIds: string[] = []
+  if (getSelectedNodes.value.length > 0) {
+    selectedIds = getSelectedNodes.value.map((node) => node.id)
+  }
+
+  if (getSelectedSensors().length > 0) {
+    selectedIds = getSelectedSensors().map((sensor) => sensor.id)
+  }
+
+  copyToClipboard(selectedIds)
+})
+
+hotkeys('command+v', function (event) {
+  event.preventDefault()
+  const copiedIds: string[] = pasteFromClipboard()
+  // loop throught the id
+  copiedIds.forEach((id) => {
+    if (id.includes('sensor')) {
+      const sensor = getSelectedSensors().find((sensor) => sensor.id === id)
+      if (sensor) {
+        const newSensor = {
+          id: id + '_copy',
+          name: id + '_copy',
+          type: sensor.type,
+          position: { x: sensor.position.x, y: sensor.position.y + 40 },
+          radius: sensor.radius,
+          selected: false
+        }
+        addSensor(newSensor)
+      }
+    } else {
+      const node = findNode(id)
+      if (node) {
+        const newNode = {
+          id: id + '_copy',
+          type: node.type,
+          position: { x: node.position.x, y: node.position.y + 50 },
+          data: node.data
+        }
+        addNodes([newNode])
+      }
+    }
+  })
 })
 </script>

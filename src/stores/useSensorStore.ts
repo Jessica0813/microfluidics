@@ -27,6 +27,10 @@ export const useSensorStore = defineStore('sensor', () => {
     shouldRecordState.value = !shouldRecordState.value
   }
 
+  function toggleIsMetaKeyPressed() {
+    isMetaKeyPressed.value = !isMetaKeyPressed.value
+  }
+
   function addSensor(sensor: Sensor) {
     sensors.value.push(sensor)
 
@@ -133,11 +137,6 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function onSelectSensor(id: string) {
-    document.addEventListener('keydown', function (event) {
-      if (event.metaKey || event.ctrlKey) {
-        isMetaKeyPressed.value = true
-      }
-    })
     if (!isMetaKeyPressed.value) {
       removeAllSelectedSensors()
     }
@@ -181,7 +180,8 @@ export const useSensorStore = defineStore('sensor', () => {
     onSelectSensor,
     removeAllSelectedSensors,
     getSelectedSensors,
-    editMultiSensors
+    editMultiSensors,
+    toggleIsMetaKeyPressed
   }
 })
 

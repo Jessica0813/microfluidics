@@ -336,10 +336,6 @@ onMounted(() => {
 
     sensorEnter.call(d3Drag(isZooming)).on('click', (event) => {
       event.stopPropagation()
-      // if (event.metaKey || event.ctrlKey) {
-      //   toggleMetaKeyPressed(true)
-      // }
-      // onSelectSensor(sensor.id)
     })
 
     // Update

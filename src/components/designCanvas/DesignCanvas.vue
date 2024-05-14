@@ -83,11 +83,9 @@ import hotkeys from 'hotkeys-js'
 
 const {
   sensors,
-  onSelectSensor,
   removeAllSelectedSensors,
   addSensor,
   getSensorId,
-  toggleMetaKeyPressed,
   getSelectedSensors,
   editSensor,
   editMultiSensors
@@ -143,7 +141,6 @@ hotkeys('up, down, left, right', (event, handler) => {
       y: sensor.position.y
     }
     if (handler.key === 'up') {
-      console.log(2222)
       updatedSensor.y -= 1
     } else if (handler.key === 'down') {
       updatedSensor.y += 1
@@ -337,13 +334,12 @@ onMounted(() => {
       .style('font-size', 12)
       .text((sensor) => sensor.name)
 
-    sensorEnter.call(d3Drag(isZooming)).on('click', (event, sensor) => {
+    sensorEnter.call(d3Drag(isZooming)).on('click', (event) => {
       event.stopPropagation()
-      if (event.metaKey || event.ctrlKey) {
-        toggleMetaKeyPressed(true)
-      }
-
-      onSelectSensor(sensor.id)
+      // if (event.metaKey || event.ctrlKey) {
+      //   toggleMetaKeyPressed(true)
+      // }
+      // onSelectSensor(sensor.id)
     })
 
     // Update

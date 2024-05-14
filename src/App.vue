@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FlowChartCanvas from './components/flowDesignCanvas/FlowChartCanvas.vue'
-import DesignCanvas from './components/sensorPlacementCanvas/DesignCanvas.vue'
+import DesignCanvas from './components/designCanvas/DesignCanvas.vue'
 import { ref } from 'vue'
 
 const isDesignCanvasVisible = ref(true)

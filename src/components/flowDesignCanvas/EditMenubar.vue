@@ -103,8 +103,6 @@ function showEditMenuBar() {
 }
 
 watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
-  console.log('newSelectedElements', newSelectedElements)
-  console.log('oldSelectedElements', oldSelectedElements)
   if (
     newSelectedElements.length === 1 &&
     oldSelectedElements.length === 1 &&

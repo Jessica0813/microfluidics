@@ -147,6 +147,21 @@ function undo() {
           toggleRecordState()
           break
         }
+        case ActionType.PASTE_NODES: {
+          for (let i = 0; i < state.objectId.length; i++) {
+            const node = findNode(state.objectId[i])
+            if (node) {
+              removeNodes([node])
+            }
+          }
+          break
+        }
+        case ActionType.PASTE_SENSORS: {
+          for (let i = 0; i < state.objectId.length; i++) {
+            deleteSensorWithId(state.objectId[i])
+          }
+          break
+        }
       }
     }
     shouldRecordState.value = true
@@ -352,6 +367,35 @@ function redo() {
           for (let i = 0; i < state.objectId.length; i++) {
             deleteSensorWithId(state.objectId[i])
           }
+          break
+        }
+        case ActionType.PASTE_NODES: {
+          for (let i = 0; i < state.objectId.length; i++) {
+            let node = {
+              id: state.objectId[i],
+              type: state.oldState[i].objectType || 'process',
+              position: state.oldState[i].objectPosition || { x: 0, y: 0 },
+              data: state.oldState[i].data
+            }
+            addNodes([node])
+          }
+          break
+        }
+        case ActionType.PASTE_SENSORS: {
+          toggleRecordState()
+          for (let i = 0; i < state.objectId.length; i++) {
+            const sensor: Sensor = {
+              id: state.objectId[i],
+              name: state.oldState[i].objectName || state.objectId[i],
+              type: state.oldState[i].objectType || 'temperature',
+              position: state.oldState[i].objectPosition || { x: 0, y: 0 },
+              radius: state.oldState[i].objectRadius || 20,
+              selected: false
+            }
+            addSensor(sensor)
+          }
+          toggleRecordState()
+          break
         }
       }
     }

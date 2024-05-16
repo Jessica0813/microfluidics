@@ -9,6 +9,7 @@
       <HistoryManager v-model:should-record-state="shouldRecordState" />
       <UploadDownLoadControls />
       <RightSideBar />
+      <HotkeysManager />
     </div>
     <VueFlow
       @dragover="onDragOver"
@@ -57,48 +58,17 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { ref } from 'vue'
 import HistoryManager from './HistoryManager.vue'
-import hotkeys from 'hotkeys-js'
-import {
-  createDeleteNodeState,
-  createDeleteEdgeState,
-  createDeleteMultiEdgesState,
-  createDeleteMultiNodesState
-} from '@/composables/useStateCreation'
-import { useSensorStore } from '@/stores/useSensorStore'
-import { useClipboardStore } from '@/stores/useClipboardStore'
+import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import HotkeysManager from './HotkeysManager.vue'
 
-let processNodeId = 1
-let conditionNodeId = 1
-let processScheduleNodeId = 1
-
-let edgeId = 1
-let edgeTrueId = 1
-let edgeFalseId = 1
-
-function getProcessNodeId() {
-  return `process_${processNodeId++}`
-}
-
-function getConditionNodeId() {
-  return `condition_${conditionNodeId++}`
-}
-
-function getProcessScheduleNodeId() {
-  return `schedule_${processScheduleNodeId++}`
-}
-
-function getEdgeId() {
-  return `edge_${edgeId++}`
-}
-
-function getEdgeTrueId() {
-  return `edgeTrue_${edgeTrueId++}`
-}
-
-function getEdgeFalseId() {
-  return `edgeFalse_${edgeFalseId++}`
-}
-
+const {
+  getProcessNodeId,
+  getConditionNodeId,
+  getProcessScheduleNodeId,
+  getEdgeId,
+  getEdgeFalseId,
+  getEdgeTrueId
+} = useNodeIdStore()
 const {
   getEdges,
   findNode,
@@ -109,17 +79,8 @@ const {
   project,
   vueFlowRef,
   onNodesChange,
-  onEdgesChange,
-  getSelectedEdges,
-  getSelectedNodes,
-  removeNodes,
-  removeEdges,
-  getConnectedEdges
+  onEdgesChange
 } = useVueFlow()
-
-const { copyToClipboard, pasteFromClipboard } = useClipboardStore()
-
-const { getSelectedSensors, deleteSelectedSensor, addSensor } = useSensorStore()
 
 const shouldRecordState = ref(true)
 
@@ -358,94 +319,6 @@ onEdgesChange((edgesChange) => {
         }
       }
       addState(state)
-    }
-  })
-})
-
-hotkeys('backspace,del,delete', function (event) {
-  event.preventDefault()
-  if (getSelectedNodes.value.length === 1 && getSelectedEdges.value.length === 0) {
-    let connectedEdges = getConnectedEdges(getSelectedNodes.value)
-    const state = createDeleteNodeState(
-      getSelectedNodes.value,
-      connectedEdges,
-      removeNodes,
-      removeEdges
-    )
-    if (state) {
-      addState(state)
-    }
-  } else if (getSelectedNodes.value.length === 0 && getSelectedEdges.value.length === 1) {
-    const state = createDeleteEdgeState(getSelectedEdges.value, removeEdges)
-    if (state) {
-      addState(state)
-    }
-  } else if (getSelectedNodes.value.length === 0 && getSelectedEdges.value.length > 1) {
-    const state = createDeleteMultiEdgesState(getSelectedEdges.value, removeEdges)
-    if (state) {
-      addState(state)
-    }
-  } else if (getSelectedNodes.value.length >= 1) {
-    const state = createDeleteMultiNodesState(
-      getSelectedNodes.value,
-      getSelectedEdges.value,
-      removeNodes,
-      removeEdges,
-      getConnectedEdges
-    )
-    if (state) {
-      addState(state)
-    }
-  }
-
-  if (getSelectedSensors().length > 0) {
-    deleteSelectedSensor()
-  }
-})
-
-hotkeys('command+c', function (event) {
-  event.preventDefault()
-  let selectedIds: string[] = []
-  if (getSelectedNodes.value.length > 0) {
-    selectedIds = getSelectedNodes.value.map((node) => node.id)
-  }
-
-  if (getSelectedSensors().length > 0) {
-    selectedIds = getSelectedSensors().map((sensor) => sensor.id)
-  }
-
-  copyToClipboard(selectedIds)
-})
-
-hotkeys('command+v', function (event) {
-  event.preventDefault()
-  const copiedIds: string[] = pasteFromClipboard()
-  // loop throught the id
-  copiedIds.forEach((id) => {
-    if (id.includes('sensor')) {
-      const sensor = getSelectedSensors().find((sensor) => sensor.id === id)
-      if (sensor) {
-        const newSensor = {
-          id: id + '_copy',
-          name: id + '_copy',
-          type: sensor.type,
-          position: { x: sensor.position.x, y: sensor.position.y + 40 },
-          radius: sensor.radius,
-          selected: false
-        }
-        addSensor(newSensor)
-      }
-    } else {
-      const node = findNode(id)
-      if (node) {
-        const newNode = {
-          id: id + '_copy',
-          type: node.type,
-          position: { x: node.position.x, y: node.position.y + 50 },
-          data: node.data
-        }
-        addNodes([newNode])
-      }
     }
   })
 })

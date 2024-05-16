@@ -152,6 +152,16 @@ export const useSensorStore = defineStore('sensor', () => {
     }
   }
 
+  function onSelectMultiSensors(id: string[]) {
+    id.forEach((sensorId) => {
+      const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === sensorId)
+      if (sensorIndex !== -1) {
+        sensors.value[sensorIndex].selected = true
+        selectedSensor.value.push(sensors.value[sensorIndex])
+      }
+    })
+  }
+
   function removeAllSelectedSensors() {
     // loop throught all the sensors in selectedSensor and set selected in the sesnor array to false
     selectedSensor.value.forEach((sensor) => {
@@ -181,7 +191,8 @@ export const useSensorStore = defineStore('sensor', () => {
     removeAllSelectedSensors,
     getSelectedSensors,
     editMultiSensors,
-    toggleIsMetaKeyPressed
+    toggleIsMetaKeyPressed,
+    onSelectMultiSensors
   }
 })
 

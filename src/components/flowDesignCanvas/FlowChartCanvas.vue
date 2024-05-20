@@ -70,6 +70,7 @@ const {
   getEdgeTrueId
 } = useNodeIdStore()
 const {
+  nodes,
   getEdges,
   findNode,
   onConnect,
@@ -151,6 +152,39 @@ function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
 function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
   if (type === '') return
+
+  if (type === 'process') {
+    for (const node of nodes.value) {
+      if (node.type === 'schedule') {
+        // check if the mouse is over a schedule node
+        const nodePosition = node.position
+        const nodeDimensions = node.dimensions
+        if (
+          event.clientX > nodePosition.x &&
+          event.clientX < nodePosition.x + nodeDimensions.width &&
+          event.clientY > nodePosition.y &&
+          event.clientY < nodePosition.y + nodeDimensions.height
+        ) {
+          console.log('Cannot drop process node on schedule node')
+          const flowControlSubprocesses = node.data.scheduledFlowControl.processes
+          flowControlSubprocesses.push({
+            id: flowControlSubprocesses.length + 1,
+            name: flowControlSubprocesses.length + 1,
+            selected: false,
+            startTime: 0.0,
+            endTime: 1.0,
+            duration: 1.0,
+            inlet: 'inlet 1',
+            injection: 'pump',
+            fluid: 'water',
+            pressure: 0,
+            flowrate: 0
+          })
+          return
+        }
+      }
+    }
+  }
 
   if (vueFlowRef.value === null) return
   const { left, top } = vueFlowRef.value.getBoundingClientRect()

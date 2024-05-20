@@ -39,8 +39,6 @@
         <p style="font-size: 12px">
           {{ 'Total Duration: ' + scheduledFlowControl.totalDuration + 's' }}
         </p>
-        <v-spacer></v-spacer>
-        <v-icon size="small" color="grey-darken-3" @click="addProcess"> mdi-plus</v-icon>
       </div>
       <div
         style="
@@ -72,31 +70,10 @@ import { useVueFlow } from '@vue-flow/core'
 
 const { findNode } = useVueFlow()
 
-let processId = 1
-function getProcessId() {
-  return `${processId++}`
-}
 const { selected, id, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
 
 const editedProcess = ref<FlowControlProcess>()
-
-function addProcess() {
-  const processId = getProcessId()
-  scheduledFlowControl.value.processes.push({
-    id: processId,
-    name: processId,
-    selected: false,
-    startTime: 0.0,
-    endTime: 1.0,
-    duration: 1.0,
-    inlet: 'inlet 1',
-    injection: 'pump',
-    fluid: 'water',
-    pressure: 0,
-    flowrate: 0
-  })
-}
 
 const scheduledFlowControl = computed(() => {
   if (data === undefined || data.scheduledFlowControl === undefined) {

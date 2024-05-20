@@ -1,12 +1,20 @@
 <template>
   <div class="panel text-center flex-column elevation-1">
     <div
-      id="process_node"
+      title="Process Node"
       class="icon-padding"
       :draggable="true"
       @dragstart="onDragStart($event, 'process')"
     >
       <v-icon size="small" color="#515a6e"> mdi-form-select </v-icon>
+    </div>
+    <div
+      title="Pause Node"
+      class="icon-padding"
+      :draggable="true"
+      @dragstart="onDragStart($event, 'pause')"
+    >
+      <v-icon size="small" color="#515a6e"> mdi-pause </v-icon>
     </div>
     <div
       title="Condition Node"

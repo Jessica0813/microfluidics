@@ -4,6 +4,7 @@
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
     <ProcessEditMenu v-if="findNode(selectedId)?.type === 'process'" :id="selectedId" />
+    <PauseEditMenu v-else-if="findNode(selectedId)?.type === 'pause'" :id="selectedId" />
     <ConditionEditMenu v-else-if="findNode(selectedId)?.type === 'condition'" :id="selectedId" />
     <ScheduledProcessEditMenu
       v-else-if="findNode(selectedId)?.type === 'schedule'"
@@ -22,6 +23,7 @@ import {
   useMenuPositionCalculatorForEdges
 } from '@/composables/useMenuPositionCalculator'
 import ProcessEditMenu from './ProcessEditMenu.vue'
+import PauseEditMenu from './PauseEditMenu.vue'
 import ConditionEditMenu from './ConditionEditMenu.vue'
 import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
 import EdgeEditMenu from './EdgeEditMenu.vue'

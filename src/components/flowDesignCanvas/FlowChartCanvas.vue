@@ -26,6 +26,9 @@
       <template #node-process="processNodeProps">
         <ProcessNode v-bind="processNodeProps" />
       </template>
+      <template #node-pause="pauseNodeProps">
+        <PauseNode v-bind="pauseNodeProps" />
+      </template>
       <template #node-condition="conditionNodeProps">
         <ConditionNode v-bind="conditionNodeProps" />
       </template>
@@ -47,6 +50,7 @@ import NodePanel from './NodePanel.vue'
 import { Background } from '@vue-flow/background'
 import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
+import PauseNode from './PauseNode.vue'
 // import { Controls } from '@vue-flow/controls'
 import CustomEdge from './CustomEdge.vue'
 import ScheduledProcessNode from './ScheduledProcessNode.vue'
@@ -63,6 +67,7 @@ import HotkeysManager from './HotkeysManager.vue'
 
 const {
   getProcessNodeId,
+  getPauseNodeId,
   getConditionNodeId,
   getProcessScheduleNodeId,
   getEdgeId,
@@ -71,7 +76,7 @@ const {
 } = useNodeIdStore()
 const {
   nodes,
-  getEdges,
+  edges,
   findNode,
   onConnect,
   updateEdge,
@@ -105,7 +110,7 @@ onConnect((params) => {
   } else if (params.source.includes('condition_')) {
     let isTrueEdgeExist: boolean = false
     let isFalseEdgeExist: boolean = false
-    getEdges.value.forEach((edge) => {
+    edges.value.forEach((edge) => {
       if (edge.source === params.source) {
         if (edge.label === 'Yes') {
           isTrueEdgeExist = true
@@ -197,6 +202,8 @@ function onDrop(event: any) {
   let nodeId: string = ''
   if (type === 'process') {
     nodeId = getProcessNodeId()
+  } else if (type === 'pause') {
+    nodeId = getPauseNodeId()
   } else if (type === 'condition') {
     nodeId = getConditionNodeId()
   } else if (type === 'schedule') {
@@ -221,6 +228,11 @@ function onDrop(event: any) {
       processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
+  } else if (type === 'pause') {
+    nodeData = {
+      duration: 0
+    }
+    newNode = { ...newNode, data: { pause: nodeData } }
   } else if (type === 'process') {
     nodeData = {
       inlet: 'inlet 1',

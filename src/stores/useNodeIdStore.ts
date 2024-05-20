@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useNodeIdStore = defineStore('nodeId', () => {
   let processNodeId = 1
+  let pauseNodeId = 1
   let conditionNodeId = 1
   let processScheduleNodeId = 1
 
@@ -11,6 +12,10 @@ export const useNodeIdStore = defineStore('nodeId', () => {
 
   function getProcessNodeId() {
     return `process_${processNodeId++}`
+  }
+
+  function getPauseNodeId() {
+    return `pause_${pauseNodeId++}`
   }
 
   function getConditionNodeId() {
@@ -35,6 +40,7 @@ export const useNodeIdStore = defineStore('nodeId', () => {
 
   return {
     getProcessNodeId,
+    getPauseNodeId,
     getConditionNodeId,
     getProcessScheduleNodeId,
     getEdgeId,

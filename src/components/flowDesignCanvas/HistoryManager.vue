@@ -198,6 +198,7 @@ function undo() {
         const data = { ...state.oldState.data }
         if (node.type === 'process') {
           node.data.flowControl = data
+          node.data.isOverScheduleNode = false
         } else if (node.type === 'pause') {
           node.data.pause = data
         } else if (node.type === 'condition') {
@@ -443,6 +444,7 @@ function redo() {
         const data = { ...state.newState?.data }
         if (node.type === 'process') {
           node.data.flowControl = data
+          node.data.isOverScheduleNode = false
         } else if (node.type === 'pause') {
           node.data.pause = data
         } else if (node.type === 'condition') {

@@ -31,17 +31,20 @@ import { select } from 'd3'
 import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
+import type { NodeDragEvent } from '@vue-flow/core'
 
 const {
   findNode,
   findEdge,
   onNodeDragStart,
+  onNodeDrag,
   onNodeDragStop,
   getSelectedElements,
   onViewportChangeStart,
   onViewportChangeEnd,
   viewport,
-  vueFlowRef
+  vueFlowRef,
+  removeNodes
 } = useVueFlow()
 
 const { getZooming } = useFlowChartCanvasStore()
@@ -65,6 +68,7 @@ const isMenuBarOpen = ref(false)
 const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
+const isNodeOverScheduleNode = ref(false)
 
 function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
   if (vueFlowRef.value === null) return
@@ -102,6 +106,47 @@ function showEditMenuBar() {
     position.value = pos
   })
   isMenuBarOpen.value = true
+}
+
+function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
+  if (dragEvent.nodes.length > 1) {
+    return
+  }
+  if (dragEvent.node.type !== 'process') {
+    return
+  }
+  if (dragEvent.intersections !== undefined) {
+    if (dragEvent.intersections.length === 0) {
+      isNodeOverScheduleNode.value = false
+      dragEvent.node.data.isOverScheduleNode = false
+      return
+    }
+    dragEvent.intersections.forEach((intersection) => {
+      if (intersection.type === 'schedule') {
+        const scheduleNode = document.getElementById(intersection.id)
+        const { left, top, right, bottom } = scheduleNode!.getBoundingClientRect()
+        const mousePosition = { x: dragEvent.event.x, y: dragEvent.event.y }
+        if (
+          mousePosition.x > left &&
+          mousePosition.x < right &&
+          mousePosition.y > top &&
+          mousePosition.y < bottom
+        ) {
+          isNodeOverScheduleNode.value = true
+          dragEvent.node.data.isOverScheduleNode = true
+        } else {
+          isNodeOverScheduleNode.value = false
+          dragEvent.node.data.isOverScheduleNode = false
+        }
+      } else {
+        isNodeOverScheduleNode.value = false
+        dragEvent.node.data.isOverScheduleNode = false
+      }
+    })
+  } else {
+    isNodeOverScheduleNode.value = false
+    dragEvent.node.data.isOverScheduleNode = false
+  }
 }
 
 watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
@@ -161,7 +206,34 @@ onNodeDragStart(() => {
   isMenuBarOpen.value = false
 })
 
-onNodeDragStop(() => {
+onNodeDrag((dragEvent: NodeDragEvent) => {
+  checkIfNodeIsOverScheduleNode(dragEvent)
+})
+
+onNodeDragStop((dragEvent: NodeDragEvent) => {
+  checkIfNodeIsOverScheduleNode(dragEvent)
+  if (isNodeOverScheduleNode.value && dragEvent.intersections) {
+    const nodeData = dragEvent.node.data.flowControl
+    const flowControlSubprocesses = dragEvent.intersections[0].data.scheduledFlowControl.processes
+    flowControlSubprocesses.push({
+      id: flowControlSubprocesses.length + 1,
+      name: flowControlSubprocesses.length + 1,
+      selected: false,
+      startTime: 0.0,
+      endTime: nodeData.duration === 0 ? 1.0 : nodeData.duration,
+      duration: nodeData.duration === 0 ? 1.0 : nodeData.duration,
+      inlet: nodeData.inlet,
+      injection: nodeData.injection,
+      fluid: nodeData.fluid,
+      pressure: nodeData.pressure,
+      flowrate: nodeData.flowrate
+    })
+    removeNodes([dragEvent.node])
+    isNodeOverScheduleNode.value = false
+    return
+  }
+  dragEvent.node.data.isOverScheduleNode = false
+
   if (selectedId.value) {
     showEditMenuBar()
   }

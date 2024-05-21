@@ -12,23 +12,28 @@
       type="source"
       :position="Position.Top"
       :class="selected || nodeIsHovered ? '' : 'top-handle'"
+      v-if="!isOverScheduleNode"
     />
     <Handle
       type="source"
       :position="Position.Bottom"
       :class="selected || nodeIsHovered ? '' : 'bottom-handle'"
+      v-if="!isOverScheduleNode"
     />
     <Handle
       type="source"
       :position="Position.Right"
       :class="selected || nodeIsHovered ? '' : 'right-handle'"
+      v-if="!isOverScheduleNode"
     />
     <Handle
       type="source"
       :position="Position.Left"
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
+      v-if="!isOverScheduleNode"
     />
     <div
+      v-if="!isOverScheduleNode"
       class="flex align-center justify-center pa-3"
       style="
         width: 300px;
@@ -53,15 +58,36 @@
         >s
       </p>
     </div>
+    <div
+      v-else
+      :style="{
+        width: '100px',
+        height: '20px',
+        backgroundColor: '#bdbdbd'
+      }"
+    ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
 const { id, selected, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
+
+const isOverScheduleNode = computed(() => {
+  if (data === undefined || data.isOverScheduleNode === undefined) {
+    return false
+  }
+  return data.isOverScheduleNode
+})
+
+watch(isOverScheduleNode, (newVal, oldVal) => {
+  if (newVal && !oldVal) {
+    //get the mouse position
+  }
+})
 
 const flowControl = computed(() => {
   if (data === undefined || data.flowControl === undefined) {

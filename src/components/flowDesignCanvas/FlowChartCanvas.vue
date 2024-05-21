@@ -242,7 +242,7 @@ function onDrop(event: any) {
       duration: 0,
       flowrate: 0
     }
-    newNode = { ...newNode, data: { flowControl: nodeData } }
+    newNode = { ...newNode, data: { flowControl: nodeData, isOverScheduleNode: false } }
   } else if (type === 'condition') {
     nodeData = {
       name: 'xxx',
@@ -297,6 +297,9 @@ onNodesChange((nodesChange) => {
     const change = nodesChange[0]
     if (change.type === 'position' && change.dragging === false) {
       const node = findNode(change.id)
+      if (node?.data.isOverScheduleNode) {
+        return
+      }
       const state: StateController = {
         type: ActionType.MOVE_NODE,
         name: 'move node ' + change.id,

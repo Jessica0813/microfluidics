@@ -172,6 +172,8 @@ function onDrop(event: any) {
           event.clientY < nodePosition.y + nodeDimensions.height
         ) {
           const flowControlSubprocesses = node.data.scheduledFlowControl.processes
+          const oldData = Object.assign({}, node.data.scheduledFlowControl)
+          oldData.processes = Object.assign([], flowControlSubprocesses)
           const subProcessId = getSubProcessId()
           flowControlSubprocesses.push({
             id: subProcessId,
@@ -186,6 +188,22 @@ function onDrop(event: any) {
             pressure: 0,
             flowrate: 0
           })
+          const newData = Object.assign({}, node.data.scheduledFlowControl)
+          newData.processes = Object.assign([], flowControlSubprocesses)
+          const state: StateController = {
+            type: ActionType.UPDATE_NODE_DATA,
+            name: 'update node data ' + node.id,
+            objectId: node.id,
+            oldState: {
+              objectPosition: node.position,
+              data: oldData
+            },
+            newState: {
+              objectPosition: node.position,
+              data: newData
+            }
+          }
+          addState(state)
           return
         }
       }

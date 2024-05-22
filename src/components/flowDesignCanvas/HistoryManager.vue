@@ -162,6 +162,20 @@ function undo() {
           }
           break
         }
+        case ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS: {
+          const scheduleNode = findNode(state.objectId[0])
+          if (scheduleNode && scheduleNode.type === 'schedule') {
+            scheduleNode.data.scheduledFlowControl = state.oldState[0].data
+          }
+          const node = {
+            id: state.objectId[1],
+            type: state.oldState[1].objectType || 'process',
+            position: state.oldState[1].objectPosition || { x: 0, y: 0 },
+            data: state.oldState[1].data
+          }
+          addNodes([node])
+          break
+        }
       }
     }
     shouldRecordState.value = true
@@ -398,6 +412,17 @@ function redo() {
             addSensor(sensor)
           }
           toggleRecordState()
+          break
+        }
+        case ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS: {
+          const scheduleNode = findNode(state.objectId[0])
+          if (scheduleNode && scheduleNode.type === 'schedule') {
+            scheduleNode.data.scheduledFlowControl = state.newState[0].data
+          }
+          const processNode = findNode(state.objectId[1])
+          if (processNode) {
+            removeNodes([processNode])
+          }
           break
         }
       }

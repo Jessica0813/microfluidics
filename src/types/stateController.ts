@@ -24,7 +24,8 @@ export enum ActionType {
   Resize_MUlTI_SENSORS = 'Resize_MUlTI_SENSORS',
   DELETE_MULTI_SENSORS = 'DELETE_MULTI_SENSORS',
   PASTE_NODES = 'PASTE_NODES',
-  PASTE_SENSORS = 'PASTE_SENSORS'
+  PASTE_SENSORS = 'PASTE_SENSORS',
+  UPDATE_NODE_DATA_BY_DRAG_PROCESS = 'UPDATE_NODE_DATA_BY_DRAG_PROCESS'
 }
 
 export interface state {
@@ -37,6 +38,7 @@ export interface state {
   target?: string
   sourceHandleId?: string
   targetHandleId?: string
+  isChangeFromProcessNode?: boolean
 }
 export interface StateController {
   type: ActionType

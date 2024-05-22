@@ -33,8 +33,11 @@ import type { D3DragEvent } from 'd3-drag'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 import type { NodeDragEvent } from '@vue-flow/core'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import { type StateController, ActionType } from '@/types/stateController'
+import { useStateStore } from '@/stores/useStateStore'
 
 const { getSubProcessId } = useNodeIdStore()
+const { addState } = useStateStore()
 
 const {
   findNode,
@@ -72,6 +75,7 @@ const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
 const isNodeOverScheduleNode = ref(false)
+let nodePositionbeforeDrag = { x: 0, y: 0 }
 
 function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
   if (vueFlowRef.value === null) return
@@ -205,8 +209,11 @@ watch(
   }
 )
 
-onNodeDragStart(() => {
+onNodeDragStart((dragEvent: NodeDragEvent) => {
   isMenuBarOpen.value = false
+  if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
+    nodePositionbeforeDrag = { x: dragEvent.node.position.x, y: dragEvent.node.position.y }
+  }
 })
 
 onNodeDrag((dragEvent: NodeDragEvent) => {
@@ -216,24 +223,59 @@ onNodeDrag((dragEvent: NodeDragEvent) => {
 onNodeDragStop((dragEvent: NodeDragEvent) => {
   checkIfNodeIsOverScheduleNode(dragEvent)
   if (isNodeOverScheduleNode.value && dragEvent.intersections) {
-    const nodeData = dragEvent.node.data.flowControl
-    const flowControlSubprocesses = dragEvent.intersections[0].data.scheduledFlowControl.processes
+    const processNodeData = dragEvent.node.data.flowControl
+    const scheduleNodeData = dragEvent.intersections[0].data.scheduledFlowControl
+    const flowControlSubprocesses = scheduleNodeData.processes
+    const oldData = Object.assign({}, scheduleNodeData)
+    oldData.processes = Object.assign([], flowControlSubprocesses)
     const subProcessId = getSubProcessId()
     flowControlSubprocesses.push({
       id: subProcessId,
       name: subProcessId,
       selected: false,
       startTime: 0.0,
-      endTime: nodeData.duration === 0 ? 1.0 : nodeData.duration,
-      duration: nodeData.duration === 0 ? 1.0 : nodeData.duration,
-      inlet: nodeData.inlet,
-      injection: nodeData.injection,
-      fluid: nodeData.fluid,
-      pressure: nodeData.pressure,
-      flowrate: nodeData.flowrate
+      endTime: processNodeData.duration === 0 ? 1.0 : processNodeData.duration,
+      duration: processNodeData.duration === 0 ? 1.0 : processNodeData.duration,
+      inlet: processNodeData.inlet,
+      injection: processNodeData.injection,
+      fluid: processNodeData.fluid,
+      pressure: processNodeData.pressure,
+      flowrate: processNodeData.flowrate
     })
-    removeNodes([dragEvent.node])
+
     isNodeOverScheduleNode.value = false
+
+    const newData = Object.assign({}, scheduleNodeData)
+    newData.processes = Object.assign([], flowControlSubprocesses)
+    const state: StateController = {
+      type: ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS,
+      name: 'update node data ' + dragEvent.intersections[0].id,
+      objectId: [dragEvent.intersections[0].id],
+      oldState: [
+        {
+          objectPosition: dragEvent.intersections[0].position,
+          data: oldData
+        }
+      ],
+      newState: [
+        {
+          objectPosition: dragEvent.intersections[0].position,
+          data: newData
+        }
+      ]
+    }
+    addState(state)
+
+    if (Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
+      state.objectId.push(dragEvent.node.id)
+      state.oldState.push({
+        objectPosition: nodePositionbeforeDrag,
+        objectType: dragEvent.node.type,
+        data: dragEvent.node.data.flowControl
+      })
+    }
+    removeNodes([dragEvent.node])
+
     return
   }
   dragEvent.node.data.isOverScheduleNode = false

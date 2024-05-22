@@ -32,6 +32,9 @@ import { drag } from 'd3-drag'
 import type { D3DragEvent } from 'd3-drag'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 import type { NodeDragEvent } from '@vue-flow/core'
+import { useNodeIdStore } from '@/stores/useNodeIdStore'
+
+const { getSubProcessId } = useNodeIdStore()
 
 const {
   findNode,
@@ -215,9 +218,10 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
   if (isNodeOverScheduleNode.value && dragEvent.intersections) {
     const nodeData = dragEvent.node.data.flowControl
     const flowControlSubprocesses = dragEvent.intersections[0].data.scheduledFlowControl.processes
+    const subProcessId = getSubProcessId()
     flowControlSubprocesses.push({
-      id: flowControlSubprocesses.length + 1,
-      name: flowControlSubprocesses.length + 1,
+      id: subProcessId,
+      name: subProcessId,
       selected: false,
       startTime: 0.0,
       endTime: nodeData.duration === 0 ? 1.0 : nodeData.duration,

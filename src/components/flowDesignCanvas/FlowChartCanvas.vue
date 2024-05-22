@@ -70,6 +70,7 @@ const {
   getPauseNodeId,
   getConditionNodeId,
   getProcessScheduleNodeId,
+  getSubProcessId,
   getEdgeId,
   getEdgeFalseId,
   getEdgeTrueId
@@ -170,11 +171,11 @@ function onDrop(event: any) {
           event.clientY > nodePosition.y &&
           event.clientY < nodePosition.y + nodeDimensions.height
         ) {
-          console.log('Cannot drop process node on schedule node')
           const flowControlSubprocesses = node.data.scheduledFlowControl.processes
+          const subProcessId = getSubProcessId()
           flowControlSubprocesses.push({
-            id: flowControlSubprocesses.length + 1,
-            name: flowControlSubprocesses.length + 1,
+            id: subProcessId,
+            name: subProcessId,
             selected: false,
             startTime: 0.0,
             endTime: 1.0,

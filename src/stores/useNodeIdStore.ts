@@ -5,6 +5,7 @@ export const useNodeIdStore = defineStore('nodeId', () => {
   let pauseNodeId = 1
   let conditionNodeId = 1
   let processScheduleNodeId = 1
+  let subProcessId = 1
 
   let edgeId = 1
   let edgeTrueId = 1
@@ -26,6 +27,10 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     return `schedule_${processScheduleNodeId++}`
   }
 
+  function getSubProcessId() {
+    return `${subProcessId++}`
+  }
+
   function getEdgeId() {
     return `edge_${edgeId++}`
   }
@@ -43,6 +48,7 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     getPauseNodeId,
     getConditionNodeId,
     getProcessScheduleNodeId,
+    getSubProcessId,
     getEdgeId,
     getEdgeTrueId,
     getEdgeFalseId

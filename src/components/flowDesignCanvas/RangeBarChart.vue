@@ -78,34 +78,26 @@ onMounted(() => {
     xAxis.selectAll('.tick text').attr('opacity', 0.6)
     xAxis.select('.domain').style('display', 'none')
 
-    const contentGroup = chartContent
-      .selectAll<SVGGElement, FlowControlProcess>(`.${props.id}-process-group`)
-      .data(flowControlProcesses.value, (d) => d.id)
+    const contentGroup = chartContent.selectAll('.process-group').data(flowControlProcesses.value)
 
-    const backgroundRect = contentGroup
-      .selectAll<SVGRectElement, FlowControlProcess>(`${props.id}-process-background-rect`)
-      .data((d) => [d])
+    const backgroundRect = contentGroup.selectAll('.process-background-rect').data((d) => [d])
     const processRect = contentGroup
-      .selectAll<SVGRectElement, FlowControlProcess>(`${props.id}-process`)
+      .selectAll<SVGRectElement, FlowControlProcess>('.process')
       .data((d) => [d])
     const startLine = contentGroup
-      .selectAll<SVGLineElement, FlowControlProcess>(`${props.id}-start-line`)
+      .selectAll<SVGLineElement, FlowControlProcess>('start-line')
       .data((d) => [d])
     const endLine = contentGroup
-      .selectAll<SVGLineElement, FlowControlProcess>(`${props.id}-end-line`)
+      .selectAll<SVGLineElement, FlowControlProcess>('.end-line')
       .data((d) => [d])
-    const deleteIconLine = contentGroup
-      .selectAll<SVGLineElement, FlowControlProcess>(`${props.id}-delete-icon-line`)
-      .data((d) => [d])
-    const deleteIconCircle = contentGroup
-      .selectAll<SVGCircleElement, FlowControlProcess>(`${props.id}-delete-icon-circle`)
-      .data((d) => [d])
+    const deleteIconLine = contentGroup.selectAll('.delete-icon-line').data((d) => [d])
+    const deleteIconCircle = contentGroup.selectAll('.delete-icon-circle').data((d) => [d])
 
     // Enter selection for creating new process groups
     const processEnter = contentGroup
       .enter()
       .append('g')
-      .attr('class', `${props.id}-process-group`)
+      .attr('class', 'process-group')
       .attr('id', (d) => `${props.id}-process-group-${d.id}`)
       .on('mouseenter', (event, d) => {
         select(`#${props.id}-delete-icon-${d.id}`).style('display', 'block')
@@ -116,7 +108,7 @@ onMounted(() => {
 
     processEnter
       .append('rect')
-      .attr('class', `${props.id}-process-background-rect`)
+      .attr('class', 'process-background-rect')
       .style('visibility', 'hidden')
       .attr('x', x(0))
       .attr('y', (d) => y(d.id)!)
@@ -125,7 +117,7 @@ onMounted(() => {
 
     processEnter
       .append('rect')
-      .attr('class', `${props.id}-process`)
+      .attr('class', 'process')
       .attr('id', (d) => `${props.id}-process-${d.id}`)
       .attr('x', (d) => x(d.startTime))
       .attr('y', (d) => y(d.id)!)
@@ -184,7 +176,7 @@ onMounted(() => {
 
     processEnter
       .append('line')
-      .attr('class', `${props.id}-start-line`)
+      .attr('class', 'start-line')
       .attr('stroke-width', 5)
       .attr('stroke', 'transparent')
       .attr('id', (d) => `${props.id}-start-line-${d.id}`)
@@ -197,7 +189,7 @@ onMounted(() => {
 
     processEnter
       .append('line')
-      .attr('class', `${props.id}-end-line`)
+      .attr('class', 'end-line')
       .attr('stroke-width', 5)
       .attr('stroke', 'transparent') // Color of the line
       .attr('id', (d) => `${props.id}-end-line-${d.id}`)
@@ -210,7 +202,7 @@ onMounted(() => {
 
     const iconGroup = processEnter
       .append('g')
-      .attr('class', `${props.id}-delete-icon`)
+      .attr('class', 'delete-icon')
       .attr('id', (d) => `${props.id}-delete-icon-${d.id}`)
       .style('cursor', 'pointer')
       .style('display', 'none')
@@ -227,7 +219,7 @@ onMounted(() => {
 
     iconGroup
       .append('line')
-      .attr('class', `${props.id}-delete-icon-line`)
+      .attr('class', 'delete-icon-line')
       .attr('stroke-width', 1.5)
       .attr('stroke', 'grey')
       .attr('x1', (d) => x(d.endTime) + 6)
@@ -237,7 +229,7 @@ onMounted(() => {
 
     iconGroup
       .append('circle')
-      .attr('class', `${props.id}-delete-icon-circle`)
+      .attr('class', 'delete-icon-circle')
       .attr('r', 7)
       .attr('stroke', 'grey')
       .attr('fill', 'transparent')
@@ -250,7 +242,7 @@ onMounted(() => {
 
     //update
     backgroundRect
-      .merge(contentGroup.selectAll(`.${props.id}-process-background-rect`))
+      .merge(contentGroup.selectAll('.process-background-rect'))
       .transition()
       .attr('x', x(0))
       .attr('y', (d) => y(d.id)!)
@@ -258,7 +250,6 @@ onMounted(() => {
       .attr('height', y.bandwidth())
 
     processRect
-      .merge(contentGroup.selectAll<SVGRectElement, FlowControlProcess>(`.${props.id}-process`))
       .attr('x', (d) => x(d.startTime))
       .attr('y', (d) => y(d.id)!)
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
@@ -267,7 +258,6 @@ onMounted(() => {
       .call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
 
     startLine
-      .merge(contentGroup.selectAll<SVGLineElement, FlowControlProcess>(`.${props.id}-start-line`))
       .attr('x1', (d) => x(d.startTime))
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.startTime))
@@ -275,7 +265,6 @@ onMounted(() => {
       .call(useLeftResize(props.id!, instances, marginX))
 
     endLine
-      .merge(contentGroup.selectAll<SVGLineElement, FlowControlProcess>(`.${props.id}-end-line`))
       .attr('x1', (d) => x(d.endTime))
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.endTime))
@@ -283,20 +272,12 @@ onMounted(() => {
       .call(useRightResize(props.id!, instances, width, marginX))
 
     deleteIconLine
-      .merge(
-        contentGroup.selectAll<SVGLineElement, FlowControlProcess>(`.${props.id}-delete-icon-line`)
-      )
       .attr('x1', (d) => x(d.endTime) + 6)
       .attr('y1', (d) => y(d.id)! + y.bandwidth() / 2)
       .attr('x2', (d) => x(d.endTime) + 14)
       .attr('y2', (d) => y(d.id)! + y.bandwidth() / 2)
 
     deleteIconCircle
-      .merge(
-        contentGroup.selectAll<SVGCircleElement, FlowControlProcess>(
-          `.${props.id}-delete-icon-circle`
-        )
-      )
       .attr('cx', (d) => x(d.endTime) + 10)
       .attr('cy', (d) => y(d.id)! + y.bandwidth() / 2)
   }

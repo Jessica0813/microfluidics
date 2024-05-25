@@ -185,7 +185,7 @@ onMounted(() => {
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.startTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useLeftResize(props.id!, instances, marginX))
+      .call(useLeftResize(props.id!, instances, marginX, flowControlProcesses))
 
     processEnter
       .append('line')
@@ -198,7 +198,7 @@ onMounted(() => {
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.endTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useRightResize(props.id!, instances, width, marginX))
+      .call(useRightResize(props.id!, instances, width, marginX, flowControlProcesses))
 
     const iconGroup = processEnter
       .append('g')
@@ -262,14 +262,14 @@ onMounted(() => {
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.startTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useLeftResize(props.id!, instances, marginX))
+      .call(useLeftResize(props.id!, instances, marginX, flowControlProcesses))
 
     endLine
       .attr('x1', (d) => x(d.endTime))
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.endTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useRightResize(props.id!, instances, width, marginX))
+      .call(useRightResize(props.id!, instances, width, marginX, flowControlProcesses))
 
     deleteIconLine
       .attr('x1', (d) => x(d.endTime) + 6)

@@ -6,6 +6,7 @@ import type { D3DragEvent } from 'd3-drag'
 import type { Instance } from 'tippy.js'
 import { useTooltipContent } from '@/composables/useTooltipContent'
 import type { Ref } from 'vue'
+import { type StateController, ActionType } from '@/types/stateController'
 
 let instance: Instance | undefined
 
@@ -126,6 +127,7 @@ export function useDrag(
       if (editedProcess) {
         editedProcess.startTime = event.subject.startTime
         editedProcess.endTime = event.subject.endTime
+        editedProcess.duration = event.subject.endTime - event.subject.startTime
       }
     }
     updateContent(event)
@@ -133,7 +135,13 @@ export function useDrag(
   return d3Drag
 }
 
-export function useRightResize(id: string, instances: Instance[], width: number, marginX: number) {
+export function useRightResize(
+  id: string,
+  instances: Instance[],
+  width: number,
+  marginX: number,
+  flowControlProcesses: Ref<FlowControlProcess[] | undefined>
+) {
   const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 
   d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
@@ -164,12 +172,27 @@ export function useRightResize(id: string, instances: Instance[], width: number,
     const endTime = ((x - marginX) / 10).toFixed(1)
     event.subject.endTime = Number(endTime)
     event.subject.duration = event.subject.endTime - event.subject.startTime
+    if (flowControlProcesses.value) {
+      const editedProcess: FlowControlProcess | undefined = flowControlProcesses.value.find(
+        (p) => p.id === event.subject.id
+      )
+      if (editedProcess) {
+        editedProcess.startTime = event.subject.endTime - event.subject.duration
+        editedProcess.endTime = event.subject.endTime
+        editedProcess.duration = event.subject.duration
+      }
+    }
     updateContent(event)
   })
   return d3RightResize
 }
 
-export function useLeftResize(id: string, instances: Instance[], marginX: number) {
+export function useLeftResize(
+  id: string,
+  instances: Instance[],
+  marginX: number,
+  flowControlProcesses: Ref<FlowControlProcess[] | undefined>
+) {
   const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 
   d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
@@ -199,6 +222,16 @@ export function useLeftResize(id: string, instances: Instance[], marginX: number
     const startTime = ((x - marginX) / 10).toFixed(1)
     event.subject.startTime = Number(startTime)
     event.subject.duration = event.subject.endTime - event.subject.startTime
+    if (flowControlProcesses.value) {
+      const editedProcess: FlowControlProcess | undefined = flowControlProcesses.value.find(
+        (p) => p.id === event.subject.id
+      )
+      if (editedProcess) {
+        editedProcess.startTime = event.subject.startTime
+        editedProcess.endTime = event.subject.startTime + event.subject.duration
+        editedProcess.duration = event.subject.duration
+      }
+    }
     updateContent(event)
   })
 

@@ -219,7 +219,6 @@ function undo() {
           node.data.condition = data
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
-          console.log(node.data)
         }
       }
       break

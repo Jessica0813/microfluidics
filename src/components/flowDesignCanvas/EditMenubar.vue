@@ -227,8 +227,7 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
     const processNodeData = dragEvent.node.data.flowControl
     const scheduleNodeData = dragEvent.intersections[0].data.scheduledFlowControl
     const flowControlSubprocesses = scheduleNodeData.processes
-    const oldData = Object.assign({}, scheduleNodeData)
-    oldData.processes = Object.assign([], flowControlSubprocesses)
+    const oldData = JSON.parse(JSON.stringify(scheduleNodeData))
     const subProcessId = getSubProcessId()
     flowControlSubprocesses.push({
       id: subProcessId,
@@ -246,8 +245,7 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
 
     isNodeOverScheduleNode.value = false
 
-    const newData = Object.assign({}, scheduleNodeData)
-    newData.processes = Object.assign([], flowControlSubprocesses)
+    const newData = JSON.parse(JSON.stringify(scheduleNodeData))
     const state: StateController = {
       type: ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS,
       name: 'update node data ' + dragEvent.intersections[0].id,

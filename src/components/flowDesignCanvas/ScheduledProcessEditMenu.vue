@@ -94,6 +94,7 @@ const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
 const isChildProcessSelected = ref(false)
+const editedProcessId = ref(-1)
 const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
   default: {
     id: '-1',
@@ -161,11 +162,26 @@ watch(
       if (scheduledFlowControl.value.processes[i].selected) {
         flowControl.value = scheduledFlowControl.value.processes[i]
         isChildProcessSelected.value = true
+        editedProcessId.value = i
         break
       }
     }
     if (i === scheduledFlowControl.value.processes.length) {
+      flowControl.value = {
+        id: '-1',
+        name: 'xyz',
+        selected: false,
+        startTime: 0.0,
+        endTime: 1.0,
+        duration: 1.0,
+        inlet: 'inlet 1',
+        injection: 'pump',
+        fluid: 'water',
+        pressure: 0,
+        flowrate: 0
+      }
       isChildProcessSelected.value = false
+      editedProcessId.value = -1
     }
   },
   {
@@ -180,10 +196,12 @@ let oldFlowControl = Object.assign({}, flowControl.value)
 watch(
   scheduledFlowControl.value,
   (newscheduledFlowControl) => {
-    if (
-      !isMenuOpen.value &&
-      JSON.stringify(scheduledFlowControl.value) !== JSON.stringify(oldScheduledFlowControl)
-    ) {
+    const newData = JSON.parse(JSON.stringify(newscheduledFlowControl))
+    if (editedProcessId.value !== -1) {
+      oldScheduledFlowControl.processes[editedProcessId.value].selected = false
+      newData.processes[editedProcessId.value].selected = false
+    }
+    if (!isMenuOpen.value && JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
       const node = findNode(props.id)
       if (node) {
         const state: StateController = {
@@ -196,11 +214,11 @@ watch(
           },
           newState: {
             objectPosition: node.position,
-            data: newscheduledFlowControl
+            data: newData
           }
         }
         addState(state)
-        oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+        oldScheduledFlowControl = newData
       }
     }
   },
@@ -210,8 +228,14 @@ watch(
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
     const node = findNode(props.id)
+    const newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+    if (editedProcessId.value !== -1) {
+      oldScheduledFlowControl.processes[editedProcessId.value].selected = false
+      newData.processes[editedProcessId.value].selected = false
+    }
     if (
       node &&
+      JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl) &&
       (flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
         flowControl.value.flowrate !== oldFlowControl.flowrate ||
@@ -227,12 +251,11 @@ watch(isMenuOpen, (newValue, oldValue) => {
         },
         newState: {
           objectPosition: node.position,
-          data: scheduledFlowControl.value
+          data: newData
         }
       }
       addState(state)
-      oldScheduledFlowControl = Object.assign({}, scheduledFlowControl.value)
-      oldScheduledFlowControl.processes = Object.assign([], scheduledFlowControl.value.processes)
+      oldScheduledFlowControl = newData
       oldFlowControl = Object.assign({}, flowControl.value)
     }
   }

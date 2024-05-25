@@ -1,5 +1,5 @@
 <template>
-  <div ref="floatingRef" class="wrapper" v-show="isMenuBarOpen" id="menu-bar">
+  <div ref="floatingRef" class="wrapper" v-show="isEditMenuOpen" id="menu-bar">
     <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
@@ -9,6 +9,7 @@
     <ScheduledProcessEditMenu
       v-else-if="findNode(selectedId)?.type === 'schedule'"
       :id="selectedId"
+      :is-edit-menu-open="isEditMenuOpen"
       v-model:edited-flow-control="flowControl"
     />
     <EdgeEditMenu v-else-if="findEdge(selectedId)?.type === 'custom'" :id="selectedId" />
@@ -70,7 +71,7 @@ const flowControl = ref({
 })
 
 const floatingRef = ref<HTMLDivElement | null>(null)
-const isMenuBarOpen = ref(false)
+const isEditMenuOpen = ref(false)
 const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
@@ -112,7 +113,7 @@ function showEditMenuBar() {
   useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
     position.value = pos
   })
-  isMenuBarOpen.value = true
+  isEditMenuOpen.value = true
 }
 
 function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
@@ -167,7 +168,7 @@ watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
   if (newSelectedElements.length === 1) {
     if (selectedId.value === null) {
       selectedId.value = newSelectedElements[0].id
-      isMenuBarOpen.value = true
+      isEditMenuOpen.value = true
     } else if (newSelectedElements[0] !== oldSelectedElements[0]) {
       selectedId.value = newSelectedElements[0].id
     }
@@ -183,7 +184,7 @@ watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
       position.value = pos
     })
   } else {
-    isMenuBarOpen.value = false
+    isEditMenuOpen.value = false
     selectedId.value = null
   }
 })
@@ -210,7 +211,7 @@ watch(
 )
 
 onNodeDragStart((dragEvent: NodeDragEvent) => {
-  isMenuBarOpen.value = false
+  isEditMenuOpen.value = false
   if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
     nodePositionbeforeDrag = { x: dragEvent.node.position.x, y: dragEvent.node.position.y }
   }
@@ -287,7 +288,7 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
 
 onViewportChangeStart(() => {
   if (selectedId.value) {
-    isMenuBarOpen.value = false
+    isEditMenuOpen.value = false
   }
 })
 
@@ -302,7 +303,7 @@ watch(
   (newValue) => {
     if (selectedId.value) {
       if (newValue) {
-        isMenuBarOpen.value = false
+        isEditMenuOpen.value = false
       } else {
         showEditMenuBar()
       }

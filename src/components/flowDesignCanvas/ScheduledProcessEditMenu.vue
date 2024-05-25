@@ -113,7 +113,6 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
 const isTotalDurationMenuOpen = ref(false)
 const isPressureMenuOpen = ref(false)
 const isFlowrateMenuOpen = ref(false)
-// const isStartTimeMenuOpen = ref(false)
 const isSubProcessDurationMenuOpen = ref(false)
 
 const isMenuOpen = computed(() => {
@@ -127,6 +126,7 @@ const isMenuOpen = computed(() => {
 
 const props = defineProps<{
   id: string | null
+  isEditMenuOpen: boolean
 }>()
 
 const scheduledFlowControl = computed(() => {
@@ -140,6 +140,18 @@ const scheduledFlowControl = computed(() => {
   }
   return data.scheduledFlowControl
 })
+
+watch(
+  () => props.isEditMenuOpen,
+  (newValue) => {
+    if (!newValue) {
+      isTotalDurationMenuOpen.value = false
+      isPressureMenuOpen.value = false
+      isFlowrateMenuOpen.value = false
+      isSubProcessDurationMenuOpen.value = false
+    }
+  }
+)
 
 watch(
   () => scheduledFlowControl.value.processes,
@@ -162,13 +174,16 @@ watch(
   }
 )
 
-let oldScheduledFlowControl = Object.assign({}, scheduledFlowControl.value)
+let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 
 watch(
   scheduledFlowControl.value,
   (newscheduledFlowControl) => {
-    if (newscheduledFlowControl && !isMenuOpen.value) {
+    if (
+      !isMenuOpen.value &&
+      JSON.stringify(scheduledFlowControl.value) !== JSON.stringify(oldScheduledFlowControl)
+    ) {
       const node = findNode(props.id)
       if (node) {
         const state: StateController = {
@@ -185,7 +200,7 @@ watch(
           }
         }
         addState(state)
-        oldScheduledFlowControl = Object.assign({}, newscheduledFlowControl)
+        oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       }
     }
   },
@@ -216,6 +231,8 @@ watch(isMenuOpen, (newValue, oldValue) => {
         }
       }
       addState(state)
+      oldScheduledFlowControl = Object.assign({}, scheduledFlowControl.value)
+      oldScheduledFlowControl.processes = Object.assign([], scheduledFlowControl.value.processes)
       oldFlowControl = Object.assign({}, flowControl.value)
     }
   }
@@ -235,3 +252,14 @@ function deleteSelectedElements() {
   }
 }
 </script>
+
+<style scoped>
+.time-menu {
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+</style>

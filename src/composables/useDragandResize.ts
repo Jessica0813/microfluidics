@@ -5,6 +5,7 @@ import type { FlowControlProcess } from '@/types/flowControl'
 import type { D3DragEvent } from 'd3-drag'
 import type { Instance } from 'tippy.js'
 import { useTooltipContent } from '@/composables/useTooltipContent'
+import type { Ref } from 'vue'
 
 let instance: Instance | undefined
 
@@ -72,7 +73,13 @@ function updateContent(
   instance = undefined
 }
 
-export function useDrag(id: string, instances: Instance[], width: number, marginX: number) {
+export function useDrag(
+  id: string,
+  instances: Instance[],
+  width: number,
+  marginX: number,
+  flowControlProcesses: Ref<FlowControlProcess[] | undefined>
+) {
   const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 
   let startOffsetX: number = 0
@@ -112,6 +119,15 @@ export function useDrag(id: string, instances: Instance[], width: number, margin
     const endTime = ((x - marginX + processWidth) / 10).toFixed(1)
     event.subject.startTime = Number(startTime)
     event.subject.endTime = Number(endTime)
+    if (flowControlProcesses.value) {
+      const editedProcess: FlowControlProcess | undefined = flowControlProcesses.value.find(
+        (p) => p.id === event.subject.id
+      )
+      if (editedProcess) {
+        editedProcess.startTime = event.subject.startTime
+        editedProcess.endTime = event.subject.endTime
+      }
+    }
     updateContent(event)
   })
   return d3Drag

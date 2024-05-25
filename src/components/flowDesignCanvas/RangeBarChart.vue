@@ -132,7 +132,7 @@ onMounted(() => {
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
       .attr('height', y.bandwidth())
       .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
-      .call(useDrag(props.id!, instances, width, marginX))
+      .call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
       .on('click', (event, d) => {
         //update relative process with selected is true
         event.stopPropagation()
@@ -180,7 +180,7 @@ onMounted(() => {
       }
     }
 
-    processRect.call(useDrag(props.id!, instances, width, marginX))
+    processRect.call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
 
     processEnter
       .append('line')
@@ -264,7 +264,7 @@ onMounted(() => {
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
       .attr('height', y.bandwidth())
       .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
-      .call(useDrag(props.id!, instances, width, marginX))
+      .call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
 
     startLine
       .merge(contentGroup.selectAll<SVGLineElement, FlowControlProcess>(`.${props.id}-start-line`))
@@ -301,14 +301,12 @@ onMounted(() => {
       .attr('cy', (d) => y(d.id)! + y.bandwidth() / 2)
   }
 
-  updateProcess()
-
   watch(
     () => [flowControlProcesses, props.totalDuration],
     () => {
       updateProcess()
     },
-    { deep: true }
+    { deep: true, immediate: true }
   )
 
   watch(

@@ -25,8 +25,6 @@ const props = defineProps({
 
 const { findNode } = useVueFlow()
 
-const isMenuOpen = defineModel<boolean>('isMenuOpen', { default: false })
-// const isEditingProcess = defineModel<boolean>('isEditingProcess', { default: false })
 const editedProcess = defineModel<FlowControlProcess>('editedProcess')
 const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProcesses', {
   default: []
@@ -144,7 +142,6 @@ onMounted(() => {
           return p
         })
         editedProcess.value = flowControlProcesses.value.find((p) => p.id === d.id)!
-        isMenuOpen.value = true
       })
 
     for (const process of flowControlProcesses.value) {
@@ -208,13 +205,6 @@ onMounted(() => {
       .style('display', 'none')
       .on('click', (event, d) => {
         flowControlProcesses.value = flowControlProcesses.value.filter((p) => p.id !== d.id)
-        const instance = instances.find(
-          (i) => `${props.id}-process-${d.id}` === i.reference.getAttribute('id')
-        )
-        if (instance) {
-          instance.destroy()
-          instances = instances.filter((i) => i !== instance)
-        }
       })
 
     iconGroup
@@ -282,6 +272,10 @@ onMounted(() => {
       .attr('cy', (d) => y(d.id)! + y.bandwidth() / 2)
   }
 
+  let oldFlowControlProcesses: FlowControlProcess[] = JSON.parse(
+    JSON.stringify(flowControlProcesses.value)
+  )
+
   watch(
     () => [flowControlProcesses, props.totalDuration],
     () => {
@@ -291,9 +285,34 @@ onMounted(() => {
   )
 
   watch(
+    () => flowControlProcesses.value.length,
+    (newValue, oldValue) => {
+      if (newValue > oldValue) {
+        oldFlowControlProcesses = JSON.parse(JSON.stringify(flowControlProcesses.value))
+      } else if (newValue < oldValue) {
+        const deletedProcess = oldFlowControlProcesses.find(
+          (p) => !flowControlProcesses.value.some((np) => np.id === p.id)
+        )
+        if (deletedProcess) {
+          const instance = instances.find(
+            (i) => `${props.id}-process-${deletedProcess.id}` === i.reference.getAttribute('id')
+          )
+          if (instance) {
+            instance.destroy()
+            instances = instances.filter((i) => i !== instance)
+          }
+          oldFlowControlProcesses = JSON.parse(JSON.stringify(newValue))
+        }
+      }
+    }
+  )
+
+  watch(
     editedProcess,
     (newValue, oldValue) => {
-      if (!editedProcess.value) return
+      if (!editedProcess.value) {
+        return
+      }
       if (editedProcess.value.id) {
         if (
           newValue?.startTime !== oldValue?.startTime ||

@@ -71,7 +71,7 @@
       </template>
       <CustomizedNumberInput v-model:number="flowControl.duration" />
     </v-menu>
-    <button class="customized-button" @click="deleteSelectedElements">
+    <button class="customized-button" @click="deleteSubprocess">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>
@@ -84,7 +84,7 @@ import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
-import type { FlowControlProcess } from '@/types/flowControl'
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
@@ -193,6 +193,27 @@ watch(
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 
+function updataState(newData: ScheduledFlowControl) {
+  const node = findNode(props.id)
+  if (node) {
+    const state: StateController = {
+      type: ActionType.UPDATE_NODE_DATA,
+      name: 'update node data ' + node.id,
+      objectId: node.id,
+      oldState: {
+        objectPosition: node.position,
+        data: oldScheduledFlowControl
+      },
+      newState: {
+        objectPosition: node.position,
+        data: newData
+      }
+    }
+    addState(state)
+    oldScheduledFlowControl = newData
+  }
+}
+
 watch(
   scheduledFlowControl.value,
   (newscheduledFlowControl) => {
@@ -202,24 +223,7 @@ watch(
       newData.processes[editedProcessId.value].selected = false
     }
     if (!isMenuOpen.value && JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
-      const node = findNode(props.id)
-      if (node) {
-        const state: StateController = {
-          type: ActionType.UPDATE_NODE_DATA,
-          name: 'update node data ' + node.id,
-          objectId: node.id,
-          oldState: {
-            objectPosition: node.position,
-            data: oldScheduledFlowControl
-          },
-          newState: {
-            objectPosition: node.position,
-            data: newData
-          }
-        }
-        addState(state)
-        oldScheduledFlowControl = newData
-      }
+      updataState(newData)
     }
   },
   { deep: true }
@@ -241,21 +245,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         flowControl.value.flowrate !== oldFlowControl.flowrate ||
         scheduledFlowControl.value.totalDuration !== oldScheduledFlowControl.totalDuration)
     ) {
-      const state: StateController = {
-        type: ActionType.UPDATE_NODE_DATA,
-        name: 'update node data ' + node.id,
-        objectId: node.id,
-        oldState: {
-          objectPosition: node.position,
-          data: oldScheduledFlowControl
-        },
-        newState: {
-          objectPosition: node.position,
-          data: newData
-        }
-      }
-      addState(state)
-      oldScheduledFlowControl = newData
+      updataState(newData)
       oldFlowControl = Object.assign({}, flowControl.value)
     }
   }
@@ -271,6 +261,33 @@ function deleteSelectedElements() {
     const state = createDeleteNodeState([node], connectedEdges, removeNodes, removeEdges)
     if (state) {
       addState(state)
+    }
+  }
+}
+
+function deleteSubprocess() {
+  if (editedProcessId.value !== -1) {
+    oldScheduledFlowControl.processes[editedProcessId.value].selected = false
+    scheduledFlowControl.value.processes.splice(editedProcessId.value, 1)
+    editedProcessId.value = -1
+    const newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+    const node = findNode(props.id)
+    if (node) {
+      const state: StateController = {
+        type: ActionType.UPDATE_NODE_DATA,
+        name: 'update node data ' + node.id,
+        objectId: node.id,
+        oldState: {
+          objectPosition: node.position,
+          data: oldScheduledFlowControl
+        },
+        newState: {
+          objectPosition: node.position,
+          data: newData
+        }
+      }
+      addState(state)
+      oldScheduledFlowControl = newData
     }
   }
 }

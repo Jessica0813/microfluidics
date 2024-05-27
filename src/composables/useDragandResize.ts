@@ -1,12 +1,13 @@
 import { drag } from 'd3-drag'
 import { select } from 'd3-selection'
 import type { Selection, BaseType } from 'd3-selection'
-import type { FlowControlProcess } from '@/types/flowControl'
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import type { D3DragEvent } from 'd3-drag'
 import type { Instance } from 'tippy.js'
 import { useTooltipContent } from '@/composables/useTooltipContent'
 import type { Ref } from 'vue'
 import { type StateController, ActionType } from '@/types/stateController'
+import { useStateStore } from '@/stores/useStateStore'
 
 let instance: Instance | undefined
 
@@ -74,12 +75,32 @@ function updateContent(
   instance = undefined
 }
 
+function updateState(
+  oldScheduledFlowControl: ScheduledFlowControl,
+  newScheduledFlowControl: ScheduledFlowControl,
+  id: string
+) {
+  const { addState } = useStateStore()
+  const state: StateController = {
+    type: ActionType.UPDATE_NODE_DATA,
+    name: 'update node data ' + id,
+    objectId: id,
+    oldState: {
+      data: oldScheduledFlowControl
+    },
+    newState: {
+      data: newScheduledFlowControl
+    }
+  }
+  addState(state)
+}
+
 export function useDrag(
   id: string,
   instances: Instance[],
   width: number,
   marginX: number,
-  flowControlProcesses: Ref<FlowControlProcess[] | undefined>
+  scheduledFlowControl: Ref<ScheduledFlowControl>
 ) {
   const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 
@@ -87,7 +108,10 @@ export function useDrag(
   let selection: Selection<BaseType, unknown, HTMLElement, any>
   let processWidth: number = 0
 
+  let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+
   d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
+    oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     selection = select(`#${id}-process-${event.subject.id}`)
     processWidth = Number(selection.attr('width'))
     const x = selection.attr('x')
@@ -120,16 +144,15 @@ export function useDrag(
     const endTime = ((x - marginX + processWidth) / 10).toFixed(1)
     event.subject.startTime = Number(startTime)
     event.subject.endTime = Number(endTime)
-    if (flowControlProcesses.value) {
-      const editedProcess: FlowControlProcess | undefined = flowControlProcesses.value.find(
-        (p) => p.id === event.subject.id
-      )
-      if (editedProcess) {
-        editedProcess.startTime = event.subject.startTime
-        editedProcess.endTime = event.subject.endTime
-        editedProcess.duration = event.subject.endTime - event.subject.startTime
-      }
+
+    const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
+      (p) => p.id === event.subject.id
+    )
+    if (editedProcess && !editedProcess.selected) {
+      const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+      updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
+
     updateContent(event)
   })
   return d3Drag
@@ -140,11 +163,14 @@ export function useRightResize(
   instances: Instance[],
   width: number,
   marginX: number,
-  flowControlProcesses: Ref<FlowControlProcess[] | undefined>
+  scheduledFlowControl: Ref<ScheduledFlowControl>
 ) {
   const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 
+  let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+
   d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     instance = instances.find(
       (instance) => instance.reference.id === `${id}-process-${event.subject.id}`
     )
@@ -172,16 +198,15 @@ export function useRightResize(
     const endTime = ((x - marginX) / 10).toFixed(1)
     event.subject.endTime = Number(endTime)
     event.subject.duration = event.subject.endTime - event.subject.startTime
-    if (flowControlProcesses.value) {
-      const editedProcess: FlowControlProcess | undefined = flowControlProcesses.value.find(
-        (p) => p.id === event.subject.id
-      )
-      if (editedProcess) {
-        editedProcess.startTime = event.subject.endTime - event.subject.duration
-        editedProcess.endTime = event.subject.endTime
-        editedProcess.duration = event.subject.duration
-      }
+
+    const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
+      (p) => p.id === event.subject.id
+    )
+    if (editedProcess && !editedProcess.selected) {
+      const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+      updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
+
     updateContent(event)
   })
   return d3RightResize
@@ -191,11 +216,14 @@ export function useLeftResize(
   id: string,
   instances: Instance[],
   marginX: number,
-  flowControlProcesses: Ref<FlowControlProcess[] | undefined>
+  scheduledFlowControl: Ref<ScheduledFlowControl>
 ) {
   const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 
+  let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+
   d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     instance = instances.find(
       (instance) => instance.reference.id === `${id}-process-${event.subject.id}`
     )
@@ -222,16 +250,15 @@ export function useLeftResize(
     const startTime = ((x - marginX) / 10).toFixed(1)
     event.subject.startTime = Number(startTime)
     event.subject.duration = event.subject.endTime - event.subject.startTime
-    if (flowControlProcesses.value) {
-      const editedProcess: FlowControlProcess | undefined = flowControlProcesses.value.find(
-        (p) => p.id === event.subject.id
-      )
-      if (editedProcess) {
-        editedProcess.startTime = event.subject.startTime
-        editedProcess.endTime = event.subject.startTime + event.subject.duration
-        editedProcess.duration = event.subject.duration
-      }
+
+    const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
+      (p) => p.id === event.subject.id
+    )
+    if (editedProcess && !editedProcess.selected) {
+      const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+      updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
+
     updateContent(event)
   })
 

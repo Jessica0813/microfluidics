@@ -10,8 +10,8 @@
 <script setup lang="ts">
 import { select } from 'd3-selection'
 import { scaleLinear, scaleBand, axisTop } from 'd3'
-import { onMounted, ref, watch } from 'vue'
-import type { FlowControlProcess } from '@/types/flowControl'
+import { onMounted, ref, watch, watchEffect } from 'vue'
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
@@ -19,16 +19,28 @@ import { useTooltipContent } from '@/composables/useTooltipContent'
 import { useVueFlow } from '@vue-flow/core'
 
 const props = defineProps({
-  id: String,
-  totalDuration: Number
+  id: String
 })
 
 const { findNode } = useVueFlow()
 
-const editedProcess = defineModel<FlowControlProcess>('editedProcess')
-const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProcesses', {
-  default: []
+const scheduledFlowControl = ref<ScheduledFlowControl>({
+  totalDuration: 20,
+  name: 'a',
+  processes: []
 })
+
+const flowControlProcesses = ref<FlowControlProcess[]>([])
+
+watchEffect(() => {
+  const node = findNode(props.id)
+  if (node && node.data && node.data.scheduledFlowControl) {
+    scheduledFlowControl.value = node.data.scheduledFlowControl
+    flowControlProcesses.value = node.data.scheduledFlowControl.processes
+  }
+})
+
+const editedProcess = defineModel<FlowControlProcess>('editedProcess')
 
 const chart = ref<SVGAElement | null>(null)
 let instances: Instance[] = []
@@ -52,11 +64,11 @@ onMounted(() => {
   xAxis.attr('transform', `translate(0,${marginTop})`)
 
   const updateProcess = () => {
-    const width = (props.totalDuration! / 10) * 100 + marginX * 2
+    const width = (scheduledFlowControl.value.totalDuration / 10) * 100 + marginX * 2
     const height = barHeight * flowControlProcesses.value.length + marginTop
 
     const x = scaleLinear()
-      .domain([0, props.totalDuration!])
+      .domain([0, scheduledFlowControl.value.totalDuration])
       .range([marginX, width - marginX])
 
     const y = scaleBand()
@@ -122,7 +134,7 @@ onMounted(() => {
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
       .attr('height', y.bandwidth())
       .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
-      .call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
+      .call(useDrag(props.id!, instances, width, marginX, scheduledFlowControl))
       .on('click', (event, d) => {
         //update relative process with selected is true
         event.stopPropagation()
@@ -169,7 +181,7 @@ onMounted(() => {
       }
     }
 
-    processRect.call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
+    processRect.call(useDrag(props.id!, instances, width, marginX, scheduledFlowControl))
 
     processEnter
       .append('line')
@@ -182,7 +194,7 @@ onMounted(() => {
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.startTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useLeftResize(props.id!, instances, marginX, flowControlProcesses))
+      .call(useLeftResize(props.id!, instances, marginX, scheduledFlowControl))
 
     processEnter
       .append('line')
@@ -195,7 +207,7 @@ onMounted(() => {
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.endTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useRightResize(props.id!, instances, width, marginX, flowControlProcesses))
+      .call(useRightResize(props.id!, instances, width, marginX, scheduledFlowControl))
 
     const iconGroup = processEnter
       .append('g')
@@ -245,21 +257,21 @@ onMounted(() => {
       .attr('width', (d) => x(d.endTime) - x(d.startTime))
       .attr('height', y.bandwidth())
       .attr('fill', (d) => (d.selected ? '#007bff' : '#BDBDBD'))
-      .call(useDrag(props.id!, instances, width, marginX, flowControlProcesses))
+      .call(useDrag(props.id!, instances, width, marginX, scheduledFlowControl))
 
     startLine
       .attr('x1', (d) => x(d.startTime))
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.startTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useLeftResize(props.id!, instances, marginX, flowControlProcesses))
+      .call(useLeftResize(props.id!, instances, marginX, scheduledFlowControl))
 
     endLine
       .attr('x1', (d) => x(d.endTime))
       .attr('y1', (d) => y(d.id)!)
       .attr('x2', (d) => x(d.endTime))
       .attr('y2', (d) => y(d.id)! + y.bandwidth())
-      .call(useRightResize(props.id!, instances, width, marginX, flowControlProcesses))
+      .call(useRightResize(props.id!, instances, width, marginX, scheduledFlowControl))
 
     deleteIconLine
       .attr('x1', (d) => x(d.endTime) + 6)
@@ -277,7 +289,7 @@ onMounted(() => {
   )
 
   watch(
-    () => [flowControlProcesses, props.totalDuration],
+    scheduledFlowControl,
     () => {
       updateProcess()
     },

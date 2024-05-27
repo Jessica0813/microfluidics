@@ -179,6 +179,14 @@ onMounted(() => {
         })
         instances.push(instance[0])
       }
+      if (isInstanceExisted) {
+        const instance = instances.find(
+          (i) => `${props.id}-process-${process.id}` === i.reference.getAttribute('id')
+        )
+        if (instance) {
+          instance.setContent(useTooltipContent(process))
+        }
+      }
     }
 
     processRect.call(useDrag(props.id!, instances, width, marginX, scheduledFlowControl))
@@ -331,12 +339,6 @@ onMounted(() => {
           newValue?.endTime !== oldValue?.endTime
         ) {
           editedProcess.value.duration = editedProcess.value.endTime - editedProcess.value.startTime
-        }
-        const instance = instances.find(
-          (i) => `${props.id}-process-${editedProcess.value!.id}` === i.reference.getAttribute('id')
-        )
-        if (instance) {
-          instance.setContent(useTooltipContent(editedProcess.value!))
         }
       }
     },

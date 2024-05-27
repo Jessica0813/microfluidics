@@ -95,7 +95,7 @@ onMounted(() => {
       .selectAll<SVGRectElement, FlowControlProcess>('.process')
       .data((d) => [d])
     const startLine = contentGroup
-      .selectAll<SVGLineElement, FlowControlProcess>('start-line')
+      .selectAll<SVGLineElement, FlowControlProcess>('.start-line')
       .data((d) => [d])
     const endLine = contentGroup
       .selectAll<SVGLineElement, FlowControlProcess>('.end-line')

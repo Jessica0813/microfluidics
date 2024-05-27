@@ -58,7 +58,6 @@ html::-webkit-scrollbar {
   margin-bottom: 2px;
 }
 .custom-input {
-  width: fit-content;
   padding: 8px 12px;
   border: 0.5px solid lightgrey;
   border-radius: 4px;

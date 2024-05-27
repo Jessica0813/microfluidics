@@ -327,24 +327,6 @@ onMounted(() => {
     }
   )
 
-  watch(
-    editedProcess,
-    (newValue, oldValue) => {
-      if (!editedProcess.value) {
-        return
-      }
-      if (editedProcess.value.id) {
-        if (
-          newValue?.startTime !== oldValue?.startTime ||
-          newValue?.endTime !== oldValue?.endTime
-        ) {
-          editedProcess.value.duration = editedProcess.value.endTime - editedProcess.value.startTime
-        }
-      }
-    },
-    { deep: true }
-  )
-
   svgChart.node()
 })
 </script>

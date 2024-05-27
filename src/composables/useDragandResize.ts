@@ -107,6 +107,7 @@ export function useDrag(
   let startOffsetX: number = 0
   let selection: Selection<BaseType, unknown, HTMLElement, any>
   let processWidth: number = 0
+  let isClicked: boolean = false
 
   let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 
@@ -116,6 +117,7 @@ export function useDrag(
     processWidth = Number(selection.attr('width'))
     const x = selection.attr('x')
     startOffsetX = event.x - Number(x)
+    isClicked = true
 
     instance = instances.find(
       (instance) => instance.reference.id === `${id}-process-${event.subject.id}`
@@ -126,6 +128,7 @@ export function useDrag(
   })
 
   d3Drag.on('drag', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
+    isClicked = false
     const x = limitDrag(event, startOffsetX, marginX, width, processWidth)
     selection.attr('x', x)
     select(`#${id}-start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
@@ -139,6 +142,9 @@ export function useDrag(
   })
 
   d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
+    if (isClicked) {
+      return
+    }
     const x = limitDrag(event, startOffsetX, marginX, width, processWidth)
     const startTime = ((x - marginX) / 10).toFixed(1)
     const endTime = ((x - marginX + processWidth) / 10).toFixed(1)
@@ -167,9 +173,11 @@ export function useRightResize(
 ) {
   const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 
+  let isClicked: boolean = false
   let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 
   d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    isClicked = true
     oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     instance = instances.find(
       (instance) => instance.reference.id === `${id}-process-${event.subject.id}`
@@ -180,6 +188,7 @@ export function useRightResize(
   })
 
   d3RightResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    isClicked = false
     const x = limitRightResize(event, width, marginX, id)
     select(`#${id}-end-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
     select(`#${id}-process-${event.subject.id}`).attr(
@@ -194,6 +203,9 @@ export function useRightResize(
   })
 
   d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    if (isClicked) {
+      return
+    }
     const x = limitRightResize(event, width, marginX, id)
     const endTime = ((x - marginX) / 10).toFixed(1)
     event.subject.endTime = Number(endTime)
@@ -220,9 +232,11 @@ export function useLeftResize(
 ) {
   const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 
+  let isClicked: boolean = false
   let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 
   d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    isClicked = true
     oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     instance = instances.find(
       (instance) => instance.reference.id === `${id}-process-${event.subject.id}`
@@ -233,6 +247,7 @@ export function useLeftResize(
   })
 
   d3LeftResize.on('drag', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    isClicked = false
     const x = limitLeftResize(event, id, marginX)
     select(`#${id}-start-line-${event.subject.id}`).attr('x1', x).attr('x2', x)
     select(`#${id}-process-${event.subject.id}`)
@@ -246,6 +261,9 @@ export function useLeftResize(
   })
 
   d3LeftResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    if (isClicked) {
+      return
+    }
     const x = limitLeftResize(event, id, marginX)
     const startTime = ((x - marginX) / 10).toFixed(1)
     event.subject.startTime = Number(startTime)

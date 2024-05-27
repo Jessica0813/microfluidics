@@ -69,7 +69,11 @@
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
         </button>
       </template>
-      <CustomizedNumberInput v-model:number="flowControl.duration" />
+      <div class="time-menu">
+        <CustomizedNumberInput v-model:number="flowControl.startTime" :is-large-width="false" />
+        <p style="padding: 0px 4px">-</p>
+        <CustomizedNumberInput v-model:number="flowControl.endTime" :is-large-width="false" />
+      </div>
     </v-menu>
     <button class="customized-button" @click="deleteSubprocess">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
@@ -223,6 +227,7 @@ watch(
       newData.processes[editedProcessId.value].selected = false
     }
     if (!isMenuOpen.value && JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
+      console.log('update state')
       updataState(newData)
     }
   },
@@ -232,20 +237,27 @@ watch(
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
     const node = findNode(props.id)
-    const newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+    let newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     if (editedProcessId.value !== -1) {
       oldScheduledFlowControl.processes[editedProcessId.value].selected = false
       newData.processes[editedProcessId.value].selected = false
     }
-    if (
-      node &&
-      JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl) &&
-      (flowControl.value.pressure !== oldFlowControl.pressure ||
+    if (node && JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
+      if (
+        flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
-        flowControl.value.flowrate !== oldFlowControl.flowrate ||
-        scheduledFlowControl.value.totalDuration !== oldScheduledFlowControl.totalDuration)
-    ) {
-      updataState(newData)
+        flowControl.value.flowrate !== oldFlowControl.flowrate
+      ) {
+        updataState(newData)
+      } else if (
+        flowControl.value.startTime !== oldFlowControl.startTime ||
+        flowControl.value.endTime !== oldFlowControl.endTime
+      ) {
+        flowControl.value.duration = flowControl.value.endTime - flowControl.value.startTime
+        newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+        newData.processes[editedProcessId.value].selected = false
+        updataState(newData)
+      }
       oldFlowControl = Object.assign({}, flowControl.value)
     }
   }
@@ -301,5 +313,6 @@ function deleteSubprocess() {
   align-items: center;
   justify-content: center;
   background-color: white;
+  padding: 4px;
 }
 </style>

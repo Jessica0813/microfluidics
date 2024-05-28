@@ -150,11 +150,21 @@ export function createDeleteMultiNodesState(
   })
   getSelectedNodes.forEach((node) => {
     if (node && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
+      let data = ''
+      if (node.type === 'process') {
+        data = Object.assign({}, node.data.flowControl)
+      } else if (node.type === 'condition') {
+        data = Object.assign({}, node.data.condition)
+      } else if (node.type === 'pause') {
+        data = Object.assign({}, node.data.pause)
+      } else if (node.type === 'schedule') {
+        data = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
+      }
       state.objectId.push(node.id)
       state.oldState.push({
         objectPosition: node.position,
         objectType: node.type,
-        data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
+        data: data
       })
       removeNodes([node])
     }

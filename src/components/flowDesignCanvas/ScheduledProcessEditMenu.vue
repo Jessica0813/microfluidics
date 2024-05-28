@@ -13,7 +13,7 @@
     </button>
   </div>
   <div class="bar" v-else>
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isFluidMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
@@ -21,7 +21,7 @@
       </template>
       <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluids" />
     </v-menu>
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-location-enter</v-icon>
@@ -29,7 +29,7 @@
       </template>
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
     </v-menu>
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isInjectionMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, watchEffect } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
@@ -116,6 +116,9 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
 })
 
 const isTotalDurationMenuOpen = ref(false)
+const isFluidMenuOpen = ref(false)
+const isInletMenuOpen = ref(false)
+const isInjectionMenuOpen = ref(false)
 const isPressureMenuOpen = ref(false)
 const isFlowrateMenuOpen = ref(false)
 const isSubProcessDurationMenuOpen = ref(false)
@@ -125,7 +128,10 @@ const isMenuOpen = computed(() => {
     isPressureMenuOpen.value ||
     isFlowrateMenuOpen.value ||
     isSubProcessDurationMenuOpen.value ||
-    isTotalDurationMenuOpen.value
+    isTotalDurationMenuOpen.value ||
+    isFluidMenuOpen.value ||
+    isInletMenuOpen.value ||
+    isInjectionMenuOpen.value
   )
 })
 
@@ -143,7 +149,7 @@ const scheduledFlowControl = ref<ScheduledFlowControl>({
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 
-watchEffect(() => {
+onMounted(() => {
   const node = findNode(props.id)
   if (node && node.data && node.data.scheduledFlowControl) {
     scheduledFlowControl.value = node.data.scheduledFlowControl
@@ -220,22 +226,6 @@ function updataState(newData: ScheduledFlowControl) {
   }
 }
 
-watch(
-  scheduledFlowControl.value,
-  (newscheduledFlowControl) => {
-    const newData = JSON.parse(JSON.stringify(newscheduledFlowControl))
-    if (editedProcessId.value !== -1) {
-      oldScheduledFlowControl.processes[editedProcessId.value].selected = false
-      newData.processes[editedProcessId.value].selected = false
-    }
-    if (!isMenuOpen.value && JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
-      console.log('update state')
-      updataState(newData)
-    }
-  },
-  { deep: true }
-)
-
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
     const node = findNode(props.id)
@@ -248,7 +238,10 @@ watch(isMenuOpen, (newValue, oldValue) => {
       if (
         flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
-        flowControl.value.flowrate !== oldFlowControl.flowrate
+        flowControl.value.flowrate !== oldFlowControl.flowrate ||
+        flowControl.value.fluid !== oldFlowControl.fluid ||
+        flowControl.value.injection !== oldFlowControl.injection ||
+        flowControl.value.inlet !== oldFlowControl.inlet
       ) {
         updataState(newData)
       } else if (

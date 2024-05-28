@@ -169,6 +169,7 @@ onMounted(() => {
           trigger: 'mouseenter',
           placement: 'bottom',
           offset: [5, 5],
+          zIndex: 3,
           content: (reference) => {
             const id = reference.getAttribute('id')
             const process = flowControlProcesses.value.find(
@@ -185,6 +186,15 @@ onMounted(() => {
         )
         if (instance) {
           instance.setContent(useTooltipContent(process))
+          if (process.selected) {
+            instance.setProps({ trigger: 'manual' })
+            instance.show()
+            instance.setProps({ hideOnClick: false })
+          } else {
+            instance.hide()
+            instance.setProps({ trigger: 'mouseenter' })
+            instance.setProps({ hideOnClick: true })
+          }
         }
       }
     }

@@ -49,6 +49,9 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
+const sensors = ['color sensor', 'viscosity sensor']
+const isMenuOpen = ref(false)
+
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 
@@ -70,8 +73,7 @@ const condition = computed(() => {
   return data.condition
 })
 
-const sensors = ['color sensor', 'viscosity sensor']
-const isMenuOpen = ref(false)
+let oldCondition = Object.assign({}, condition.value)
 
 const dynamicOperators = computed(() => {
   // Get the selected sensor
@@ -85,8 +87,6 @@ const dynamicOperators = computed(() => {
     return []
   }
 })
-
-let oldCondition = Object.assign({}, condition.value)
 
 watch(
   condition.value,

@@ -18,7 +18,6 @@ import { useStateStore } from '@/stores/useStateStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
 
 const { getProcessNodeId, getConditionNodeId, getProcessScheduleNodeId } = useNodeIdStore()
-
 const {
   findNode,
   addNodes,
@@ -29,9 +28,7 @@ const {
   getConnectedEdges,
   removeSelectedNodes
 } = useVueFlow()
-
 const { copyToClipboard, pasteFromClipboard, getContentsType } = useClipboardStore()
-
 const {
   getSelectedSensors,
   deleteSelectedSensor,
@@ -42,7 +39,6 @@ const {
   removeAllSelectedSensors,
   sensors
 } = useSensorStore()
-
 const { addState } = useStateStore()
 
 hotkeys('backspace,del,delete', function (event) {

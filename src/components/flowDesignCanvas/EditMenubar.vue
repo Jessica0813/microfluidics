@@ -39,7 +39,6 @@ import { useStateStore } from '@/stores/useStateStore'
 
 const { getSubProcessId } = useNodeIdStore()
 const { addState } = useStateStore()
-
 const {
   findNode,
   findEdge,
@@ -53,7 +52,6 @@ const {
   vueFlowRef,
   removeNodes
 } = useVueFlow()
-
 const { getZooming } = useFlowChartCanvasStore()
 
 const flowControl = ref({

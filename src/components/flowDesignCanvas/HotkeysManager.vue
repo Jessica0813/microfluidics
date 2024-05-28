@@ -17,7 +17,8 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
 
-const { getProcessNodeId, getConditionNodeId, getProcessScheduleNodeId } = useNodeIdStore()
+const { getProcessNodeId, getConditionNodeId, getProcessScheduleNodeId, getPauseNodeId } =
+  useNodeIdStore()
 const {
   findNode,
   addNodes,
@@ -159,15 +160,18 @@ hotkeys('command+v', function (event) {
           newId = getProcessNodeId()
         } else if (node.type === 'condition') {
           newId = getConditionNodeId()
+        } else if (node.type === 'pause') {
+          newId = getPauseNodeId()
         } else if (node.type === 'schedule') {
           newId = getProcessScheduleNodeId()
         }
         newIds.push(newId)
+        const data = JSON.parse(JSON.stringify(node.data))
         const newNode = {
           id: newId,
           type: node.type,
           position: { x: node.position.x + 50, y: node.position.y + 50 },
-          data: node.data
+          data: data
         }
         addNodes([newNode])
 
@@ -176,7 +180,7 @@ hotkeys('command+v', function (event) {
           state.oldState.push({
             objectPosition: { x: node.position.x + 50, y: node.position.y + 50 },
             objectType: node.type,
-            data: node.data
+            data: data
           })
         }
       }

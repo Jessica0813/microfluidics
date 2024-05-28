@@ -1,6 +1,6 @@
 <template>
   <div class="bar">
-    <v-menu :close-on-content-click="false" offset="10" v-model="isMenuOpen">
+    <v-menu :close-on-content-click="false" offset="10" v-model="isPauseMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -39,14 +39,15 @@ const pause = computed(() => {
   return data.pause
 })
 
-const isMenuOpen = ref(false)
+const isPauseMenuOpen = ref(false)
 
 let oldPause = Object.assign({}, pause.value)
 
-watch(isMenuOpen, (newValue, oldValue) => {
+watch(isPauseMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
     const node = findNode(props.id)
     if (node && pause.value.duration !== oldPause.duration) {
+      let newPause = Object.assign({}, pause.value)
       const state: StateController = {
         type: ActionType.UPDATE_NODE_DATA,
         name: 'update node data ' + node.id,
@@ -57,11 +58,11 @@ watch(isMenuOpen, (newValue, oldValue) => {
         },
         newState: {
           objectPosition: node.position,
-          data: pause.value
+          data: newPause
         }
       }
       addState(state)
-      oldPause = Object.assign({}, pause.value)
+      oldPause = newPause
     }
   }
 })

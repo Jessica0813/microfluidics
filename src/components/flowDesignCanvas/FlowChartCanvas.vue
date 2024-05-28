@@ -235,7 +235,7 @@ function onDrop(event: any) {
     data: {}
   }
 
-  let nodeData
+  let nodeData = {}
 
   if (type === 'schedule') {
     nodeData = {
@@ -286,6 +286,18 @@ function onDrop(event: any) {
           }
           stop()
 
+          let stringifiedData: any
+
+          if (type === 'schedule') {
+            stringifiedData = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
+          } else if (type === 'pause') {
+            stringifiedData = Object.assign({}, node.data.pause)
+          } else if (type === 'process') {
+            stringifiedData = Object.assign({}, node.data.flowControl)
+          } else if (type === 'condition') {
+            stringifiedData = Object.assign({}, node.data.condition)
+          }
+
           const state: StateController = {
             type: ActionType.CREATE_NODE,
             name: 'create node ' + newNode.id,
@@ -293,7 +305,7 @@ function onDrop(event: any) {
             oldState: {
               objectPosition: node.position,
               objectType: newNode.type,
-              data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
+              data: stringifiedData
             }
           }
 

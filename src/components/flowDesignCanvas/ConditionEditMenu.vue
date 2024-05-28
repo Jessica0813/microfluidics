@@ -1,6 +1,6 @@
 <template>
   <div class="bar">
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isSensorMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-leak</v-icon>
@@ -8,7 +8,7 @@
       </template>
       <CustomizedDropdown v-model:selected="condition.sensor" :items="sensors" />
     </v-menu>
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isOperatorMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-compare-horizontal</v-icon>
@@ -16,15 +16,32 @@
       </template>
       <CustomizedDropdown v-model:selected="condition.operator" :items="dynamicOperators" />
     </v-menu>
-    <CustomizedColorInput
+    <!-- <CustomizedColorInput
       v-model:color="condition.color"
       v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
-    />
+    /> -->
+    <v-menu
+      v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
+      v-model="isColorMenuOpen"
+      offset="10"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props">
+          <v-icon size="small" color="#66615b">mdi-select-color</v-icon>
+        </button>
+      </template>
+      <v-color-picker
+        v-model="condition.color"
+        show-swatches
+        hide-sliders
+        hide-inputs
+      ></v-color-picker>
+    </v-menu>
     <v-menu
       :close-on-content-click="false"
       offset="10"
       v-else-if="condition.sensor === 'viscosity sensor'"
-      v-model="isMenuOpen"
+      v-model="isViscosityMenuOpen"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
@@ -43,14 +60,13 @@
 import { computed, ref, watch } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
-import CustomizedColorInput from '../general/CustomizedColorInput.vue'
+// import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
 const sensors = ['color sensor', 'viscosity sensor']
-const isMenuOpen = ref(false)
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
@@ -73,10 +89,21 @@ const condition = computed(() => {
   return data.condition
 })
 
-let oldCondition = Object.assign({}, condition.value)
+const isSensorMenuOpen = ref(false)
+const isOperatorMenuOpen = ref(false)
+const isColorMenuOpen = ref(false)
+const isViscosityMenuOpen = ref(false)
+
+const isMenuOpen = computed(() => {
+  return (
+    isSensorMenuOpen.value ||
+    isOperatorMenuOpen.value ||
+    isViscosityMenuOpen.value ||
+    isColorMenuOpen.value
+  )
+})
 
 const dynamicOperators = computed(() => {
-  // Get the selected sensor
   const selectedSensor = condition.value.sensor
 
   if (selectedSensor === 'color sensor' || selectedSensor === undefined) {
@@ -88,39 +115,21 @@ const dynamicOperators = computed(() => {
   }
 })
 
-watch(
-  condition.value,
-  (newCondition) => {
-    if (newCondition && !isMenuOpen.value) {
-      const node = findNode(props.id)
-      if (node) {
-        const state: StateController = {
-          type: ActionType.UPDATE_NODE_DATA,
-          name: 'update node data ' + node.id,
-          objectId: node.id,
-          oldState: {
-            objectPosition: node.position,
-            data: oldCondition
-          },
-          newState: {
-            objectPosition: node.position,
-            data: condition.value
-          }
-        }
-        addState(state)
-        oldCondition = Object.assign({}, newCondition)
-      }
-    }
-  },
-  { deep: true }
-)
+let oldCondition = Object.assign({}, condition.value)
 
 watch(
   isMenuOpen,
   (newValue, oldValue) => {
     if (newValue === false && oldValue === true) {
       const node = findNode(props.id)
-      if (node && condition.value.viscosity !== oldCondition.viscosity) {
+      const newCondition = Object.assign({}, condition.value)
+      if (
+        node &&
+        (newCondition.viscosity !== oldCondition.viscosity ||
+          newCondition.color !== oldCondition.color ||
+          newCondition.sensor !== oldCondition.sensor ||
+          newCondition.operator !== oldCondition.operator)
+      ) {
         const state: StateController = {
           type: ActionType.UPDATE_NODE_DATA,
           name: 'update node data ' + node.id,
@@ -131,11 +140,11 @@ watch(
           },
           newState: {
             objectPosition: node.position,
-            data: condition.value
+            data: newCondition
           }
         }
         addState(state)
-        oldCondition = Object.assign({}, condition.value)
+        oldCondition = newCondition
       }
     }
   },

@@ -8,14 +8,16 @@ export function createDeleteNodeState(
   removeNodes: RemoveNodes,
   removeEdges: RemoveEdges
 ) {
+  const state: StateController = {
+    type: ActionType.DELETE_NODE,
+    name: 'delete node',
+    objectId: [],
+    oldState: [],
+    newState: []
+  }
   if (connectedEdges.length > 0) {
-    const state: StateController = {
-      type: ActionType.DELETE_MULTI_ElEMENTS,
-      name: 'delete multiple elements',
-      objectId: [],
-      oldState: [],
-      newState: []
-    }
+    state.type = ActionType.DELETE_MULTI_ElEMENTS
+    state.name = 'delete multiple elements'
     connectedEdges.forEach((edge) => {
       if (edge && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
         state.objectId.push(edge.id)
@@ -29,33 +31,28 @@ export function createDeleteNodeState(
         removeEdges([edge])
       }
     })
-    const node = getSelectedNodes[0]
-    if (Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
-      state.objectId.push(node.id)
-      state.oldState.push({
-        objectPosition: node.position,
-        objectType: node.type,
-        data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
-      })
-      removeNodes([node])
-    }
-    return state
   }
   const node = getSelectedNodes[0]
-  if (node) {
-    const state: StateController = {
-      type: ActionType.DELETE_NODE,
-      name: 'delete node ' + node.id,
-      objectId: node.id,
-      oldState: {
-        objectPosition: node.position,
-        objectType: node.type,
-        data: node.data.flowControl || node.data.condition || node.data.scheduledFlowControl
-      }
+  if (Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
+    let data = ''
+    if (node.type === 'process') {
+      data = Object.assign({}, node.data.flowControl)
+    } else if (node.type === 'condition') {
+      data = Object.assign({}, node.data.condition)
+    } else if (node.type === 'pause') {
+      data = Object.assign({}, node.data.pause)
+    } else if (node.type === 'schedule') {
+      data = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
     }
+    state.objectId.push(node.id)
+    state.oldState.push({
+      objectPosition: node.position,
+      objectType: node.type,
+      data: data
+    })
     removeNodes([node])
-    return state
   }
+  return state
 }
 
 export function createDeleteEdgeState(getSelectedEdges: GraphEdge[], removeEdges: RemoveEdges) {

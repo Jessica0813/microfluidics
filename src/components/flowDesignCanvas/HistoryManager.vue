@@ -84,19 +84,30 @@ function undo() {
           }
           break
         }
-        case ActionType.DELETE_MULTI_ElEMENTS: {
+        case ActionType.DELETE_MULTI_ElEMENTS:
+        case ActionType.DELETE_NODE: {
           if (state.oldState.length === state.objectId.length) {
             for (let i = state.objectId.length - 1; i >= 0; i--) {
               if (
                 state.objectId[i].includes('process') ||
                 state.objectId[i].includes('condition') ||
+                state.objectId[i].includes('pause') ||
                 state.objectId[i].includes('schedule')
               ) {
                 const node = {
                   id: state.objectId[i],
                   type: state.oldState[i].objectType || 'process',
                   position: state.oldState[i].objectPosition || { x: 0, y: 0 },
-                  data: state.oldState[i].data
+                  data: {}
+                }
+                if (state.objectId[i].includes('process')) {
+                  node.data = { flowControl: state.oldState[i].data }
+                } else if (state.objectId[i].includes('condition')) {
+                  node.data = { condition: state.oldState[i].data }
+                } else if (state.objectId[i].includes('pause')) {
+                  node.data = { pause: state.oldState[i].data }
+                } else if (state.objectId[i].includes('schedule')) {
+                  node.data = { scheduledFlowControl: state.oldState[i].data }
                 }
                 addNodes([node])
               } else if (state.objectId[i].includes('edge')) {
@@ -187,16 +198,6 @@ function undo() {
       if (node) {
         removeNodes([node])
       }
-      break
-    }
-    case ActionType.DELETE_NODE: {
-      const node = {
-        id: state.objectId,
-        type: state.oldState.objectType || 'process',
-        position: state.oldState.objectPosition || { x: 0, y: 0 },
-        data: state.oldState.data
-      }
-      addNodes([node])
       break
     }
     case ActionType.MOVE_NODE: {
@@ -345,12 +346,14 @@ function redo() {
           }
           break
         }
-        case ActionType.DELETE_MULTI_ElEMENTS: {
+        case ActionType.DELETE_MULTI_ElEMENTS:
+        case ActionType.DELETE_NODE: {
           if (state.oldState.length === state.objectId.length) {
             for (let i = 0; i < state.objectId.length; i++) {
               if (
                 state.objectId[i].includes('process') ||
                 state.objectId[i].includes('condition') ||
+                state.objectId[i].includes('pause') ||
                 state.objectId[i].includes('schedule')
               ) {
                 const node = findNode(state.objectId[i])
@@ -443,17 +446,12 @@ function redo() {
         node = { ...node, data: { flowControl: data } }
       } else if (node.type === 'condition') {
         node = { ...node, data: { condition: data } }
+      } else if (node.type === 'pause') {
+        node = { ...node, data: { pause: data } }
       } else if (node.type === 'schedule') {
         node = { ...node, data: { scheduledFlowControl: data } }
       }
       addNodes([node])
-      break
-    }
-    case ActionType.DELETE_NODE: {
-      const node = findNode(state.objectId)
-      if (node) {
-        removeNodes([node])
-      }
       break
     }
     case ActionType.MOVE_NODE: {

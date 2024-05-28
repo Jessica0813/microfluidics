@@ -1,6 +1,6 @@
 <template>
   <div class="bar">
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isFluidMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
@@ -8,7 +8,7 @@
       </template>
       <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluids" />
     </v-menu>
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-location-enter</v-icon>
@@ -16,7 +16,7 @@
       </template>
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
     </v-menu>
-    <v-menu offset="10">
+    <v-menu offset="10" v-model="isInjectionMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props">
           <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
@@ -79,12 +79,23 @@ const { addState } = useStateStore()
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
 const fluids = ['water', 'oil']
+
+const isFluidMenuOpen = ref(false)
+const isInjectionMenuOpen = ref(false)
+const isInletMenuOpen = ref(false)
 const isPressureMenuOpen = ref(false)
 const isViscosityMenuOpen = ref(false)
 const isDurationMenuOpen = ref(false)
 
 const isMenuOpen = computed(() => {
-  return isPressureMenuOpen.value || isViscosityMenuOpen.value || isDurationMenuOpen.value
+  return (
+    isPressureMenuOpen.value ||
+    isViscosityMenuOpen.value ||
+    isDurationMenuOpen.value ||
+    isFluidMenuOpen.value ||
+    isInletMenuOpen.value ||
+    isInjectionMenuOpen.value
+  )
 })
 
 const props = defineProps<{
@@ -108,33 +119,6 @@ const flowControl = computed(() => {
 
 let oldFlowControl = Object.assign({}, flowControl.value)
 
-watch(
-  flowControl.value,
-  (newFlowControl) => {
-    if (newFlowControl && !isMenuOpen.value) {
-      const node = findNode(props.id)
-      if (node) {
-        const state: StateController = {
-          type: ActionType.UPDATE_NODE_DATA,
-          name: 'update node data ' + node.id,
-          objectId: node.id,
-          oldState: {
-            objectPosition: node.position,
-            data: oldFlowControl
-          },
-          newState: {
-            objectPosition: node.position,
-            data: newFlowControl
-          }
-        }
-        addState(state)
-        oldFlowControl = Object.assign({}, newFlowControl)
-      }
-    }
-  },
-  { deep: true }
-)
-
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
     const node = findNode(props.id)
@@ -142,8 +126,12 @@ watch(isMenuOpen, (newValue, oldValue) => {
       node &&
       (flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
-        flowControl.value.flowrate !== oldFlowControl.flowrate)
+        flowControl.value.flowrate !== oldFlowControl.flowrate ||
+        flowControl.value.fluid !== oldFlowControl.fluid ||
+        flowControl.value.injection !== oldFlowControl.injection ||
+        flowControl.value.inlet !== oldFlowControl.inlet)
     ) {
+      const newFlowControl = Object.assign({}, flowControl.value)
       const state: StateController = {
         type: ActionType.UPDATE_NODE_DATA,
         name: 'update node data ' + node.id,
@@ -154,11 +142,11 @@ watch(isMenuOpen, (newValue, oldValue) => {
         },
         newState: {
           objectPosition: node.position,
-          data: flowControl.value
+          data: newFlowControl
         }
       }
       addState(state)
-      oldFlowControl = Object.assign({}, flowControl.value)
+      oldFlowControl = newFlowControl
     }
   }
 })

@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, watchEffect } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
@@ -134,16 +134,21 @@ const props = defineProps<{
   isEditMenuOpen: boolean
 }>()
 
-const scheduledFlowControl = computed(() => {
-  const data = findNode(props.id)?.data
-  if (data === undefined || data.scheduledFlowControl === undefined) {
-    return {
-      totalDuration: 20,
-      name: 'a',
-      processes: []
-    }
+const scheduledFlowControl = ref<ScheduledFlowControl>({
+  totalDuration: 20,
+  name: 'a',
+  processes: []
+})
+
+let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+let oldFlowControl = Object.assign({}, flowControl.value)
+
+watchEffect(() => {
+  const node = findNode(props.id)
+  if (node && node.data && node.data.scheduledFlowControl) {
+    scheduledFlowControl.value = node.data.scheduledFlowControl
+    oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
   }
-  return data.scheduledFlowControl
 })
 
 watch(
@@ -193,9 +198,6 @@ watch(
     immediate: true
   }
 )
-
-let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
-let oldFlowControl = Object.assign({}, flowControl.value)
 
 function updataState(newData: ScheduledFlowControl) {
   const node = findNode(props.id)

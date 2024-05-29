@@ -151,11 +151,13 @@ export function useDrag(
     event.subject.startTime = Number(startTime)
     event.subject.endTime = Number(endTime)
 
-    const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
+    const editedProcessIndex = scheduledFlowControl.value.processes.findIndex(
       (p) => p.id === event.subject.id
     )
-    if (editedProcess) {
+    if (editedProcessIndex !== -1) {
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+      oldScheduledFlowControl.processes[editedProcessIndex].selected = false
+      newScheduledFlowControl.processes[editedProcessIndex].selected = false
       updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
 
@@ -211,11 +213,13 @@ export function useRightResize(
     event.subject.endTime = Number(endTime)
     event.subject.duration = event.subject.endTime - event.subject.startTime
 
-    const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
+    const editedProcessIndex = scheduledFlowControl.value.processes.findIndex(
       (p) => p.id === event.subject.id
     )
-    if (editedProcess) {
+    if (editedProcessIndex !== -1) {
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+      oldScheduledFlowControl.processes[editedProcessIndex].selected = false
+      newScheduledFlowControl.processes[editedProcessIndex].selected = false
       updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
 
@@ -269,11 +273,13 @@ export function useLeftResize(
     event.subject.startTime = Number(startTime)
     event.subject.duration = event.subject.endTime - event.subject.startTime
 
-    const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
+    const editedProcessIndex = scheduledFlowControl.value.processes.findIndex(
       (p) => p.id === event.subject.id
     )
-    if (editedProcess) {
+    if (editedProcessIndex !== -1) {
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+      oldScheduledFlowControl.processes[editedProcessIndex].selected = false
+      newScheduledFlowControl.processes[editedProcessIndex].selected = false
       updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
 

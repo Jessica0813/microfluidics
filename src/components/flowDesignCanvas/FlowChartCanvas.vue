@@ -105,7 +105,11 @@ onConnect((params) => {
     return
   }
   // look through edges to check if any edge is connected to the source node
-  if (params.source.includes('process_') || params.source.includes('schedule_')) {
+  if (
+    params.source.includes('process_') ||
+    params.source.includes('schedule_') ||
+    params.source.includes('pause_')
+  ) {
     addEdges([{ ...params, type: 'custom', id: getEdgeId() }])
   } else if (params.source.includes('condition_')) {
     let isTrueEdgeExist: boolean = false

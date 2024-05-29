@@ -70,9 +70,19 @@
         </button>
       </template>
       <div class="time-menu">
-        <CustomizedNumberInput v-model:number="flowControl.startTime" :is-large-width="false" />
+        <CustomizedNumberInput
+          v-model:number="flowControl.startTime"
+          :is-large-width="false"
+          :min="0"
+          :max="flowControl.endTime"
+        />
         <p style="padding: 0px 4px">-</p>
-        <CustomizedNumberInput v-model:number="flowControl.endTime" :is-large-width="false" />
+        <CustomizedNumberInput
+          v-model:number="flowControl.endTime"
+          :is-large-width="false"
+          :min="flowControl.startTime"
+          :max="scheduledFlowControl.totalDuration"
+        />
       </div>
     </v-menu>
     <button class="customized-button" @click="deleteSubprocess">
@@ -82,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
@@ -140,22 +150,20 @@ const props = defineProps<{
   isEditMenuOpen: boolean
 }>()
 
-const scheduledFlowControl = ref<ScheduledFlowControl>({
-  totalDuration: 20,
-  name: 'a',
-  processes: []
+const scheduledFlowControl = computed(() => {
+  const data = findNode(props.id)?.data
+  if (data === undefined || data.scheduledFlowControl === undefined) {
+    return {
+      totalDuration: 20,
+      name: 'a',
+      processes: []
+    }
+  }
+  return data.scheduledFlowControl
 })
 
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
-
-onMounted(() => {
-  const node = findNode(props.id)
-  if (node && node.data && node.data.scheduledFlowControl) {
-    scheduledFlowControl.value = node.data.scheduledFlowControl
-    oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
-  }
-})
 
 watch(
   () => props.isEditMenuOpen,
@@ -165,6 +173,9 @@ watch(
       isPressureMenuOpen.value = false
       isFlowrateMenuOpen.value = false
       isSubProcessDurationMenuOpen.value = false
+      isFluidMenuOpen.value = false
+      isInletMenuOpen.value = false
+      isInjectionMenuOpen.value = false
     }
   }
 )

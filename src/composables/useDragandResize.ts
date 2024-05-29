@@ -154,7 +154,7 @@ export function useDrag(
     const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
       (p) => p.id === event.subject.id
     )
-    if (editedProcess && !editedProcess.selected) {
+    if (editedProcess) {
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
@@ -214,7 +214,7 @@ export function useRightResize(
     const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
       (p) => p.id === event.subject.id
     )
-    if (editedProcess && !editedProcess.selected) {
+    if (editedProcess) {
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }
@@ -272,7 +272,7 @@ export function useLeftResize(
     const editedProcess: FlowControlProcess | undefined = scheduledFlowControl.value.processes.find(
       (p) => p.id === event.subject.id
     )
-    if (editedProcess && !editedProcess.selected) {
+    if (editedProcess) {
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
     }

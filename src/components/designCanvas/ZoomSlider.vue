@@ -31,11 +31,11 @@ import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
-const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
 }>()
+const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
 const maxZoomReached = toRef(() => transform.value.k >= 2)

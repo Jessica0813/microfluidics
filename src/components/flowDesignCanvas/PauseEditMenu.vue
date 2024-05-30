@@ -22,12 +22,15 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
+const props = defineProps<{
+  id: string | null
+  isEditMenuOpen: boolean
+}>()
+
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 
-const props = defineProps<{
-  id: string | null
-}>()
+const isPauseMenuOpen = ref(false)
 
 const pause = computed(() => {
   const data = findNode(props.id)?.data
@@ -39,7 +42,14 @@ const pause = computed(() => {
   return data.pause
 })
 
-const isPauseMenuOpen = ref(false)
+watch(
+  () => props.isEditMenuOpen,
+  (newValue) => {
+    if (!newValue) {
+      isPauseMenuOpen.value = false
+    }
+  }
+)
 
 let oldPause = Object.assign({}, pause.value)
 

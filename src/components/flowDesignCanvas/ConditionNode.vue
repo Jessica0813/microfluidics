@@ -63,8 +63,10 @@ import { ref, watch, computed } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import { useVueFlow } from '@vue-flow/core'
 
-const { findNode } = useVueFlow()
 const { id, selected, data } = defineProps<NodeProps>()
+
+const { findNode } = useVueFlow()
+
 const isMenuOpen = ref<boolean>(false)
 const nodeIsHovered = ref<boolean>(false)
 

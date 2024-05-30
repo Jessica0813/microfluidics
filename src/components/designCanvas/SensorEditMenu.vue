@@ -46,22 +46,24 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
-const { getSelectedSensors, deleteSelectedSensor } = useSensorStore()
-const { addState } = useStateStore()
-const isEditMenuOpen = ref(false)
-
-const sensorType = ['temperature', 'speed']
 const props = defineProps<{
   designCanvasRef: HTMLElement | null
   transform: { x: number; y: number; k: number }
   isZooming: boolean
 }>()
-const isMenuOpen = ref(false)
+
+const { getSelectedSensors, deleteSelectedSensor } = useSensorStore()
+const { addState } = useStateStore()
 const { getZooming } = useSensorCanvasStore()
 
+const sensorType = ['temperature', 'speed']
+
+const isEditMenuOpen = ref(false)
+const isMenuOpen = ref(false)
 const sensorFloatingRef = ref<HTMLDivElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(true)
+
 let oldType = 'temperature'
 let oldName = ''
 

@@ -21,8 +21,15 @@ import { useVueFlow } from '@vue-flow/core'
 const props = defineProps({
   id: String
 })
+const editedProcess = defineModel<FlowControlProcess>('editedProcess')
 
 const { findNode } = useVueFlow()
+
+const chart = ref<SVGAElement | null>(null)
+let instances: Instance[] = []
+const marginX = 17
+const marginTop = 10
+const barHeight = 20
 
 const scheduledFlowControl = ref<ScheduledFlowControl>({
   totalDuration: 20,
@@ -39,15 +46,6 @@ watchEffect(() => {
     flowControlProcesses.value = node.data.scheduledFlowControl.processes
   }
 })
-
-const editedProcess = defineModel<FlowControlProcess>('editedProcess')
-
-const chart = ref<SVGAElement | null>(null)
-let instances: Instance[] = []
-
-const marginX = 17
-const marginTop = 10
-const barHeight = 20
 
 function onClick(event: MouseEvent) {
   event.stopPropagation()

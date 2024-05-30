@@ -74,6 +74,7 @@ import { ref, computed, watch } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
 const { id, selected, data } = defineProps<NodeProps>()
+
 const nodeIsHovered = ref(false)
 
 const isOverScheduleNode = computed(() => {
@@ -81,12 +82,6 @@ const isOverScheduleNode = computed(() => {
     return false
   }
   return data.isOverScheduleNode
-})
-
-watch(isOverScheduleNode, (newVal, oldVal) => {
-  if (newVal && !oldVal) {
-    //get the mouse position
-  }
 })
 
 const flowControl = computed(() => {
@@ -101,6 +96,12 @@ const flowControl = computed(() => {
     }
   }
   return data.flowControl
+})
+
+watch(isOverScheduleNode, (newVal, oldVal) => {
+  if (newVal && !oldVal) {
+    //get the mouse position
+  }
 })
 </script>
 

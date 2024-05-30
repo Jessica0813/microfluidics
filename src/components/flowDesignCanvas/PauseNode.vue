@@ -57,6 +57,7 @@ import { ref, computed } from 'vue'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
 const { id, selected, data } = defineProps<NodeProps>()
+
 const nodeIsHovered = ref<boolean>(false)
 
 const pause = computed(() => {

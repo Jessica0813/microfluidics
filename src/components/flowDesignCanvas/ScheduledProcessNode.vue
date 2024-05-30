@@ -63,11 +63,11 @@ import { NodeResizer } from '@vue-flow/node-resizer'
 import type { FlowControlProcess } from '@/types/flowControl'
 import { useVueFlow } from '@vue-flow/core'
 
+const { selected, id, data } = defineProps<NodeProps>()
+
 const { findNode } = useVueFlow()
 
-const { selected, id, data } = defineProps<NodeProps>()
 const nodeIsHovered = ref(false)
-
 const editedProcess = ref<FlowControlProcess>()
 
 const scheduledFlowControl = computed(() => {

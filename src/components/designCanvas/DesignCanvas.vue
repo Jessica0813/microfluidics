@@ -81,6 +81,9 @@ import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
 import SensorEditMenu from './SensorEditMenu.vue'
 import hotkeys from 'hotkeys-js'
 
+const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
+const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
+
 const {
   sensors,
   removeAllSelectedSensors,
@@ -90,6 +93,7 @@ const {
   editSensor,
   editMultiSensors
 } = useSensorStore()
+
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
 const d3Zoom = ref<D3Zoom>()
@@ -97,9 +101,6 @@ const d3Selection = ref<D3Selection>()
 
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
-
-const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
-const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
 const isZooming = ref(false)
 
 function onDragOver(event: any) {

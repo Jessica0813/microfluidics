@@ -66,14 +66,20 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
-const sensors = ['color sensor', 'viscosity sensor']
+const props = defineProps<{
+  id: string | null
+  isEditMenuOpen: boolean
+}>()
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 
-const props = defineProps<{
-  id: string | null
-}>()
+const sensors = ['color sensor', 'viscosity sensor']
+
+const isSensorMenuOpen = ref(false)
+const isOperatorMenuOpen = ref(false)
+const isColorMenuOpen = ref(false)
+const isViscosityMenuOpen = ref(false)
 
 const condition = computed(() => {
   const data = findNode(props.id)?.data
@@ -89,19 +95,7 @@ const condition = computed(() => {
   return data.condition
 })
 
-const isSensorMenuOpen = ref(false)
-const isOperatorMenuOpen = ref(false)
-const isColorMenuOpen = ref(false)
-const isViscosityMenuOpen = ref(false)
-
-const isMenuOpen = computed(() => {
-  return (
-    isSensorMenuOpen.value ||
-    isOperatorMenuOpen.value ||
-    isViscosityMenuOpen.value ||
-    isColorMenuOpen.value
-  )
-})
+let oldCondition = Object.assign({}, condition.value)
 
 const dynamicOperators = computed(() => {
   const selectedSensor = condition.value.sensor
@@ -115,7 +109,24 @@ const dynamicOperators = computed(() => {
   }
 })
 
-let oldCondition = Object.assign({}, condition.value)
+const isMenuOpen = computed(() => {
+  return (
+    isSensorMenuOpen.value ||
+    isOperatorMenuOpen.value ||
+    isViscosityMenuOpen.value ||
+    isColorMenuOpen.value
+  )
+})
+
+watch(
+  () => props.isEditMenuOpen,
+  (newValue) => {
+    if (!newValue) {
+      isColorMenuOpen.value = false
+      isViscosityMenuOpen.value = false
+    }
+  }
+)
 
 watch(
   isMenuOpen,

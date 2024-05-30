@@ -57,15 +57,19 @@ import hotkeys from 'hotkeys-js'
 
 const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = useStateStore()
 
-const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges } = useVueFlow()
+const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, removeSelectedElements } =
+  useVueFlow()
 
-const { editSensor, addSensor, deleteSensorWithId, toggleRecordState } = useSensorStore()
+const { editSensor, addSensor, deleteSensorWithId, toggleRecordState, removeAllSelectedSensors } =
+  useSensorStore()
 
 const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
   default: true
 })
 
 function undo() {
+  removeAllSelectedSensors()
+  removeSelectedElements()
   shouldRecordState.value = false
   const state = undoState()
   if (!state) {
@@ -320,6 +324,8 @@ function undo() {
 }
 
 function redo() {
+  removeAllSelectedSensors()
+  removeSelectedElements()
   shouldRecordState.value = false
   const state = redoState()
   if (!state) {

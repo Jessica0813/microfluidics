@@ -33,19 +33,12 @@ import IconZoomOut from '../icons/IconZoomOut.vue'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 
 const { zoomTo, viewport, setViewport } = useVueFlow()
-
 const { setZooming } = useFlowChartCanvasStore()
+
 const zoom = ref(1)
 
 const minZoomReached = toRef(() => viewport.value.zoom <= 0.2)
 const maxZoomReached = toRef(() => viewport.value.zoom >= 2)
-
-watch(
-  () => viewport.value,
-  () => {
-    zoom.value = viewport.value.zoom
-  }
-)
 
 function zoomIn() {
   setZooming(true)
@@ -82,6 +75,13 @@ function resetView() {
     setZooming(false)
   }, 200)
 }
+
+watch(
+  () => viewport.value,
+  () => {
+    zoom.value = viewport.value.zoom
+  }
+)
 </script>
 
 <style scoped>

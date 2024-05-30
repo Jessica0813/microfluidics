@@ -11,11 +11,11 @@ import DeletableDropDown from '../general/DeletableDropDown.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 
-const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 defineProps<{
   d3Zoom: D3Zoom | undefined
   d3Selection: D3Selection | undefined
 }>()
+const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 
 const selected = ref('')
 const layer = ref(['layer 1', 'layer 2', 'layer 3'])

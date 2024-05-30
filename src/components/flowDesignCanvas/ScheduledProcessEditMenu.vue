@@ -101,14 +101,11 @@ import { useStateStore } from '@/stores/useStateStore'
 import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
-const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
-const { addState } = useStateStore()
+const props = defineProps<{
+  id: string | null
+  isEditMenuOpen: boolean
+}>()
 
-const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['pump', 'needle']
-const fluids = ['water', 'oil']
-const isChildProcessSelected = ref(false)
-const editedProcessId = ref(-1)
 const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
   default: {
     id: '-1',
@@ -124,6 +121,16 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
     flowrate: 0
   }
 })
+
+const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
+const { addState } = useStateStore()
+
+const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
+const injections = ['pump', 'needle']
+const fluids = ['water', 'oil']
+
+const isChildProcessSelected = ref(false)
+const editedProcessId = ref(-1)
 
 const isTotalDurationMenuOpen = ref(false)
 const isFluidMenuOpen = ref(false)
@@ -144,11 +151,6 @@ const isMenuOpen = computed(() => {
     isInjectionMenuOpen.value
   )
 })
-
-const props = defineProps<{
-  id: string | null
-  isEditMenuOpen: boolean
-}>()
 
 const scheduledFlowControl = computed(() => {
   const data = findNode(props.id)?.data

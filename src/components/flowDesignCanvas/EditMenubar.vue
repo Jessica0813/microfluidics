@@ -3,9 +3,21 @@
     <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
-    <ProcessEditMenu v-if="findNode(selectedId)?.type === 'process'" :id="selectedId" />
-    <PauseEditMenu v-else-if="findNode(selectedId)?.type === 'pause'" :id="selectedId" />
-    <ConditionEditMenu v-else-if="findNode(selectedId)?.type === 'condition'" :id="selectedId" />
+    <ProcessEditMenu
+      v-if="findNode(selectedId)?.type === 'process'"
+      :id="selectedId"
+      :is-edit-menu-open="isEditMenuOpen"
+    />
+    <PauseEditMenu
+      v-else-if="findNode(selectedId)?.type === 'pause'"
+      :id="selectedId"
+      :is-edit-menu-open="isEditMenuOpen"
+    />
+    <ConditionEditMenu
+      v-else-if="findNode(selectedId)?.type === 'condition'"
+      :id="selectedId"
+      :is-edit-menu-open="isEditMenuOpen"
+    />
     <ScheduledProcessEditMenu
       v-else-if="findNode(selectedId)?.type === 'schedule'"
       :id="selectedId"

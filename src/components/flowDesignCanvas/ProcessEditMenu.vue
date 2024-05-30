@@ -72,6 +72,12 @@ import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
+import type { FlowControl } from '@/types/flowControl'
+
+const props = defineProps<{
+  id: string | null
+  isEditMenuOpen: boolean
+}>()
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
@@ -98,10 +104,6 @@ const isMenuOpen = computed(() => {
   )
 })
 
-const props = defineProps<{
-  id: string | null
-}>()
-
 const flowControl = computed(() => {
   const data = findNode(props.id)?.data
   if (data === undefined || data.flowControl === undefined) {
@@ -117,7 +119,20 @@ const flowControl = computed(() => {
   return data.flowControl
 })
 
-let oldFlowControl = Object.assign({}, flowControl.value)
+let oldFlowControl: FlowControl = Object.assign({}, flowControl.value)
+
+watch(
+  () => props.isEditMenuOpen,
+  (newValue, oldValue) => {
+    if (!newValue && oldValue) {
+      if (isMenuOpen.value) {
+        isPressureMenuOpen.value = false
+        isViscosityMenuOpen.value = false
+        isDurationMenuOpen.value = false
+      }
+    }
+  }
+)
 
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {

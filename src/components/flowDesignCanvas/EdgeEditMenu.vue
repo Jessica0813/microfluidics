@@ -11,11 +11,12 @@ import { useVueFlow } from '@vue-flow/core'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteEdgeState } from '@/composables/useStateCreation'
 
-const { addState } = useStateStore()
-const { findEdge, removeEdges } = useVueFlow()
 const props = defineProps<{
   id: string | null
 }>()
+
+const { addState } = useStateStore()
+const { findEdge, removeEdges } = useVueFlow()
 
 function deleteSelectedElements() {
   const edge = findEdge(props.id)

@@ -17,7 +17,7 @@
         </template>
         <CustomizedDropdown v-model:selected="selectedSensor.type" :items="sensorType" />
       </v-menu>
-      <v-menu :close-on-content-click="false" offset="10" v-model="isMenuOpen">
+      <v-menu :close-on-content-click="false" offset="10" v-model="isNameMenuOpen">
         <template v-slot:activator="{ props }">
           <button class="customized-button" v-bind="props">
             <v-icon size="small" color="#66615b">mdi-rename-outline</v-icon>
@@ -45,6 +45,7 @@ import type { Sensor } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   designCanvasRef: HTMLElement | null
@@ -52,14 +53,15 @@ const props = defineProps<{
   isZooming: boolean
 }>()
 
-const { getSelectedSensors, deleteSelectedSensor } = useSensorStore()
+const { deleteSelectedSensor } = useSensorStore()
+const { selectedSensors } = storeToRefs(useSensorStore())
 const { addState } = useStateStore()
 const { getZooming } = useSensorCanvasStore()
 
 const sensorType = ['temperature', 'speed']
 
 const isEditMenuOpen = ref(false)
-const isMenuOpen = ref(false)
+const isNameMenuOpen = ref(false)
 const sensorFloatingRef = ref<HTMLDivElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(true)
@@ -109,19 +111,18 @@ function showSensorEditMenu() {
 }
 
 watch(
-  () => getSelectedSensors(),
-  (newValue) => {
-    if (newValue.length === 1) {
+  selectedSensors,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue && newValue.length === 1) {
       selectedSensor.value = newValue[0]
-      oldType = newValue[0].type
-      oldName = newValue[0].name
       const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
       useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
         position.value = pos
       })
       isEditMenuOpen.value = true
-    } else {
-      isEditMenuOpen.value = false
+      oldType = selectedSensor.value.type
+      oldName = selectedSensor.value.name
+    } else if (newValue.length === 0 || newValue.length > 1) {
       selectedSensor.value = {
         id: '',
         name: '',
@@ -130,6 +131,7 @@ watch(
         radius: 20,
         selected: false
       }
+      isEditMenuOpen.value = false
       oldType = 'temperature'
       oldName = ''
     }
@@ -163,10 +165,17 @@ watch(
   }
 )
 
+watch(isEditMenuOpen, (newValue) => {
+  if (!newValue) {
+    isNameMenuOpen.value = false
+  }
+})
+
 watch(
   () => selectedSensor.value.type,
   (newSelectedSensorType) => {
     if (selectedSensor.value.id !== '' && oldType !== newSelectedSensorType) {
+      const newType = newSelectedSensorType
       const state: StateController = {
         type: ActionType.UPDATE_SENSOR_TYPE,
         name: 'update sensor type ' + selectedSensor.value.id,
@@ -176,23 +185,24 @@ watch(
           data: ''
         },
         newState: {
-          objectType: newSelectedSensorType,
+          objectType: newType,
           data: ''
         }
       }
       addState(state)
-      oldType = newSelectedSensorType
+      oldType = newType
     }
   }
 )
 
-watch(isMenuOpen, (newValue, oldValue) => {
+watch(isNameMenuOpen, (newValue, oldValue) => {
   if (
     !newValue &&
     oldValue &&
     selectedSensor.value.id !== '' &&
     oldName !== selectedSensor.value.name
   ) {
+    const newName = selectedSensor.value.name
     const state: StateController = {
       type: ActionType.UPDATE_SENSOR_NAME,
       name: 'update sensor name ' + selectedSensor.value.id,
@@ -202,12 +212,12 @@ watch(isMenuOpen, (newValue, oldValue) => {
         data: ''
       },
       newState: {
-        objectName: selectedSensor.value.name,
+        objectName: newName,
         data: ''
       }
     }
     addState(state)
-    oldType = selectedSensor.value.name
+    oldName = newName
   }
 })
 

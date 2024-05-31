@@ -80,19 +80,14 @@ import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
 import SensorEditMenu from './SensorEditMenu.vue'
 import hotkeys from 'hotkeys-js'
+import { storeToRefs } from 'pinia'
 
 const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
 const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
 
-const {
-  sensors,
-  removeAllSelectedSensors,
-  addSensor,
-  getSensorId,
-  getSelectedSensors,
-  editSensor,
-  editMultiSensors
-} = useSensorStore()
+const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
+  useSensorStore()
+const { selectedSensors } = storeToRefs(useSensorStore())
 
 const svg = ref<HTMLElement | null>(null)
 const transform = ref({ x: 0, y: 0, k: 1 })
@@ -121,6 +116,7 @@ function onDrop(event: any) {
 }
 
 function removeSelectedSensor() {
+  console.log(11111111)
   if (isDesignCanvasVisible.value) {
     removeAllSelectedSensors()
   } else {
@@ -135,8 +131,8 @@ function onCanvasHideClick() {
 
 hotkeys('up, down, left, right', (event, handler) => {
   event.preventDefault()
-  if (getSelectedSensors().length === 1) {
-    const sensor = getSelectedSensors()[0]
+  if (selectedSensors.value.length === 1) {
+    const sensor = selectedSensors.value[0]
     let updatedSensor = {
       x: sensor.position.x,
       y: sensor.position.y
@@ -151,9 +147,9 @@ hotkeys('up, down, left, right', (event, handler) => {
       updatedSensor.x += 1
     }
     editSensor(sensor.id, { position: updatedSensor })
-  } else if (getSelectedSensors().length > 1) {
-    const idList = getSelectedSensors().map((sensor) => sensor.id)
-    const updatedSensorList = getSelectedSensors().map((sensor) => {
+  } else if (selectedSensors.value.length > 1) {
+    const idList = selectedSensors.value.map((sensor) => sensor.id)
+    const updatedSensorList = selectedSensors.value.map((sensor) => {
       return {
         position: {
           x: sensor.position.x,

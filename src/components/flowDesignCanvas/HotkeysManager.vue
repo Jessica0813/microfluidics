@@ -16,6 +16,7 @@ import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import { storeToRefs } from 'pinia'
 
 const { getProcessNodeId, getConditionNodeId, getProcessScheduleNodeId, getPauseNodeId } =
   useNodeIdStore()
@@ -31,7 +32,6 @@ const {
 } = useVueFlow()
 const { copyToClipboard, pasteFromClipboard, getContentsType } = useClipboardStore()
 const {
-  getSelectedSensors,
   deleteSelectedSensor,
   addSensor,
   toggleRecordState,
@@ -40,6 +40,7 @@ const {
   removeAllSelectedSensors,
   sensors
 } = useSensorStore()
+const { selectedSensors } = storeToRefs(useSensorStore())
 const { addState } = useStateStore()
 
 hotkeys('backspace,del,delete', function (event) {
@@ -78,7 +79,7 @@ hotkeys('backspace,del,delete', function (event) {
     }
   }
 
-  if (getSelectedSensors().length > 0) {
+  if (selectedSensors.value.length > 0) {
     deleteSelectedSensor()
   }
 })
@@ -90,8 +91,8 @@ hotkeys('command+c', function (event) {
     selectedIds = getSelectedNodes.value.map((node) => node.id)
   }
 
-  if (getSelectedSensors().length > 0) {
-    selectedIds = getSelectedSensors().map((sensor) => sensor.id)
+  if (selectedSensors.value.length > 0) {
+    selectedIds = selectedSensors.value.map((sensor) => sensor.id)
   }
 
   copyToClipboard(selectedIds)

@@ -11,7 +11,7 @@ export const useSensorStore = defineStore('sensor', () => {
 
   const sensors = ref<Sensor[]>([])
 
-  const selectedSensor = ref<Sensor[]>([])
+  const selectedSensors = ref<Sensor[]>([])
 
   const shouldRecordState = ref(true)
 
@@ -53,11 +53,11 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function deleteSelectedSensor() {
-    if (selectedSensor.value.length === 1) {
+    if (selectedSensors.value.length === 1) {
       const sensorIndex = sensors.value.findIndex(
-        (sensor) => sensor.id === selectedSensor.value[0].id
+        (sensor) => sensor.id === selectedSensors.value[0].id
       )
-      const sensor = selectedSensor.value[0]
+      const sensor = selectedSensors.value[0]
       if (sensorIndex !== -1) {
         const state: StateController = {
           type: ActionType.DELETE_SENSOR,
@@ -73,7 +73,7 @@ export const useSensorStore = defineStore('sensor', () => {
         addState(state)
         sensors.value.splice(sensorIndex, 1)
       }
-    } else if (selectedSensor.value.length > 1) {
+    } else if (selectedSensors.value.length > 1) {
       const state: StateController = {
         type: ActionType.DELETE_MULTI_SENSORS,
         name: 'delete multiple sensors',
@@ -81,7 +81,7 @@ export const useSensorStore = defineStore('sensor', () => {
         oldState: [],
         newState: []
       }
-      selectedSensor.value.forEach((sensor) => {
+      selectedSensors.value.forEach((sensor) => {
         const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
         if (sensorIndex !== -1 && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
           state.objectId.push(sensor.id)
@@ -98,7 +98,7 @@ export const useSensorStore = defineStore('sensor', () => {
         addState(state)
       }
     }
-    selectedSensor.value = []
+    selectedSensors.value = []
   }
 
   function deleteSensorWithId(id: string) {
@@ -144,7 +144,7 @@ export const useSensorStore = defineStore('sensor', () => {
 
     if (sensorIndex !== -1) {
       sensors.value[sensorIndex].selected = true
-      selectedSensor.value.push(sensors.value[sensorIndex])
+      selectedSensors.value.push(sensors.value[sensorIndex])
     }
 
     if (isMetaKeyPressed.value) {
@@ -157,29 +157,25 @@ export const useSensorStore = defineStore('sensor', () => {
       const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === sensorId)
       if (sensorIndex !== -1) {
         sensors.value[sensorIndex].selected = true
-        selectedSensor.value.push(sensors.value[sensorIndex])
+        selectedSensors.value.push(sensors.value[sensorIndex])
       }
     })
   }
 
   function removeAllSelectedSensors() {
     // loop throught all the sensors in selectedSensor and set selected in the sesnor array to false
-    selectedSensor.value.forEach((sensor) => {
+    selectedSensors.value.forEach((sensor) => {
       const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
       if (sensorIndex !== -1) {
         sensors.value[sensorIndex].selected = false
       }
     })
-    selectedSensor.value = []
-  }
-
-  function getSelectedSensors() {
-    return selectedSensor.value
+    selectedSensors.value = []
   }
 
   return {
     sensors,
-    selectedSensor,
+    selectedSensors,
     toggleRecordState,
     getSensorId,
     addSensor,
@@ -189,7 +185,6 @@ export const useSensorStore = defineStore('sensor', () => {
     findSensor,
     onSelectSensor,
     removeAllSelectedSensors,
-    getSelectedSensors,
     editMultiSensors,
     toggleIsMetaKeyPressed,
     onSelectMultiSensors

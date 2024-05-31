@@ -11,6 +11,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
+import VueTippy from 'vue-tippy'
 
 const app = createApp(App)
 
@@ -27,6 +28,14 @@ const vuetify = createVuetify({
     VBtn: {
       style: [{ textTransform: 'none', letterSpacing: '0' }]
     }
+  }
+})
+
+app.use(VueTippy, {
+  directive: 'tippy', // => v-tippy
+  component: 'tippy', // => <tippy/>
+  defaultProps: {
+    placement: 'top'
   }
 })
 

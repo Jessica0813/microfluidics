@@ -5,13 +5,18 @@
     id="sensor-menu-bar"
     v-show="isEditMenuOpen"
   >
-    <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
+    <div
+      class="drag-button"
+      @mouseenter="isDraggable = true"
+      @mouseleave="isDraggable = false"
+      v-tippy="{ content: 'Drag' }"
+    >
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
     <div class="bar">
       <v-menu offset="10">
         <template v-slot:activator="{ props }">
-          <button class="customized-button" v-bind="props">
+          <button class="customized-button" v-bind="props" v-tippy="{ content: 'Sensor' }">
             <v-icon size="small" color="#66615b">mdi-leak</v-icon>
           </button>
         </template>
@@ -19,13 +24,17 @@
       </v-menu>
       <v-menu :close-on-content-click="false" offset="10" v-model="isNameMenuOpen">
         <template v-slot:activator="{ props }">
-          <button class="customized-button" v-bind="props">
+          <button class="customized-button" v-bind="props" v-tippy="{ content: 'Name' }">
             <v-icon size="small" color="#66615b">mdi-rename-outline</v-icon>
           </button>
         </template>
         <CustomizedTextInput v-model:text="selectedSensor.name" />
       </v-menu>
-      <button class="customized-button" @click="deleteSelectedSensor">
+      <button
+        class="customized-button"
+        @click="deleteSelectedSensor"
+        v-tippy="{ content: 'Delete' }"
+      >
         <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
       </button>
     </div>

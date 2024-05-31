@@ -1,6 +1,11 @@
 <template>
   <div ref="floatingRef" class="wrapper" v-show="isEditMenuOpen" id="menu-bar">
-    <div class="drag-button" @mouseenter="isDraggable = true" @mouseleave="isDraggable = false">
+    <div
+      class="drag-button"
+      @mouseenter="isDraggable = true"
+      @mouseleave="isDraggable = false"
+      v-tippy="{ content: 'Drag' }"
+    >
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
     <ProcessEditMenu

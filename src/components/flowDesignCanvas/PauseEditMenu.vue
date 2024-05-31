@@ -2,13 +2,17 @@
   <div class="bar">
     <v-menu :close-on-content-click="false" offset="10" v-model="isPauseMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Pause' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
         </button>
       </template>
       <CustomizedNumberInput v-model:number="pause.duration" />
     </v-menu>
-    <button class="customized-button" @click="deleteSelectedElements">
+    <button
+      class="customized-button"
+      @click="deleteSelectedElements"
+      v-tippy="{ content: 'Delete' }"
+    >
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>

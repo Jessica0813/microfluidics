@@ -2,7 +2,7 @@
   <div class="bar">
     <v-menu offset="10" v-model="isSensorMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Sensor' }">
           <v-icon size="small" color="#66615b">mdi-leak</v-icon>
         </button>
       </template>
@@ -10,7 +10,7 @@
     </v-menu>
     <v-menu offset="10" v-model="isOperatorMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Operator' }">
           <v-icon size="small" color="#66615b">mdi-compare-horizontal</v-icon>
         </button>
       </template>
@@ -26,7 +26,7 @@
       offset="10"
     >
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Color' }">
           <v-icon size="small" color="#66615b">mdi-select-color</v-icon>
         </button>
       </template>
@@ -44,13 +44,17 @@
       v-model="isViscosityMenuOpen"
     >
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Viscosity' }">
           <v-icon size="small" color="#66615b">mdi-numeric</v-icon>
         </button>
       </template>
       <CustomizedNumberInput v-model:number="condition.viscosity" />
     </v-menu>
-    <button class="customized-button" @click="deleteSelectedElements">
+    <button
+      class="customized-button"
+      @click="deleteSelectedElements"
+      v-tippy="{ content: 'Delete' }"
+    >
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>

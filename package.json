@@ -24,6 +24,7 @@
     "pinia": "^2.1.7",
     "tippy.js": "^6.3.7",
     "vue": "^3.3.11",
+    "vue-tippy": "^6.4.1",
     "vuetify": "^3.4.9"
   },
   "devDependencies": {

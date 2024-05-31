@@ -116,7 +116,6 @@ function onDrop(event: any) {
 }
 
 function removeSelectedSensor() {
-  console.log(11111111)
   if (isDesignCanvasVisible.value) {
     removeAllSelectedSensors()
   } else {

@@ -3,15 +3,11 @@ import { type D3DragEvent } from 'd3-drag'
 import { type Sensor } from '@/types/sensor'
 import { type Ref } from 'vue'
 import { useSensorStore } from '@/stores/useSensorStore'
+import { storeToRefs } from 'pinia'
 
 export function d3Drag(isDragging: Ref<boolean>) {
-  const {
-    editSensor,
-    getSelectedSensors,
-    editMultiSensors,
-    onSelectSensor,
-    toggleIsMetaKeyPressed
-  } = useSensorStore()
+  const { editSensor, editMultiSensors, onSelectSensor, toggleIsMetaKeyPressed } = useSensorStore()
+  const { selectedSensors } = storeToRefs(useSensorStore())
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
   let startOffsetY: number = 0
@@ -28,7 +24,7 @@ export function d3Drag(isDragging: Ref<boolean>) {
     }
 
     // check if the sensor is already selected
-    const sensorIndex = getSelectedSensors().findIndex((sensor) => sensor.id === event.subject.id)
+    const sensorIndex = selectedSensors.value.findIndex((sensor) => sensor.id === event.subject.id)
     if (sensorIndex === -1) {
       onSelectSensor(event.subject.id)
     }
@@ -36,12 +32,12 @@ export function d3Drag(isDragging: Ref<boolean>) {
     startOffsetX = event.x - event.subject.position.x
     startOffsetY = event.y - event.subject.position.y
 
-    for (let i = 0; i < getSelectedSensors().length; i++) {
-      if (getSelectedSensors()[i] === event.subject.id) {
+    for (let i = 0; i < selectedSensors.value.length; i++) {
+      if (selectedSensors.value[i] === event.subject.id) {
         continue
       }
-      offsetXList.push(event.x - getSelectedSensors()[i].position.x)
-      offsetYList.push(event.y - getSelectedSensors()[i].position.y)
+      offsetXList.push(event.x - selectedSensors.value[i].position.x)
+      offsetYList.push(event.y - selectedSensors.value[i].position.y)
     }
   })
   d3Drag.on('drag', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
@@ -75,35 +71,35 @@ export function d3Drag(isDragging: Ref<boolean>) {
       .attr('cx', event.x - startOffsetX + event.subject.radius)
       .attr('cy', event.y - startOffsetY + event.subject.radius)
 
-    for (let i = 0; i < getSelectedSensors().length; i++) {
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+    for (let i = 0; i < selectedSensors.value.length; i++) {
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.sensor')
         .attr('cx', event.x - offsetXList[i])
         .attr('cy', event.y - offsetYList[i])
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.sensor-label')
         .attr('x', event.x - offsetXList[i])
         .attr('y', event.y - offsetYList[i])
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.sensor-rect')
-        .attr('x', event.x - offsetXList[i] - getSelectedSensors()[i].radius)
-        .attr('y', event.y - offsetYList[i] - getSelectedSensors()[i].radius)
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .attr('x', event.x - offsetXList[i] - selectedSensors.value[i].radius)
+        .attr('y', event.y - offsetYList[i] - selectedSensors.value[i].radius)
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.upper-left-dot')
-        .attr('cx', event.x - offsetXList[i] - getSelectedSensors()[i].radius)
-        .attr('cy', event.y - offsetYList[i] - getSelectedSensors()[i].radius)
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .attr('cx', event.x - offsetXList[i] - selectedSensors.value[i].radius)
+        .attr('cy', event.y - offsetYList[i] - selectedSensors.value[i].radius)
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.upper-right-dot')
-        .attr('cx', event.x - offsetXList[i] + getSelectedSensors()[i].radius)
-        .attr('cy', event.y - offsetYList[i] - getSelectedSensors()[i].radius)
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .attr('cx', event.x - offsetXList[i] + selectedSensors.value[i].radius)
+        .attr('cy', event.y - offsetYList[i] - selectedSensors.value[i].radius)
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.lower-left-dot')
-        .attr('cx', event.x - offsetXList[i] - getSelectedSensors()[i].radius)
-        .attr('cy', event.y - offsetYList[i] + getSelectedSensors()[i].radius)
-      select(`#sensor-${getSelectedSensors()[i].id}`)
+        .attr('cx', event.x - offsetXList[i] - selectedSensors.value[i].radius)
+        .attr('cy', event.y - offsetYList[i] + selectedSensors.value[i].radius)
+      select(`#sensor-${selectedSensors.value[i].id}`)
         .select('.lower-right-dot')
-        .attr('cx', event.x - offsetXList[i] + getSelectedSensors()[i].radius)
-        .attr('cy', event.y - offsetYList[i] + getSelectedSensors()[i].radius)
+        .attr('cx', event.x - offsetXList[i] + selectedSensors.value[i].radius)
+        .attr('cy', event.y - offsetYList[i] + selectedSensors.value[i].radius)
     }
   })
   d3Drag.on('end', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
@@ -118,7 +114,7 @@ export function d3Drag(isDragging: Ref<boolean>) {
       return
     }
 
-    if (getSelectedSensors().length <= 1) {
+    if (selectedSensors.value.length <= 1) {
       editSensor(event.subject.id, {
         position: {
           x: event.x - startOffsetX,
@@ -126,8 +122,8 @@ export function d3Drag(isDragging: Ref<boolean>) {
         }
       })
     } else {
-      const idList = getSelectedSensors().map((sensor) => sensor.id)
-      const updatedPosition = getSelectedSensors().map((sensor, index) => {
+      const idList = selectedSensors.value.map((sensor) => sensor.id)
+      const updatedPosition = selectedSensors.value.map((sensor, index) => {
         return {
           position: {
             x: event.x - offsetXList[index],

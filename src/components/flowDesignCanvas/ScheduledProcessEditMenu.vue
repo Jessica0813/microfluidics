@@ -2,20 +2,24 @@
   <div class="bar" v-if="!isChildProcessSelected">
     <v-menu :close-on-content-click="false" offset="10" v-model="isTotalDurationMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Duration' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
         </button>
       </template>
       <CustomizedNumberInput v-model:number="scheduledFlowControl.totalDuration" />
     </v-menu>
-    <button class="customized-button" @click="deleteSelectedElements">
+    <button
+      class="customized-button"
+      @click="deleteSelectedElements"
+      v-tippy="{ content: 'Delete' }"
+    >
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>
   <div class="bar" v-else>
     <v-menu offset="10" v-model="isFluidMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Fluid' }">
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
         </button>
       </template>
@@ -23,7 +27,7 @@
     </v-menu>
     <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Inlet' }">
           <v-icon size="small" color="#66615b">mdi-location-enter</v-icon>
         </button>
       </template>
@@ -31,7 +35,7 @@
     </v-menu>
     <v-menu offset="10" v-model="isInjectionMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
           <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
         </button>
       </template>
@@ -44,7 +48,7 @@
       v-model="isPressureMenuOpen"
     >
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Pressure' }">
           <v-icon size="small" color="#66615b">mdi-car-brake-low-pressure</v-icon>
         </button>
       </template>
@@ -57,7 +61,7 @@
       v-model="isFlowrateMenuOpen"
     >
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Flowrate' }">
           <v-icon size="small" color="#66615b">mdi-speedometer</v-icon>
         </button>
       </template>
@@ -65,7 +69,7 @@
     </v-menu>
     <v-menu :close-on-content-click="false" offset="10" v-model="isSubProcessDurationMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Time Range' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
         </button>
       </template>
@@ -85,7 +89,7 @@
         />
       </div>
     </v-menu>
-    <button class="customized-button" @click="deleteSubprocess">
+    <button class="customized-button" @click="deleteSubprocess" v-tippy="{ content: 'Delete' }">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
   </div>

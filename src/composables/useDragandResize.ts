@@ -8,6 +8,7 @@ import { useTooltipContent } from '@/composables/useTooltipContent'
 import type { Ref } from 'vue'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 
 let instance: Instance | undefined
 
@@ -102,6 +103,7 @@ export function useDrag(
   marginX: number,
   scheduledFlowControl: Ref<ScheduledFlowControl>
 ) {
+  const { setDraggingOrResizingSubProcess } = useFlowChartCanvasStore()
   const d3Drag = drag<SVGRectElement, FlowControlProcess, any>()
 
   let startOffsetX: number = 0
@@ -112,6 +114,7 @@ export function useDrag(
   let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 
   d3Drag.on('start', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
+    setDraggingOrResizingSubProcess()
     oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     selection = select(`#${id}-process-${event.subject.id}`)
     processWidth = Number(selection.attr('width'))
@@ -143,6 +146,7 @@ export function useDrag(
 
   d3Drag.on('end', (event: D3DragEvent<SVGRectElement, FlowControlProcess, any>) => {
     if (isClicked) {
+      setDraggingOrResizingSubProcess()
       return
     }
     const x = limitDrag(event, startOffsetX, marginX, width, processWidth)
@@ -162,6 +166,7 @@ export function useDrag(
     }
 
     updateContent(event)
+    setDraggingOrResizingSubProcess()
   })
   return d3Drag
 }
@@ -173,12 +178,14 @@ export function useRightResize(
   marginX: number,
   scheduledFlowControl: Ref<ScheduledFlowControl>
 ) {
+  const { setDraggingOrResizingSubProcess } = useFlowChartCanvasStore()
   const d3RightResize = drag<SVGLineElement, FlowControlProcess, any>()
 
   let isClicked: boolean = false
   let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 
   d3RightResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    setDraggingOrResizingSubProcess()
     isClicked = true
     oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     instance = instances.find(
@@ -206,6 +213,7 @@ export function useRightResize(
 
   d3RightResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
     if (isClicked) {
+      setDraggingOrResizingSubProcess()
       return
     }
     const x = limitRightResize(event, width, marginX, id)
@@ -224,6 +232,7 @@ export function useRightResize(
     }
 
     updateContent(event)
+    setDraggingOrResizingSubProcess()
   })
   return d3RightResize
 }
@@ -234,12 +243,15 @@ export function useLeftResize(
   marginX: number,
   scheduledFlowControl: Ref<ScheduledFlowControl>
 ) {
+  const { setDraggingOrResizingSubProcess } = useFlowChartCanvasStore()
+
   const d3LeftResize = drag<SVGLineElement, FlowControlProcess, any>()
 
   let isClicked: boolean = false
   let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 
   d3LeftResize.on('start', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
+    setDraggingOrResizingSubProcess()
     isClicked = true
     oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     instance = instances.find(
@@ -266,6 +278,7 @@ export function useLeftResize(
 
   d3LeftResize.on('end', (event: D3DragEvent<SVGLineElement, FlowControlProcess, any>) => {
     if (isClicked) {
+      setDraggingOrResizingSubProcess()
       return
     }
     const x = limitLeftResize(event, id, marginX)
@@ -284,6 +297,7 @@ export function useLeftResize(
     }
 
     updateContent(event)
+    setDraggingOrResizingSubProcess()
   })
 
   return d3LeftResize

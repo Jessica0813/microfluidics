@@ -100,6 +100,7 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 
 const props = defineProps<{
   id: string | null
@@ -124,6 +125,7 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
+const { getDraggingOrResizingSubProcess } = useFlowChartCanvasStore()
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
@@ -166,6 +168,15 @@ const scheduledFlowControl = computed(() => {
 
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
+
+watch(
+  () => getDraggingOrResizingSubProcess(),
+  (newValue, oldValue) => {
+    if (!newValue && oldValue) {
+      oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+    }
+  }
+)
 
 watch(
   () => props.isEditMenuOpen,

@@ -1,20 +1,25 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useSensorCanvasStore = defineStore('sensorCanvas', () => {
   const isCanvasZooming = ref(false)
+  const isDraggingSensor = ref(false)
 
-  function setZooming(zooming: boolean) {
-    isCanvasZooming.value = zooming
+  const isZoomingOrDragging = computed(() => {
+    return isCanvasZooming.value || isDraggingSensor.value
+  })
+
+  function setZooming() {
+    isCanvasZooming.value = !isCanvasZooming.value
   }
 
-  function getZooming() {
-    return isCanvasZooming.value
+  function setDragging() {
+    isDraggingSensor.value = !isDraggingSensor.value
   }
 
   return {
-    isCanvasZooming,
-    getZooming,
-    setZooming
+    isZoomingOrDragging,
+    setZooming,
+    setDragging
   }
 })

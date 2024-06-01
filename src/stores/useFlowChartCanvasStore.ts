@@ -9,23 +9,14 @@ export const useFlowChartCanvasStore = defineStore('flowChartCanvasCanvas', () =
     isFlowChartCanvasZooming.value = zooming
   }
 
-  function getZooming() {
-    return isFlowChartCanvasZooming.value
-  }
-
   function setDraggingOrResizingSubProcess() {
     isDraggingOrResizingSubProcess.value = !isDraggingOrResizingSubProcess.value
   }
 
-  function getDraggingOrResizingSubProcess() {
-    return isDraggingOrResizingSubProcess.value
-  }
-
   return {
     isFlowChartCanvasZooming,
-    getZooming,
+    isDraggingOrResizingSubProcess,
     setZooming,
-    getDraggingOrResizingSubProcess,
     setDraggingOrResizingSubProcess
   }
 })

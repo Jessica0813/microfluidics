@@ -1,12 +1,13 @@
 import { drag, select } from 'd3'
 import { type D3DragEvent } from 'd3-drag'
 import { type Sensor } from '@/types/sensor'
-import { type Ref } from 'vue'
 import { useSensorStore } from '@/stores/useSensorStore'
+import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 import { storeToRefs } from 'pinia'
 
-export function d3Drag(isDragging: Ref<boolean>) {
+export function d3Drag() {
   const { editSensor, editMultiSensors, onSelectSensor, toggleIsMetaKeyPressed } = useSensorStore()
+  const { setDragging } = useSensorCanvasStore()
   const { selectedSensors } = storeToRefs(useSensorStore())
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
@@ -16,7 +17,7 @@ export function d3Drag(isDragging: Ref<boolean>) {
   let isClicking = false
   d3Drag.on('start', (event: D3DragEvent<SVGGElement, Sensor, any>) => {
     isClicking = true
-    isDragging.value = true
+    setDragging()
     select('body').style('cursor', 'grabbing')
 
     if (event.sourceEvent.metaKey || event.sourceEvent.ctrlKey) {
@@ -109,7 +110,7 @@ export function d3Drag(isDragging: Ref<boolean>) {
       startOffsetY = 0
       offsetXList = []
       offsetYList = []
-      isDragging.value = false
+      setDragging()
       select('body').style('cursor', 'default')
       return
     }
@@ -138,7 +139,7 @@ export function d3Drag(isDragging: Ref<boolean>) {
     startOffsetY = 0
     offsetXList = []
     offsetYList = []
-    isDragging.value = false
+    setDragging()
     select('body').style('cursor', 'default')
   })
   return d3Drag
@@ -148,11 +149,12 @@ let startPositionX = 0
 let originalRadius = 0
 let updatedRadius = 0
 
-export function d3UpperLeftResize(isDragging: Ref<boolean>) {
+export function d3UpperLeftResize() {
   const { editSensor } = useSensorStore()
+  const { setDragging } = useSensorCanvasStore()
   const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    isDragging.value = true
+    setDragging()
     select('body').style('cursor', 'nwse-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -205,17 +207,18 @@ export function d3UpperLeftResize(isDragging: Ref<boolean>) {
     })
 
     select('body').style('cursor', 'default')
-    isDragging.value = false
+    setDragging()
   })
 
   return d3UpperLeftResize
 }
 
-export function d3UpperRightResize(isDragging: Ref<boolean>) {
+export function d3UpperRightResize() {
   const { editSensor } = useSensorStore()
+  const { setDragging } = useSensorCanvasStore()
   const d3UpperRightResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    isDragging.value = true
+    setDragging()
     select('body').style('cursor', 'nesw-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -267,16 +270,17 @@ export function d3UpperRightResize(isDragging: Ref<boolean>) {
     })
 
     select('body').style('cursor', 'default')
-    isDragging.value = false
+    setDragging()
   })
   return d3UpperRightResize
 }
 
-export function d3LowerLeftResize(isDragging: Ref<boolean>) {
+export function d3LowerLeftResize() {
   const { editSensor } = useSensorStore()
+  const { setDragging } = useSensorCanvasStore()
   const d3LowerLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    isDragging.value = true
+    setDragging()
     select('body').style('cursor', 'nesw-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -329,16 +333,17 @@ export function d3LowerLeftResize(isDragging: Ref<boolean>) {
     })
 
     select('body').style('cursor', 'default')
-    isDragging.value = false
+    setDragging()
   })
   return d3LowerLeftResize
 }
 
-export function d3LowerRightResize(isDragging: Ref<boolean>) {
+export function d3LowerRightResize() {
   const { editSensor } = useSensorStore()
+  const { setDragging } = useSensorCanvasStore()
   const d3LowerRightResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
-    isDragging.value = true
+    setDragging()
     select('body').style('cursor', 'nwse-resize')
     originalRadius = event.subject.radius
     startPositionX = event.x
@@ -391,7 +396,7 @@ export function d3LowerRightResize(isDragging: Ref<boolean>) {
     })
 
     select('body').style('cursor', 'default')
-    isDragging.value = false
+    setDragging()
   })
   return d3LowerRightResize
 }

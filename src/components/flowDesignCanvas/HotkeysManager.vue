@@ -30,7 +30,8 @@ const {
   getConnectedEdges,
   removeSelectedNodes
 } = useVueFlow()
-const { copyToClipboard, pasteFromClipboard, getContentsType } = useClipboardStore()
+const { copyToClipboard, pasteFromClipboard } = useClipboardStore()
+const { contentsType } = storeToRefs(useClipboardStore())
 const {
   deleteSelectedSensor,
   addSensor,
@@ -100,9 +101,9 @@ hotkeys('command+c', function (event) {
 
 hotkeys('command+v', function (event) {
   event.preventDefault()
-  const contentsType = getContentsType()
+  const type = contentsType.value
   const copiedIds: string[] = pasteFromClipboard()
-  if (contentsType === ObjectType.SENSOR) {
+  if (type === ObjectType.SENSOR) {
     const state: StateController = {
       type: ActionType.PASTE_SENSORS,
       name: 'paste nodes',
@@ -143,7 +144,7 @@ hotkeys('command+v', function (event) {
     }
     removeAllSelectedSensors()
     onSelectMultiSensors(newIds)
-  } else if (contentsType === ObjectType.NODE) {
+  } else if (type === ObjectType.NODE) {
     const state: StateController = {
       type: ActionType.PASTE_NODES,
       name: 'paste nodes',

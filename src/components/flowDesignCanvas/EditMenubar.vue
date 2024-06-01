@@ -53,6 +53,7 @@ import type { NodeDragEvent } from '@vue-flow/core'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
+import { storeToRefs } from 'pinia'
 
 const { getSubProcessId } = useNodeIdStore()
 const { addState } = useStateStore()
@@ -69,7 +70,7 @@ const {
   vueFlowRef,
   removeNodes
 } = useVueFlow()
-const { getZooming } = useFlowChartCanvasStore()
+const { isFlowChartCanvasZooming } = storeToRefs(useFlowChartCanvasStore())
 
 const flowControl = ref({
   id: '-1',
@@ -311,18 +312,15 @@ onViewportChangeEnd(() => {
   }
 })
 
-watch(
-  () => getZooming(),
-  (newValue) => {
-    if (selectedId.value) {
-      if (newValue) {
-        isEditMenuOpen.value = false
-      } else {
-        showEditMenuBar()
-      }
+watch(isFlowChartCanvasZooming, (newValue) => {
+  if (selectedId.value) {
+    if (newValue) {
+      isEditMenuOpen.value = false
+    } else {
+      showEditMenuBar()
     }
   }
-)
+})
 
 const d3Drag = drag<HTMLDivElement, any, any>()
 let startOffsetX: number = 0

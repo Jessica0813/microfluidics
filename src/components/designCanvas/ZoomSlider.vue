@@ -11,8 +11,8 @@
       :thumb-size="14"
       :hide-details="true"
       @update:modelValue="zoomBySlider"
-      @start="setZooming(true)"
-      @end="setZooming(false)"
+      @start="setZooming()"
+      @end="setZooming()"
     ></v-slider>
     <button @click="zoomIn" class="button" :disabled="maxZoomReached">
       <IconZoomIn :color="maxZoomReached ? '#BDBDBD' : ''" />
@@ -49,7 +49,7 @@ function zoomTo(value: number) {
 }
 
 function zoomIn() {
-  setZooming(true)
+  setZooming()
 
   transform.value.k += 0.1
   if (transform.value.k > 2) {
@@ -58,12 +58,12 @@ function zoomIn() {
   zoomTo(transform.value.k)
 
   setTimeout(function () {
-    setZooming(false)
+    setZooming()
   }, 200)
 }
 
 function zoomOut() {
-  setZooming(true)
+  setZooming()
 
   transform.value.k -= 0.1
   if (transform.value.k < 0.2) {
@@ -71,7 +71,7 @@ function zoomOut() {
   }
   zoomTo(transform.value.k)
   setTimeout(function () {
-    setZooming(false)
+    setZooming()
   }, 200)
 }
 
@@ -80,14 +80,14 @@ function zoomBySlider() {
 }
 
 function resetView() {
-  setZooming(true)
+  setZooming()
 
   if (props.d3Zoom && props.d3Selection) {
     props.d3Zoom.transform(props.d3Selection, zoomIdentity)
   }
 
   setTimeout(function () {
-    setZooming(false)
+    setZooming()
   }, 200)
 }
 </script>

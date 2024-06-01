@@ -59,13 +59,12 @@ import { storeToRefs } from 'pinia'
 const props = defineProps<{
   designCanvasRef: HTMLElement | null
   transform: { x: number; y: number; k: number }
-  isZooming: boolean
 }>()
 
 const { deleteSelectedSensor } = useSensorStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 const { addState } = useStateStore()
-const { getZooming } = useSensorCanvasStore()
+const { isZoomingOrDragging } = storeToRefs(useSensorCanvasStore())
 
 const sensorType = ['temperature', 'speed']
 
@@ -148,31 +147,15 @@ watch(
   { deep: true }
 )
 
-watch(
-  () => props.isZooming,
-  (newValue) => {
-    if (selectedSensor.value.id !== '') {
-      if (newValue) {
-        isEditMenuOpen.value = false
-      } else {
-        showSensorEditMenu()
-      }
+watch(isZoomingOrDragging, (newValue) => {
+  if (selectedSensor.value.id !== '') {
+    if (newValue) {
+      isEditMenuOpen.value = false
+    } else {
+      showSensorEditMenu()
     }
   }
-)
-
-watch(
-  () => getZooming(),
-  (newValue) => {
-    if (selectedSensor.value.id !== '') {
-      if (newValue) {
-        isEditMenuOpen.value = false
-      } else {
-        showSensorEditMenu()
-      }
-    }
-  }
-)
+})
 
 watch(isEditMenuOpen, (newValue) => {
   if (!newValue) {

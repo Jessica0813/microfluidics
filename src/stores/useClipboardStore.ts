@@ -27,9 +27,5 @@ export const useClipboardStore = defineStore('clipboard', () => {
     return value
   }
 
-  function getContentsType() {
-    return contentsType.value
-  }
-
-  return { copyToClipboard, pasteFromClipboard, getContentsType }
+  return { contentsType, copyToClipboard, pasteFromClipboard }
 })

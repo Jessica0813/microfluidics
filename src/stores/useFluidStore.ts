@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Fluid } from '@/types/fluid.ts'
 
 export const useFluidStore = defineStore('fluid', () => {
-  const fluidTypes = ref<Fluid[]>([
+  const fluids = ref<Fluid[]>([
     {
       name: 'Water',
       color: '#0000ff',
@@ -20,21 +20,23 @@ export const useFluidStore = defineStore('fluid', () => {
     }
   ])
 
+  const fluidNames = computed(() => fluids.value.map((fluid) => fluid.name))
+
   function addFluid(fluid: Fluid) {
-    fluidTypes.value.unshift(fluid)
+    fluids.value.unshift(fluid)
   }
 
   function removeFluid(index: number) {
-    if (index >= 0 && index < fluidTypes.value.length) {
-      fluidTypes.value.splice(index, 1)
+    if (index >= 0 && index < fluids.value.length) {
+      fluids.value.splice(index, 1)
     }
   }
 
   function editFluid(index: number, updatedFluid: Partial<Fluid>) {
-    if (index >= 0 && index < fluidTypes.value.length) {
-      Object.assign(fluidTypes.value[index], updatedFluid)
+    if (index >= 0 && index < fluids.value.length) {
+      Object.assign(fluids.value[index], updatedFluid)
     }
   }
 
-  return { fluidTypes, addFluid, removeFluid, editFluid }
+  return { fluids, fluidNames, addFluid, removeFluid, editFluid }
 })

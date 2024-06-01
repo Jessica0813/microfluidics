@@ -186,7 +186,7 @@ function onDrop(event: any) {
             duration: 1.0,
             inlet: 'inlet 1',
             injection: 'pump',
-            fluid: 'water',
+            fluid: 'Water',
             pressure: 0,
             flowrate: 0
           })
@@ -257,7 +257,7 @@ function onDrop(event: any) {
     nodeData = {
       inlet: 'inlet 1',
       injection: 'pump',
-      fluid: 'water',
+      fluid: 'Water',
       pressure: 0,
       duration: 0,
       flowrate: 0

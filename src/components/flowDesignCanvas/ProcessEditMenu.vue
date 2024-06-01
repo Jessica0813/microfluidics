@@ -6,7 +6,7 @@
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
         </button>
       </template>
-      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluids" />
+      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluidNames" />
     </v-menu>
     <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
@@ -77,6 +77,8 @@ import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 import type { FlowControl } from '@/types/flowControl'
+import { useFluidStore } from '@/stores/useFluidStore'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   id: string | null
@@ -85,10 +87,10 @@ const props = defineProps<{
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
+const { fluidNames } = storeToRefs(useFluidStore())
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
-const fluids = ['water', 'oil']
 
 const isFluidMenuOpen = ref(false)
 const isInjectionMenuOpen = ref(false)

@@ -49,7 +49,12 @@
           height: 75%;
         "
       >
-        <RangBarChart :id="id" v-model:edited-process="editedProcess" />
+        <RangBarChart
+          :id="id"
+          v-model:scheduledFlowControl="scheduledFlowControl"
+          v-model:flowControlProcesses="scheduledFlowControl.processes"
+          v-model:edited-process="editedProcess"
+        />
       </div>
     </div>
   </div>

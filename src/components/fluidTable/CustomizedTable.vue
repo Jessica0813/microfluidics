@@ -29,7 +29,7 @@
       <v-divider></v-divider>
       <v-data-table-virtual
         :headers="headers"
-        :items="fluidStore.fluidTypes"
+        :items="fluidStore.fluids"
         density="comfortable"
         :hover="true"
       >

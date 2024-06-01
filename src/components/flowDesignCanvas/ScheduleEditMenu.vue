@@ -23,7 +23,7 @@
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
         </button>
       </template>
-      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluids" />
+      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluidNames" />
     </v-menu>
     <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
@@ -105,6 +105,7 @@ import { useStateStore } from '@/stores/useStateStore'
 import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
+import { useFluidStore } from '@/stores/useFluidStore'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
@@ -131,10 +132,10 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 const { isDraggingOrResizingSubProcess } = storeToRefs(useFlowChartCanvasStore())
+const { fluidNames } = storeToRefs(useFluidStore())
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
-const fluids = ['water', 'oil']
 
 const isChildProcessSelected = ref(false)
 const editedProcessId = ref(-1)

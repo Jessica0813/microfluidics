@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { select } from 'd3-selection'
 import { scaleLinear, scaleBand, axisTop } from 'd3'
-import { onMounted, ref, watch, watchEffect } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
@@ -21,6 +21,16 @@ import { useVueFlow } from '@vue-flow/core'
 const props = defineProps({
   id: String
 })
+const scheduledFlowControl = defineModel<ScheduledFlowControl>('scheduledFlowControl', {
+  default: {
+    totalDuration: 20,
+    name: 'a',
+    processes: []
+  }
+})
+const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProcesses', {
+  default: []
+})
 const editedProcess = defineModel<FlowControlProcess>('editedProcess')
 
 const { findNode } = useVueFlow()
@@ -30,22 +40,6 @@ let instances: Instance[] = []
 const marginX = 17
 const marginTop = 10
 const barHeight = 20
-
-const scheduledFlowControl = ref<ScheduledFlowControl>({
-  totalDuration: 20,
-  name: 'a',
-  processes: []
-})
-
-const flowControlProcesses = ref<FlowControlProcess[]>([])
-
-watchEffect(() => {
-  const node = findNode(props.id)
-  if (node && node.data && node.data.scheduledFlowControl) {
-    scheduledFlowControl.value = node.data.scheduledFlowControl
-    flowControlProcesses.value = node.data.scheduledFlowControl.processes
-  }
-})
 
 function onClick(event: MouseEvent) {
   event.stopPropagation()

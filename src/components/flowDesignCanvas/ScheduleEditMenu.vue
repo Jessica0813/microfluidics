@@ -97,16 +97,21 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import { storeToRefs } from 'pinia'
+
 import { useVueFlow } from '@vue-flow/core'
-import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+
 import { type StateController, ActionType } from '@/types/stateController'
-import { useStateStore } from '@/stores/useStateStore'
 import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
+
 import { createDeleteNodeState } from '@/composables/useStateCreation'
+
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 import { useFluidStore } from '@/stores/useFluidStore'
-import { storeToRefs } from 'pinia'
+import { useStateStore } from '@/stores/useStateStore'
+
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 
 const props = defineProps<{
   id: string | null
@@ -129,17 +134,6 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
   }
 })
 
-const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
-const { addState } = useStateStore()
-const { isDraggingOrResizingSubProcess } = storeToRefs(useFlowChartCanvasStore())
-const { fluidNames } = storeToRefs(useFluidStore())
-
-const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['pump', 'needle']
-
-const isChildProcessSelected = ref(false)
-const editedProcessId = ref(-1)
-
 const isTotalDurationMenuOpen = ref(false)
 const isFluidMenuOpen = ref(false)
 const isInletMenuOpen = ref(false)
@@ -148,17 +142,25 @@ const isPressureMenuOpen = ref(false)
 const isFlowrateMenuOpen = ref(false)
 const isSubProcessDurationMenuOpen = ref(false)
 
+const isChildProcessSelected = ref(false)
+const editedProcessId = ref(-1)
+
 const isMenuOpen = computed(() => {
   return (
-    isPressureMenuOpen.value ||
-    isFlowrateMenuOpen.value ||
-    isSubProcessDurationMenuOpen.value ||
     isTotalDurationMenuOpen.value ||
     isFluidMenuOpen.value ||
     isInletMenuOpen.value ||
-    isInjectionMenuOpen.value
+    isInjectionMenuOpen.value ||
+    isPressureMenuOpen.value ||
+    isFlowrateMenuOpen.value ||
+    isSubProcessDurationMenuOpen.value
   )
 })
+
+const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
+const { addState } = useStateStore()
+const { isDraggingOrResizingSubProcess } = storeToRefs(useFlowChartCanvasStore())
+const { fluidNames } = storeToRefs(useFluidStore())
 
 const scheduledFlowControl = computed(() => {
   const data = findNode(props.id)?.data
@@ -172,6 +174,8 @@ const scheduledFlowControl = computed(() => {
   return data.scheduledFlowControl
 })
 
+const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
+const injections = ['pump', 'needle']
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 

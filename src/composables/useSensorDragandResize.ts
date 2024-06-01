@@ -1,9 +1,9 @@
+import { storeToRefs } from 'pinia'
 import { drag, select } from 'd3'
 import { type D3DragEvent } from 'd3-drag'
 import { type Sensor } from '@/types/sensor'
 import { useSensorStore } from '@/stores/useSensorStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
-import { storeToRefs } from 'pinia'
 
 export function d3Drag() {
   const { editSensor, editMultiSensors, onSelectSensor, toggleIsMetaKeyPressed } = useSensorStore()

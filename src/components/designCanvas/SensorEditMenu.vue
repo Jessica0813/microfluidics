@@ -43,40 +43,33 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useMenuPositionCalculatorForSensor } from '@/composables/useMenuPositionCalculator'
+import { storeToRefs } from 'pinia'
+
 import { select } from 'd3'
-import { drag } from 'd3-drag'
-import type { D3DragEvent } from 'd3-drag'
-import CustomizedDropdown from '../general/CustomizedDropdown.vue'
-import CustomizedTextInput from '../general/CustomizedTextInput.vue'
-import { useSensorStore } from '@/stores/useSensorStore'
+import { drag, type D3DragEvent } from 'd3-drag'
+
 import type { Sensor } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
+
+import { useMenuPositionCalculatorForSensor } from '@/composables/useMenuPositionCalculator'
+
+import { useSensorStore } from '@/stores/useSensorStore'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
-import { storeToRefs } from 'pinia'
+
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import CustomizedTextInput from '../general/CustomizedTextInput.vue'
 
 const props = defineProps<{
   designCanvasRef: HTMLElement | null
   transform: { x: number; y: number; k: number }
 }>()
 
-const { deleteSelectedSensor } = useSensorStore()
-const { selectedSensors } = storeToRefs(useSensorStore())
-const { addState } = useStateStore()
-const { isZoomingOrDragging } = storeToRefs(useSensorCanvasStore())
-
-const sensorType = ['temperature', 'speed']
-
-const isEditMenuOpen = ref(false)
-const isNameMenuOpen = ref(false)
 const sensorFloatingRef = ref<HTMLDivElement | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+const isEditMenuOpen = ref(false)
+const isNameMenuOpen = ref(false)
 const isDraggable = ref(true)
-
-let oldType = 'temperature'
-let oldName = ''
-
 const selectedSensor = ref<Sensor>({
   id: '',
   name: '',
@@ -85,6 +78,20 @@ const selectedSensor = ref<Sensor>({
   radius: 20,
   selected: false
 })
+
+const sensorType = ['temperature', 'speed']
+let oldType = 'temperature'
+let oldName = ''
+const d3Drag = drag<HTMLDivElement, any, any>()
+let startOffsetX: number = 0
+let startOffsetY: number = 0
+let x: number = 0
+let y: number = 0
+
+const { deleteSelectedSensor } = useSensorStore()
+const { selectedSensors } = storeToRefs(useSensorStore())
+const { addState } = useStateStore()
+const { isZoomingOrDragging } = storeToRefs(useSensorCanvasStore())
 
 function isSensorinView(target: HTMLElement) {
   if (props.designCanvasRef === null) {
@@ -213,11 +220,6 @@ watch(isNameMenuOpen, (newValue, oldValue) => {
   }
 })
 
-const d3Drag = drag<HTMLDivElement, any, any>()
-let startOffsetX: number = 0
-let startOffsetY: number = 0
-let x: number = 0
-let y: number = 0
 d3Drag.on('start', (event: D3DragEvent<HTMLDivElement, any, any>) => {
   event.sourceEvent.preventDefault()
   startOffsetX = event.x - position.value.x

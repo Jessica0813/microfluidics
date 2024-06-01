@@ -60,12 +60,9 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { Handle, Position, type NodeProps } from '@vue-flow/core'
-import { useVueFlow } from '@vue-flow/core'
+import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
 
 const { id, selected, data } = defineProps<NodeProps>()
-
-const { findNode } = useVueFlow()
 
 const isMenuOpen = ref<boolean>(false)
 const nodeIsHovered = ref<boolean>(false)
@@ -82,6 +79,8 @@ const condition = computed(() => {
   }
   return data.condition
 })
+
+const { findNode } = useVueFlow()
 
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {

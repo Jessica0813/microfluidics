@@ -125,16 +125,16 @@
 
 <script setup lang="ts">
 import { computed, defineModel } from 'vue'
-import CustomizedButton from './CustomizedButton.vue'
-import { useFluidStore } from '@/stores/useFluidStore'
 import type { Fluid } from '@/types/fluid'
+import { useFluidStore } from '@/stores/useFluidStore'
 import CustomizedColorInputVue from '../general/CustomizedColorInput.vue'
-
-const fluidStore = useFluidStore()
+import CustomizedButton from './CustomizedButton.vue'
 
 const props = defineProps({
   itemIndex: Number
 })
+
+const emit = defineEmits(['close', 'cancel', 'save'])
 
 const isDialogVisible = defineModel<boolean>('isDialogVisible')
 const nameInput = defineModel<string>('nameInput')
@@ -144,13 +144,13 @@ const withParticle = defineModel<string>('withParticle', { default: 'No' })
 const particleSize = defineModel('particleSize', { default: 0 })
 const particleDensity = defineModel('particleDensity', { default: 0 })
 
-const emit = defineEmits(['close', 'cancel', 'save'])
-
 const isNameExisted = computed(() => {
   const enteredName = nameInput.value?.trim().toLowerCase()
-  return fluidStore.fluidTypes.some(
+  return fluidStore.fluids.some(
     (fluid: Fluid, index: number) =>
       index !== props.itemIndex && fluid.name.toLowerCase() === enteredName
   )
 })
+
+const fluidStore = useFluidStore()
 </script>

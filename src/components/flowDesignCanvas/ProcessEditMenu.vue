@@ -85,30 +85,27 @@ const props = defineProps<{
   isEditMenuOpen: boolean
 }>()
 
-const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
-const { addState } = useStateStore()
-const { fluidNames } = storeToRefs(useFluidStore())
-
-const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['pump', 'needle']
-
 const isFluidMenuOpen = ref(false)
-const isInjectionMenuOpen = ref(false)
 const isInletMenuOpen = ref(false)
+const isInjectionMenuOpen = ref(false)
 const isPressureMenuOpen = ref(false)
 const isViscosityMenuOpen = ref(false)
 const isDurationMenuOpen = ref(false)
 
 const isMenuOpen = computed(() => {
   return (
-    isPressureMenuOpen.value ||
-    isViscosityMenuOpen.value ||
-    isDurationMenuOpen.value ||
     isFluidMenuOpen.value ||
     isInletMenuOpen.value ||
-    isInjectionMenuOpen.value
+    isInjectionMenuOpen.value ||
+    isPressureMenuOpen.value ||
+    isViscosityMenuOpen.value ||
+    isDurationMenuOpen.value
   )
 })
+
+const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
+const { addState } = useStateStore()
+const { fluidNames } = storeToRefs(useFluidStore())
 
 const flowControl = computed(() => {
   const data = findNode(props.id)?.data
@@ -125,6 +122,8 @@ const flowControl = computed(() => {
   return data.flowControl
 })
 
+const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
+const injections = ['pump', 'needle']
 let oldFlowControl: FlowControl = Object.assign({}, flowControl.value)
 
 watch(

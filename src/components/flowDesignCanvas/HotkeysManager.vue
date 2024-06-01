@@ -2,21 +2,24 @@
   <div></div>
 </template>
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
+import { useVueFlow } from '@vue-flow/core'
 import hotkeys from 'hotkeys-js'
+
+import { type StateController, ActionType } from '@/types/stateController'
+
 import {
   createDeleteNodeState,
   createDeleteEdgeState,
   createDeleteMultiEdgesState,
   createDeleteMultiNodesState
 } from '@/composables/useStateCreation'
-import { useClipboardStore } from '@/stores/useClipboardStore'
-import { ObjectType } from '@/stores/useClipboardStore'
+
+import { useClipboardStore, ObjectType } from '@/stores/useClipboardStore'
 import { useSensorStore } from '@/stores/useSensorStore'
-import { useVueFlow } from '@vue-flow/core'
-import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
-import { storeToRefs } from 'pinia'
 
 const { getProcessNodeId, getConditionNodeId, getProcessScheduleNodeId, getPauseNodeId } =
   useNodeIdStore()

@@ -8,8 +8,8 @@
 
 <script setup lang="ts">
 import { useVueFlow } from '@vue-flow/core'
-import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteEdgeState } from '@/composables/useStateCreation'
+import { useStateStore } from '@/stores/useStateStore'
 
 const props = defineProps<{
   id: string | null

@@ -20,21 +20,21 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
-import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
+import { useStateStore } from '@/stores/useStateStore'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 
 const props = defineProps<{
   id: string | null
   isEditMenuOpen: boolean
 }>()
 
+const isPauseMenuOpen = ref(false)
+
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
-
-const isPauseMenuOpen = ref(false)
 
 const pause = computed(() => {
   const data = findNode(props.id)?.data
@@ -46,6 +46,8 @@ const pause = computed(() => {
   return data.pause
 })
 
+let oldPause = Object.assign({}, pause.value)
+
 watch(
   () => props.isEditMenuOpen,
   (newValue) => {
@@ -54,8 +56,6 @@ watch(
     }
   }
 )
-
-let oldPause = Object.assign({}, pause.value)
 
 watch(isPauseMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {

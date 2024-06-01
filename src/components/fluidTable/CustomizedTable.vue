@@ -80,16 +80,26 @@
 </template>
 
 <script setup lang="ts">
-import { type Fluid } from '@/types/fluid'
 import { ref } from 'vue'
+import { type Fluid } from '@/types/fluid'
+import { useFluidStore } from '@/stores/useFluidStore'
 import CustomizedButton from './CustomizedButton.vue'
 import DeleteConfirmationDialog from './DeleteConfirmationDialog.vue'
 import ItemCreateEditDialog from './ItemCreateEditDialog.vue'
-import { useFluidStore } from '@/stores/useFluidStore'
-
-const fluidStore = useFluidStore()
 
 const isTableVisible = defineModel<boolean>('isTableVisible')
+
+const dialogDelete = ref(false)
+const deleteItemIndex = ref(-1)
+
+const dialogCreateOrEdit = ref(false)
+const createOrEditItemIndex = ref(-1)
+const name = ref('')
+const color = ref('')
+const viscosity = ref(0)
+const withParticle = ref<'Yes' | 'No'>('No')
+const particleSize = ref(0)
+const particleDensity = ref(0)
 
 const headers: any = [
   { title: 'Name', align: 'start', sortable: false, key: 'name', width: '20%' },
@@ -113,17 +123,7 @@ const headers: any = [
   { title: 'Actions', align: 'start', sortable: false, key: 'actions', width: '15%' }
 ]
 
-const dialogDelete = ref(false)
-const deleteItemIndex = ref(-1)
-
-const dialogCreateOrEdit = ref(false)
-const createOrEditItemIndex = ref(-1)
-const name = ref('')
-const color = ref('')
-const viscosity = ref(0)
-const withParticle = ref<'Yes' | 'No'>('No')
-const particleSize = ref(0)
-const particleDensity = ref(0)
+const fluidStore = useFluidStore()
 
 function deleteItem(index: number) {
   dialogDelete.value = true

@@ -62,28 +62,26 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
-import CustomizedDropdown from '../general/CustomizedDropdown.vue'
-// import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+// import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 
 const props = defineProps<{
   id: string | null
   isEditMenuOpen: boolean
 }>()
 
-const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
-const { addState } = useStateStore()
-
-const sensors = ['color sensor', 'viscosity sensor']
-
 const isSensorMenuOpen = ref(false)
 const isOperatorMenuOpen = ref(false)
 const isColorMenuOpen = ref(false)
 const isViscosityMenuOpen = ref(false)
+
+const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
+const { addState } = useStateStore()
 
 const condition = computed(() => {
   const data = findNode(props.id)?.data
@@ -98,8 +96,6 @@ const condition = computed(() => {
   }
   return data.condition
 })
-
-let oldCondition = Object.assign({}, condition.value)
 
 const dynamicOperators = computed(() => {
   const selectedSensor = condition.value.sensor
@@ -117,10 +113,13 @@ const isMenuOpen = computed(() => {
   return (
     isSensorMenuOpen.value ||
     isOperatorMenuOpen.value ||
-    isViscosityMenuOpen.value ||
-    isColorMenuOpen.value
+    isColorMenuOpen.value ||
+    isViscosityMenuOpen.value
   )
 })
+
+const sensors = ['color sensor', 'viscosity sensor']
+let oldCondition = Object.assign({}, condition.value)
 
 watch(
   () => props.isEditMenuOpen,

@@ -19,9 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import CustomizedButton from './CustomizedButton.vue'
 import { defineModel } from 'vue'
+import CustomizedButton from './CustomizedButton.vue'
 
-const emit = defineEmits(['close', 'cancel', 'confirm'])
 const isDeleteDialogVisible = defineModel<boolean>()
+const emit = defineEmits(['close', 'cancel', 'confirm'])
 </script>

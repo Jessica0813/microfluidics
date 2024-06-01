@@ -70,6 +70,7 @@ function zoomOut() {
     transform.value.k = 0.2
   }
   zoomTo(transform.value.k)
+
   setTimeout(function () {
     setZooming()
   }, 200)

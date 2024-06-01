@@ -34,26 +34,51 @@
 </template>
 
 <script setup lang="ts">
-import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useVueFlow } from '@vue-flow/core'
+import type { NodeDragEvent } from '@vue-flow/core'
+import { select } from 'd3'
+import { drag, type D3DragEvent } from 'd3-drag'
+
+import { type StateController, ActionType } from '@/types/stateController'
+
 import {
   useMenuPositionCalculator,
   useMenuPositionCalculatorForEdges
 } from '@/composables/useMenuPositionCalculator'
+
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
+import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import { useStateStore } from '@/stores/useStateStore'
+
 import ProcessEditMenu from './ProcessEditMenu.vue'
 import PauseEditMenu from './PauseEditMenu.vue'
 import ConditionEditMenu from './ConditionEditMenu.vue'
 import ScheduleEditMenu from './ScheduleEditMenu.vue'
 import EdgeEditMenu from './EdgeEditMenu.vue'
-import { select } from 'd3'
-import { drag } from 'd3-drag'
-import type { D3DragEvent } from 'd3-drag'
-import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
-import type { NodeDragEvent } from '@vue-flow/core'
-import { useNodeIdStore } from '@/stores/useNodeIdStore'
-import { type StateController, ActionType } from '@/types/stateController'
-import { useStateStore } from '@/stores/useStateStore'
-import { storeToRefs } from 'pinia'
+
+const flowControl = ref({
+  id: '-1',
+  name: 'xyz',
+  selected: false,
+  startTime: 0.0,
+  endTime: 1.0,
+  duration: 1.0,
+  inlet: 'inlet 1',
+  injection: 'pump',
+  fluid: 'water',
+  pressure: 0,
+  flowrate: 0
+})
+const floatingRef = ref<HTMLDivElement | null>(null)
+const isEditMenuOpen = ref(false)
+const selectedId = ref<string | null>(null)
+const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+const isDraggable = ref(false)
+const isNodeOverScheduleNode = ref(false)
+let nodePositionbeforeDrag = { x: 0, y: 0 }
 
 const { getSubProcessId } = useNodeIdStore()
 const { addState } = useStateStore()
@@ -71,28 +96,6 @@ const {
   removeNodes
 } = useVueFlow()
 const { isFlowChartCanvasZooming } = storeToRefs(useFlowChartCanvasStore())
-
-const flowControl = ref({
-  id: '-1',
-  name: 'xyz',
-  selected: false,
-  startTime: 0.0,
-  endTime: 1.0,
-  duration: 1.0,
-  inlet: 'inlet 1',
-  injection: 'pump',
-  fluid: 'water',
-  pressure: 0,
-  flowrate: 0
-})
-
-const floatingRef = ref<HTMLDivElement | null>(null)
-const isEditMenuOpen = ref(false)
-const selectedId = ref<string | null>(null)
-const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
-const isDraggable = ref(false)
-const isNodeOverScheduleNode = ref(false)
-let nodePositionbeforeDrag = { x: 0, y: 0 }
 
 function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
   if (vueFlowRef.value === null) return

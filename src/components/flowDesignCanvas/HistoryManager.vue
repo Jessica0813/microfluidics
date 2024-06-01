@@ -48,12 +48,18 @@
 
 <script setup lang="ts">
 import { useVueFlow } from '@vue-flow/core'
-import { useStateStore } from '@/stores/useStateStore'
-import { ActionType } from '@/types/stateController'
 import type { Connection } from '@vue-flow/core'
-import { useSensorStore } from '@/stores/useSensorStore'
-import type { Sensor } from '@/types/sensor'
 import hotkeys from 'hotkeys-js'
+
+import { ActionType } from '@/types/stateController'
+import type { Sensor } from '@/types/sensor'
+
+import { useStateStore } from '@/stores/useStateStore'
+import { useSensorStore } from '@/stores/useSensorStore'
+
+const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
+  default: true
+})
 
 const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = useStateStore()
 
@@ -62,10 +68,6 @@ const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, remove
 
 const { editSensor, addSensor, deleteSensorWithId, toggleRecordState, removeAllSelectedSensors } =
   useSensorStore()
-
-const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
-  default: true
-})
 
 function undo() {
   removeAllSelectedSensors()

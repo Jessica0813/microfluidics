@@ -8,15 +8,18 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
+
+import { useVueFlow } from '@vue-flow/core'
 import { select } from 'd3-selection'
 import { scaleLinear, scaleBand, axisTop } from 'd3'
-import { onMounted, ref, watch } from 'vue'
-import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
+
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
+
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
 import { useTooltipContent } from '@/composables/useTooltipContent'
-import { useVueFlow } from '@vue-flow/core'
 
 const props = defineProps({
   id: String
@@ -33,13 +36,14 @@ const flowControlProcesses = defineModel<FlowControlProcess[]>('flowControlProce
 })
 const editedProcess = defineModel<FlowControlProcess>('editedProcess')
 
-const { findNode } = useVueFlow()
-
 const chart = ref<SVGAElement | null>(null)
+
 let instances: Instance[] = []
 const marginX = 17
 const marginTop = 10
 const barHeight = 20
+
+const { findNode } = useVueFlow()
 
 function onClick(event: MouseEvent) {
   event.stopPropagation()

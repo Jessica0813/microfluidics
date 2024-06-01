@@ -55,11 +55,12 @@ import { ref } from 'vue'
 defineProps({
   items: Array as () => string[]
 })
+
+const selected = defineModel<string>('selected', { default: '' })
+
 const targetRef = ref<HTMLElement | null>(null)
 const floatingRef = ref<HTMLElement | null>(null)
 const isMenuOpen = ref(false)
-
-const selected = defineModel<string>('selected', { default: '' })
 
 const selectItem = (item: string) => {
   selected.value = item

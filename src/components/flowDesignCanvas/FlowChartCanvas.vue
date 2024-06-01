@@ -44,10 +44,17 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, watch, ref } from 'vue'
+
 import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
-import { nextTick, watch } from 'vue'
-import NodePanel from './NodePanel.vue'
 import { Background } from '@vue-flow/background'
+
+import { type StateController, ActionType } from '@/types/stateController'
+
+import { useStateStore } from '@/stores/useStateStore'
+import { useNodeIdStore } from '@/stores/useNodeIdStore'
+
+import NodePanel from './NodePanel.vue'
 import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import PauseNode from './PauseNode.vue'
@@ -57,12 +64,10 @@ import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
-import { type StateController, ActionType } from '@/types/stateController'
-import { useStateStore } from '@/stores/useStateStore'
-import { ref } from 'vue'
 import HistoryManager from './HistoryManager.vue'
-import { useNodeIdStore } from '@/stores/useNodeIdStore'
 import HotkeysManager from './HotkeysManager.vue'
+
+const shouldRecordState = ref(true)
 
 const {
   getProcessNodeId,
@@ -87,8 +92,6 @@ const {
   onNodesChange,
   onEdgesChange
 } = useVueFlow()
-
-const shouldRecordState = ref(true)
 
 const { addState } = useStateStore()
 

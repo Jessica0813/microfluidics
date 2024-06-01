@@ -15,8 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { SmoothStepEdge } from '@vue-flow/core'
-import type { EdgeProps } from '@vue-flow/core'
+import { SmoothStepEdge, type EdgeProps } from '@vue-flow/core'
 
 const props = defineProps<EdgeProps>()
 </script>

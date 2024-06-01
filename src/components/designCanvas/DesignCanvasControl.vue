@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import DeletableDropDown from '../general/DeletableDropDown.vue'
 import ZoomSlider from './ZoomSlider.vue'
-import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 
 defineProps<{
   d3Zoom: D3Zoom | undefined
@@ -18,6 +18,7 @@ defineProps<{
 const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 
 const selected = ref('')
+
 const layer = ref(['layer 1', 'layer 2', 'layer 3'])
 </script>
 

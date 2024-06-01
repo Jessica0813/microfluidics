@@ -62,15 +62,13 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useVueFlow } from '@vue-flow/core'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
-import RangBarChart from './RangeBarChart.vue'
 import { NodeResizer } from '@vue-flow/node-resizer'
 import type { FlowControlProcess } from '@/types/flowControl'
-import { useVueFlow } from '@vue-flow/core'
+import RangBarChart from './RangeBarChart.vue'
 
 const { selected, id, data } = defineProps<NodeProps>()
-
-const { findNode } = useVueFlow()
 
 const nodeIsHovered = ref(false)
 const editedProcess = ref<FlowControlProcess>()
@@ -85,6 +83,8 @@ const scheduledFlowControl = computed(() => {
   }
   return data.scheduledFlowControl
 })
+
+const { findNode } = useVueFlow()
 
 const isSelected = computed(() => {
   const node = findNode(id)

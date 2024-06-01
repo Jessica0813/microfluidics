@@ -1,6 +1,6 @@
-import { type StateController, ActionType } from '@/types/stateController'
 import type { Node } from '@vue-flow/core'
 import type { GraphNode, GraphEdge, RemoveNodes, RemoveEdges } from '@vue-flow/core'
+import { type StateController, ActionType } from '@/types/stateController'
 
 export function createDeleteNodeState(
   getSelectedNodes: GraphNode<any, any, string>[],

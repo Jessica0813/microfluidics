@@ -1,12 +1,16 @@
+import type { Ref } from 'vue'
+
 import { drag } from 'd3-drag'
 import { select } from 'd3-selection'
 import type { Selection, BaseType } from 'd3-selection'
-import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import type { D3DragEvent } from 'd3-drag'
 import type { Instance } from 'tippy.js'
-import { useTooltipContent } from '@/composables/useTooltipContent'
-import type { Ref } from 'vue'
+
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
 import { type StateController, ActionType } from '@/types/stateController'
+
+import { useTooltipContent } from '@/composables/useTooltipContent'
+
 import { useStateStore } from '@/stores/useStateStore'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 

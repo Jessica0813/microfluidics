@@ -60,13 +60,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+
 import { zoom } from 'd3-zoom'
 import { select } from 'd3-selection'
-import { useSensorStore } from '@/stores/useSensorStore'
-import type { Sensor } from '@/types/sensor'
-import { useDrop } from '@/composables/useDrop'
-import SensorPanel from './SensorPanel.vue'
 import type { D3Zoom, D3Selection } from '@/types/d3'
+import hotkeys from 'hotkeys-js'
+
+import type { Sensor } from '@/types/sensor'
+
+import { useDrop } from '@/composables/useDrop'
 import {
   d3UpperLeftResize,
   d3UpperRightResize,
@@ -74,30 +77,31 @@ import {
   d3LowerRightResize,
   d3Drag
 } from '@/composables/useSensorDragandResize'
+
+import { useSensorStore } from '@/stores/useSensorStore'
+import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
+
+import SensorEditMenu from './SensorEditMenu.vue'
+import SensorPanel from './SensorPanel.vue'
 import DesignCanvasControl from './DesignCanvasControl.vue'
 import IconEnlarge from '../icons/IconEnlarge.vue'
 import IconSchrink from '../icons/IconSchrink.vue'
 import IconScreenSchrink from '../icons/IconScreenSchrink.vue'
-import SensorEditMenu from './SensorEditMenu.vue'
-import hotkeys from 'hotkeys-js'
-import { storeToRefs } from 'pinia'
-import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
 const isDesignCanvasVisible = defineModel<boolean>('isDesignCanvasVisible', { default: true })
 const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'small' })
+
+const svg = ref<HTMLElement | null>(null)
+const d3Zoom = ref<D3Zoom>()
+const d3Selection = ref<D3Selection>()
+const transform = ref({ x: 0, y: 0, k: 1 })
+const isCanvasFocused = ref(false)
+const isButtonHovered = ref(false)
 
 const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
   useSensorStore()
 const { setZooming } = useSensorCanvasStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
-
-const svg = ref<HTMLElement | null>(null)
-const transform = ref({ x: 0, y: 0, k: 1 })
-const d3Zoom = ref<D3Zoom>()
-const d3Selection = ref<D3Selection>()
-
-const isCanvasFocused = ref(false)
-const isButtonHovered = ref(false)
 
 function onDragOver(event: any) {
   event.preventDefault()

@@ -23,7 +23,7 @@
       :id="selectedId"
       :is-edit-menu-open="isEditMenuOpen"
     />
-    <ScheduledProcessEditMenu
+    <ScheduleEditMenu
       v-else-if="findNode(selectedId)?.type === 'schedule'"
       :id="selectedId"
       :is-edit-menu-open="isEditMenuOpen"
@@ -43,7 +43,7 @@ import {
 import ProcessEditMenu from './ProcessEditMenu.vue'
 import PauseEditMenu from './PauseEditMenu.vue'
 import ConditionEditMenu from './ConditionEditMenu.vue'
-import ScheduledProcessEditMenu from './ScheduledProcessEditMenu.vue'
+import ScheduleEditMenu from './ScheduleEditMenu.vue'
 import EdgeEditMenu from './EdgeEditMenu.vue'
 import { select } from 'd3'
 import { drag } from 'd3-drag'

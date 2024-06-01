@@ -33,7 +33,7 @@
         <ConditionNode v-bind="conditionNodeProps" />
       </template>
       <template #node-schedule="scheduleNodeProps">
-        <ScheduledProcessNode v-bind="scheduleNodeProps" />
+        <ScheduleNode v-bind="scheduleNodeProps" />
       </template>
       <template #edge-custom="props">
         <CustomEdge v-bind="props" />
@@ -52,7 +52,7 @@ import ProcessNode from './ProcessNode.vue'
 import ConditionNode from './ConditionNode.vue'
 import PauseNode from './PauseNode.vue'
 import CustomEdge from './CustomEdge.vue'
-import ScheduledProcessNode from './ScheduledProcessNode.vue'
+import ScheduleNode from './ScheduleNode.vue'
 import UploadDownLoadControls from '../layout/UploadDownloadControls.vue'
 import ZoomSlider from './ZoomSlider.vue'
 import RightSideBar from '../layout/RightSideBar.vue'

@@ -13,7 +13,7 @@
           : ''
     }"
   >
-    <NodeResizer :minWidth="300" :minHeight="150" :color="'transparent'" />
+    <NodeResizer :minWidth="300" :minHeight="150" :color="'transparent'" v-if="selected" />
     <Handle
       type="source"
       :position="Position.Top"
@@ -34,7 +34,15 @@
       :position="Position.Left"
       :class="selected || nodeIsHovered ? '' : 'left-handle'"
     />
-    <div style="background-color: #eeeeee; border-radius: 4px; height: 100%">
+    <div
+      style="
+        background-color: #eeeeee;
+        border-radius: 4px;
+        height: 100%;
+        min-height: 150px;
+        min-width: 300px;
+      "
+    >
       <div class="d-flex align-center py-3 px-4">
         <p style="font-size: 12px">
           {{ 'Total Duration: ' + scheduledFlowControl.totalDuration + 's' }}

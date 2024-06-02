@@ -125,42 +125,34 @@ function showSensorEditMenu() {
   isEditMenuOpen.value = true
 }
 
-watch(
-  selectedSensors,
-  (newValue, oldValue) => {
-    if (newValue !== oldValue && newValue.length === 1) {
-      selectedSensor.value = newValue[0]
-      const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-      useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
-        position.value = pos
-      })
-      isEditMenuOpen.value = true
-      oldType = selectedSensor.value.type
-      oldName = selectedSensor.value.name
-    } else if (newValue.length === 0 || newValue.length > 1) {
-      selectedSensor.value = {
-        id: '',
-        name: '',
-        type: 'temperature',
-        position: { x: 0, y: 0 },
-        radius: 20,
-        selected: false
-      }
-      isEditMenuOpen.value = false
-      oldType = 'temperature'
-      oldName = ''
-    }
-  },
-  { deep: true }
-)
+watch([selectedSensors, isZoomingOrDragging], ([newSelectedSensors, newIsZoomingOrDragging]) => {
+  if (newIsZoomingOrDragging) {
+    isEditMenuOpen.value = false
+    return
+  }
 
-watch(isZoomingOrDragging, (newValue) => {
-  if (selectedSensor.value.id !== '') {
-    if (newValue) {
-      isEditMenuOpen.value = false
-    } else {
-      showSensorEditMenu()
+  if (newSelectedSensors.length === 1) {
+    selectedSensor.value = newSelectedSensors[0]
+    // const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+    // useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
+    //   position.value = pos
+    // })
+    // isEditMenuOpen.value = true
+    showSensorEditMenu()
+    oldType = selectedSensor.value.type
+    oldName = selectedSensor.value.name
+  } else if (newSelectedSensors.length === 0 || newSelectedSensors.length > 1) {
+    selectedSensor.value = {
+      id: '',
+      name: '',
+      type: 'temperature',
+      position: { x: 0, y: 0 },
+      radius: 20,
+      selected: false
     }
+    isEditMenuOpen.value = false
+    oldType = 'temperature'
+    oldName = ''
   }
 })
 

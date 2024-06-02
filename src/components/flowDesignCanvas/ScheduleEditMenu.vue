@@ -147,7 +147,6 @@ const editedProcessId = ref(-1)
 
 const isMenuOpen = computed(() => {
   return (
-    isTotalDurationMenuOpen.value ||
     isFluidMenuOpen.value ||
     isInletMenuOpen.value ||
     isInjectionMenuOpen.value ||
@@ -256,6 +255,16 @@ function updataState(newData: ScheduledFlowControl) {
     oldScheduledFlowControl = newData
   }
 }
+
+watch(isTotalDurationMenuOpen, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    const node = findNode(props.id)
+    const newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
+    if (node && newData.totalDuration !== oldScheduledFlowControl.totalDuration) {
+      updataState(newData)
+    }
+  }
+})
 
 watch(isMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {

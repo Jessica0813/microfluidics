@@ -23,6 +23,7 @@
     <v-menu
       v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
       v-model="isColorMenuOpen"
+      :close-on-content-click="false"
       offset="10"
     >
       <template v-slot:activator="{ props }">
@@ -32,9 +33,9 @@
       </template>
       <v-color-picker
         v-model="condition.color"
-        show-swatches
         hide-sliders
-        hide-inputs
+        width="300px"
+        mode="hex"
       ></v-color-picker>
     </v-menu>
     <v-menu

@@ -56,6 +56,7 @@ import type { Sensor } from '@/types/sensor'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
+import { select } from 'd3'
 
 const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
   default: true
@@ -86,6 +87,7 @@ function undo() {
             const node = findNode(state.objectId[i])
             if (node) {
               node.position = state.oldState[i].objectPosition || { x: 0, y: 0 }
+              node.selected = true
             }
           }
           break
@@ -104,7 +106,8 @@ function undo() {
                   id: state.objectId[i],
                   type: state.oldState[i].objectType || 'process',
                   position: state.oldState[i].objectPosition || { x: 0, y: 0 },
-                  data: {}
+                  data: {},
+                  selected: true
                 }
                 if (state.objectId[i].includes('process')) {
                   node.data = { flowControl: state.oldState[i].data }
@@ -130,6 +133,10 @@ function undo() {
                 } else if (state.objectId[i].includes('edge')) {
                   addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: '' }])
                 }
+                const readdedEdge = findEdge(state.objectId[i])
+                if (readdedEdge) {
+                  readdedEdge.selected = true
+                }
               }
             }
           }
@@ -142,7 +149,8 @@ function undo() {
               position: {
                 x: state.oldState[i].objectPosition?.x || 0,
                 y: state.oldState[i].objectPosition?.y || 0
-              }
+              },
+              selected: true
             })
           }
           toggleRecordState()
@@ -183,12 +191,14 @@ function undo() {
           const scheduleNode = findNode(state.objectId[0])
           if (scheduleNode && scheduleNode.type === 'schedule') {
             scheduleNode.data.scheduledFlowControl = state.oldState[0].data
+            scheduleNode.selected = true
           }
           const node = {
             id: state.objectId[1],
             type: state.oldState[1].objectType || 'process',
             position: state.oldState[1].objectPosition || { x: 0, y: 0 },
-            data: state.oldState[1].data
+            data: state.oldState[1].data,
+            selected: true
           }
           addNodes([node])
           break
@@ -210,6 +220,7 @@ function undo() {
       const node = findNode(state.objectId)
       if (node) {
         node.position = state.oldState.objectPosition || { x: 0, y: 0 }
+        node.selected = true
       }
       break
     }
@@ -227,6 +238,7 @@ function undo() {
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
         }
+        node.selected = true
       }
       break
     }
@@ -251,6 +263,10 @@ function undo() {
       } else if (state.objectId.includes('edge')) {
         addEdges([{ ...edge, id: state.objectId, type: 'custom', label: '' }])
       }
+      const readdedEdge = findEdge(state.objectId)
+      if (readdedEdge) {
+        readdedEdge.selected = true
+      }
       break
     }
     case ActionType.UPDATE_EDGE: {
@@ -260,6 +276,7 @@ function undo() {
         edge.target = state.oldState.target || ''
         edge.sourceHandle = state.oldState.sourceHandleId
         edge.targetHandle = state.oldState.targetHandleId
+        edge.selected = true
       }
       break
     }
@@ -275,7 +292,7 @@ function undo() {
         type: 'temperature',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: state.oldState.objectRadius || 20,
-        selected: false
+        selected: true
       }
       addSensor(sensor)
       toggleRecordState()
@@ -287,7 +304,8 @@ function undo() {
         position: {
           x: state.oldState.objectPosition?.x || 0,
           y: state.oldState.objectPosition?.y || 0
-        }
+        },
+        selected: true
       })
       toggleRecordState()
       break
@@ -299,7 +317,8 @@ function undo() {
           x: state.oldState.objectPosition?.x || 0,
           y: state.oldState.objectPosition?.y || 0
         },
-        radius: state.oldState.objectRadius || 20
+        radius: state.oldState.objectRadius || 20,
+        selected: true
       })
       toggleRecordState()
       break
@@ -307,7 +326,8 @@ function undo() {
     case ActionType.UPDATE_SENSOR_TYPE: {
       toggleRecordState()
       editSensor(state.objectId, {
-        type: state.oldState.objectType || 'temperature'
+        type: state.oldState.objectType || 'temperature',
+        selected: true
       })
       toggleRecordState()
       break
@@ -315,7 +335,8 @@ function undo() {
     case ActionType.UPDATE_SENSOR_NAME: {
       toggleRecordState()
       editSensor(state.objectId, {
-        name: state.oldState.objectName
+        name: state.oldState.objectName,
+        selected: true
       })
       toggleRecordState()
       break
@@ -350,6 +371,7 @@ function redo() {
             const node = findNode(state.objectId[i])
             if (node) {
               node.position = state.newState[i].objectPosition || { x: 0, y: 0 }
+              node.selected = true
             }
           }
           break
@@ -385,7 +407,8 @@ function redo() {
               position: {
                 x: state.newState[i].objectPosition?.x || 0,
                 y: state.newState[i].objectPosition?.y || 0
-              }
+              },
+              selected: true
             })
           }
           toggleRecordState()
@@ -403,7 +426,8 @@ function redo() {
               id: state.objectId[i],
               type: state.oldState[i].objectType || 'process',
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
-              data: state.oldState[i].data
+              data: state.oldState[i].data,
+              selected: true
             }
             addNodes([node])
           }
@@ -418,7 +442,7 @@ function redo() {
               type: state.oldState[i].objectType || 'temperature',
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               radius: state.oldState[i].objectRadius || 20,
-              selected: false
+              selected: true
             }
             addSensor(sensor)
           }
@@ -429,6 +453,7 @@ function redo() {
           const scheduleNode = findNode(state.objectId[0])
           if (scheduleNode && scheduleNode.type === 'schedule') {
             scheduleNode.data.scheduledFlowControl = state.newState[0].data
+            scheduleNode.selected = true
           }
           const processNode = findNode(state.objectId[1])
           if (processNode) {
@@ -447,7 +472,8 @@ function redo() {
         id: state.objectId,
         type: state.oldState.objectType || 'process',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
-        data: {}
+        data: {},
+        selected: true
       }
       const data = { ...state.oldState.data }
       if (node.type === 'process') {
@@ -466,6 +492,7 @@ function redo() {
       const node = findNode(state.objectId)
       if (node) {
         node.position = (state.newState && state.newState.objectPosition) || { x: 0, y: 0 }
+        node.selected = true
       }
       break
     }
@@ -483,6 +510,7 @@ function redo() {
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
         }
+        node.selected = true
       }
       break
     }
@@ -500,6 +528,10 @@ function redo() {
       } else if (state.objectId.includes('edge')) {
         addEdges([{ ...edge, id: state.objectId, type: 'custom', label: '' }])
       }
+      const readdedEdge = findEdge(state.objectId)
+      if (readdedEdge) {
+        readdedEdge.selected = true
+      }
       break
     }
     case ActionType.DELETE_EDGE: {
@@ -516,6 +548,7 @@ function redo() {
         edge.target = state.newState?.target || ''
         edge.sourceHandle = state.newState?.sourceHandleId
         edge.targetHandle = state.newState?.targetHandleId
+        edge.selected = true
       }
       break
     }
@@ -527,7 +560,7 @@ function redo() {
         type: 'temperature',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: 20,
-        selected: false
+        selected: true
       }
       addSensor(sensor)
       toggleRecordState()
@@ -543,7 +576,8 @@ function redo() {
         position: {
           x: state.newState?.objectPosition?.x || 0,
           y: state.newState?.objectPosition?.y || 0
-        }
+        },
+        selected: true
       })
       toggleRecordState()
       break
@@ -555,7 +589,8 @@ function redo() {
           x: state.newState?.objectPosition?.x || 0,
           y: state.newState?.objectPosition?.y || 0
         },
-        radius: state.newState?.objectRadius || 20
+        radius: state.newState?.objectRadius || 20,
+        selected: true
       })
       toggleRecordState()
       break
@@ -563,7 +598,8 @@ function redo() {
     case ActionType.UPDATE_SENSOR_TYPE: {
       toggleRecordState()
       editSensor(state.objectId, {
-        type: state.newState?.objectType || 'temperature'
+        type: state.newState?.objectType || 'temperature',
+        selected: true
       })
       toggleRecordState()
       break
@@ -571,7 +607,8 @@ function redo() {
     case ActionType.UPDATE_SENSOR_NAME: {
       toggleRecordState()
       editSensor(state.objectId, {
-        name: state.newState?.objectName
+        name: state.newState?.objectName,
+        selected: true
       })
       toggleRecordState()
       break

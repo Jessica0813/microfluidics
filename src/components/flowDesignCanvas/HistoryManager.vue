@@ -56,7 +56,6 @@ import type { Sensor } from '@/types/sensor'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
-import { select } from 'd3'
 
 const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
   default: true

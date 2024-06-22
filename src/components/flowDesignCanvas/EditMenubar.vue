@@ -182,26 +182,45 @@ watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
     oldSelectedElements.length === 1 &&
     newSelectedElements[0].id === oldSelectedElements[0].id
   ) {
+    console.log('clicked on the same element')
     return
   }
   if (newSelectedElements.length === 1) {
-    if (selectedId.value === null) {
-      selectedId.value = newSelectedElements[0].id
-      isEditMenuOpen.value = true
-    } else if (newSelectedElements[0] !== oldSelectedElements[0]) {
-      selectedId.value = newSelectedElements[0].id
-    }
+    selectedId.value = newSelectedElements[0].id
+
+    let element = document.getElementById(selectedId.value!)
+
     if (selectedId.value.includes('edge')) {
-      const element = document.getElementById(selectedId.value!)
-      useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
-        position.value = pos
-      })
-      return
+      if (!element) {
+        setTimeout(() => {
+          element == document.getElementById(selectedId.value!)
+          isEditMenuOpen.value = true
+          useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
+            position.value = pos
+          })
+        }, 1000)
+      } else {
+        isEditMenuOpen.value = true
+        useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
+          position.value = pos
+        })
+      }
+    } else {
+      if (!element) {
+        setTimeout(() => {
+          element = document.getElementById(selectedId.value!)
+          isEditMenuOpen.value = true
+          useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+            position.value = pos
+          })
+        }, 800)
+      } else {
+        isEditMenuOpen.value = true
+        useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+          position.value = pos
+        })
+      }
     }
-    const element = document.getElementById(selectedId.value!)
-    useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-      position.value = pos
-    })
   } else {
     isEditMenuOpen.value = false
     selectedId.value = null
@@ -237,6 +256,9 @@ onNodeDragStart((dragEvent: NodeDragEvent) => {
 })
 
 onNodeDrag((dragEvent: NodeDragEvent) => {
+  if (isEditMenuOpen.value) {
+    isEditMenuOpen.value = false
+  }
   checkIfNodeIsOverScheduleNode(dragEvent)
 })
 

@@ -234,12 +234,22 @@ watch(
       useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
         position.value = pos
       })
-    }
-    if (newValue.selected && selectedId.value && newValue.id !== oldValue.id) {
+    } else if (newValue.selected && selectedId.value) {
       const element = document.getElementById(`${selectedId.value}-process-group-${newValue.id}`)
-      useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-        position.value = pos
-      })
+      if (!element) {
+        setTimeout(() => {
+          const element = document.getElementById(
+            `${selectedId.value}-process-group-${newValue.id}`
+          )
+          useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+            position.value = pos
+          })
+        }, 100)
+      } else {
+        useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
+          position.value = pos
+        })
+      }
     }
   },
   {
@@ -299,7 +309,8 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
       newState: [
         {
           objectPosition: dragEvent.intersections[0].position,
-          data: newData
+          data: newData,
+          changedSubprocessId: subProcessId
         }
       ]
     }

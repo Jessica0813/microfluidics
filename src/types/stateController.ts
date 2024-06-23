@@ -34,11 +34,11 @@ export interface state {
   objectType?: string
   objectRadius?: number
   data: FlowControl | ScheduledFlowControl | Condition | Sensor | any
+  changedSubprocessId?: string
   source?: string
   target?: string
   sourceHandleId?: string
   targetHandleId?: string
-  isChangeFromProcessNode?: boolean
 }
 export interface StateController {
   type: ActionType

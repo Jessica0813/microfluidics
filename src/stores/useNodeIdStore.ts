@@ -28,7 +28,7 @@ export const useNodeIdStore = defineStore('nodeId', () => {
   }
 
   function getSubProcessId() {
-    return subProcessId++
+    return `${subProcessId++}`
   }
 
   function getEdgeId() {

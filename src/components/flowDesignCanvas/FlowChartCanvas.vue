@@ -204,7 +204,8 @@ function onDrop(event: any) {
             },
             newState: {
               objectPosition: node.position,
-              data: newData
+              data: newData,
+              changedSubprocessId: subProcessId
             }
           }
           addState(state)

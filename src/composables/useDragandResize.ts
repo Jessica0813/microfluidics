@@ -83,7 +83,8 @@ function updateContent(
 function updateState(
   oldScheduledFlowControl: ScheduledFlowControl,
   newScheduledFlowControl: ScheduledFlowControl,
-  id: string
+  id: string,
+  changedSubprocessId: string | undefined
 ) {
   const { addState } = useStateStore()
   const state: StateController = {
@@ -91,10 +92,12 @@ function updateState(
     name: 'update node data ' + id,
     objectId: id,
     oldState: {
-      data: oldScheduledFlowControl
+      data: oldScheduledFlowControl,
+      changedSubprocessId: changedSubprocessId
     },
     newState: {
-      data: newScheduledFlowControl
+      data: newScheduledFlowControl,
+      changedSubprocessId: changedSubprocessId
     }
   }
   addState(state)
@@ -166,7 +169,7 @@ export function useDrag(
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       oldScheduledFlowControl.processes[editedProcessIndex].selected = false
       newScheduledFlowControl.processes[editedProcessIndex].selected = false
-      updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
+      updateState(oldScheduledFlowControl, newScheduledFlowControl, id, event.subject.id)
     }
 
     updateContent(event)
@@ -232,7 +235,7 @@ export function useRightResize(
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       oldScheduledFlowControl.processes[editedProcessIndex].selected = false
       newScheduledFlowControl.processes[editedProcessIndex].selected = false
-      updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
+      updateState(oldScheduledFlowControl, newScheduledFlowControl, id, event.subject.id)
     }
 
     updateContent(event)
@@ -297,7 +300,7 @@ export function useLeftResize(
       const newScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
       oldScheduledFlowControl.processes[editedProcessIndex].selected = false
       newScheduledFlowControl.processes[editedProcessIndex].selected = false
-      updateState(oldScheduledFlowControl, newScheduledFlowControl, id)
+      updateState(oldScheduledFlowControl, newScheduledFlowControl, id, event.subject.id)
     }
 
     updateContent(event)

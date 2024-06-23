@@ -235,7 +235,7 @@ watch(
   }
 )
 
-function updataState(newData: ScheduledFlowControl) {
+function updataState(newData: ScheduledFlowControl, changedSubprocessId: string | undefined) {
   const node = findNode(props.id)
   if (node) {
     const state: StateController = {
@@ -244,11 +244,13 @@ function updataState(newData: ScheduledFlowControl) {
       objectId: node.id,
       oldState: {
         objectPosition: node.position,
-        data: oldScheduledFlowControl
+        data: oldScheduledFlowControl,
+        changedSubprocessId: changedSubprocessId
       },
       newState: {
         objectPosition: node.position,
-        data: newData
+        data: newData,
+        changedSubprocessId: changedSubprocessId
       }
     }
     addState(state)
@@ -261,7 +263,7 @@ watch(isTotalDurationMenuOpen, (newValue, oldValue) => {
     const node = findNode(props.id)
     const newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     if (node && newData.totalDuration !== oldScheduledFlowControl.totalDuration) {
-      updataState(newData)
+      updataState(newData, undefined)
     }
   }
 })
@@ -283,7 +285,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         flowControl.value.injection !== oldFlowControl.injection ||
         flowControl.value.inlet !== oldFlowControl.inlet
       ) {
-        updataState(newData)
+        updataState(newData, flowControl.value.id)
       } else if (
         flowControl.value.startTime !== oldFlowControl.startTime ||
         flowControl.value.endTime !== oldFlowControl.endTime
@@ -291,7 +293,7 @@ watch(isMenuOpen, (newValue, oldValue) => {
         flowControl.value.duration = flowControl.value.endTime - flowControl.value.startTime
         newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
         newData.processes[editedProcessId.value].selected = false
-        updataState(newData)
+        updataState(newData, flowControl.value.id)
       }
       oldFlowControl = Object.assign({}, flowControl.value)
     }

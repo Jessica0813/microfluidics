@@ -53,6 +53,7 @@ import hotkeys from 'hotkeys-js'
 
 import { ActionType } from '@/types/stateController'
 import type { Sensor } from '@/types/sensor'
+import type { FlowControlProcess } from '@/types/flowControl'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
@@ -236,6 +237,15 @@ function undo() {
           node.data.condition = data
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
+          if (state.oldState.changedSubprocessId) {
+            const id = state.oldState.changedSubprocessId
+            const subprocess = node.data.scheduledFlowControl.processes.find(
+              (process: FlowControlProcess) => process.id === id
+            )
+            if (subprocess) {
+              subprocess.selected = true
+            }
+          }
         }
         node.selected = true
       }
@@ -453,6 +463,15 @@ function redo() {
           if (scheduleNode && scheduleNode.type === 'schedule') {
             scheduleNode.data.scheduledFlowControl = state.newState[0].data
             scheduleNode.selected = true
+            if (state.newState[0].changedSubprocessId) {
+              const id = state.newState[0].changedSubprocessId
+              const subprocess = scheduleNode.data.scheduledFlowControl.processes.find(
+                (process: FlowControlProcess) => process.id === id
+              )
+              if (subprocess) {
+                subprocess.selected = true
+              }
+            }
           }
           const processNode = findNode(state.objectId[1])
           if (processNode) {
@@ -508,6 +527,15 @@ function redo() {
           node.data.condition = data
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
+          if (state.newState?.changedSubprocessId) {
+            const id = state.newState?.changedSubprocessId
+            const subprocess = node.data.scheduledFlowControl.processes.find(
+              (process: FlowControlProcess) => process.id === id
+            )
+            if (subprocess) {
+              subprocess.selected = true
+            }
+          }
         }
         node.selected = true
       }

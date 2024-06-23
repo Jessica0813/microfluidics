@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Sensor } from '@/types/sensor.ts'
 import { useStateStore } from './useStateStore'
 import { type StateController, ActionType } from '@/types/stateController'
@@ -11,7 +11,7 @@ export const useSensorStore = defineStore('sensor', () => {
 
   const sensors = ref<Sensor[]>([])
 
-  const selectedSensors = ref<Sensor[]>([])
+  const selectedSensors = computed(() => sensors.value.filter((sensor) => sensor.selected))
 
   const shouldRecordState = ref(true)
 
@@ -98,7 +98,7 @@ export const useSensorStore = defineStore('sensor', () => {
         addState(state)
       }
     }
-    selectedSensors.value = []
+    // selectedSensors.value = []
   }
 
   function deleteSensorWithId(id: string) {
@@ -144,7 +144,6 @@ export const useSensorStore = defineStore('sensor', () => {
 
     if (sensorIndex !== -1) {
       sensors.value[sensorIndex].selected = true
-      selectedSensors.value.push(sensors.value[sensorIndex])
     }
 
     if (isMetaKeyPressed.value) {
@@ -157,7 +156,6 @@ export const useSensorStore = defineStore('sensor', () => {
       const sensorIndex = sensors.value.findIndex((sensor) => sensor.id === sensorId)
       if (sensorIndex !== -1) {
         sensors.value[sensorIndex].selected = true
-        selectedSensors.value.push(sensors.value[sensorIndex])
       }
     })
   }
@@ -170,7 +168,6 @@ export const useSensorStore = defineStore('sensor', () => {
         sensors.value[sensorIndex].selected = false
       }
     })
-    selectedSensors.value = []
   }
 
   return {

@@ -164,7 +164,7 @@ function undo() {
               type: 'temperature',
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               radius: state.oldState[i].objectRadius || 20,
-              selected: false
+              selected: true
             }
             addSensor(sensor)
           }

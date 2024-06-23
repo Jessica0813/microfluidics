@@ -177,14 +177,13 @@ function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
 }
 
 watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
-  if (
-    newSelectedElements.length === 1 &&
-    oldSelectedElements.length === 1 &&
-    newSelectedElements[0].id === oldSelectedElements[0].id
-  ) {
-    console.log('clicked on the same element')
-    return
-  }
+  // if (
+  //   newSelectedElements.length === 1 &&
+  //   oldSelectedElements.length === 1 &&
+  //   newSelectedElements[0].id === oldSelectedElements[0].id
+  // ) {
+  //   return
+  // }
   if (newSelectedElements.length === 1) {
     selectedId.value = newSelectedElements[0].id
 

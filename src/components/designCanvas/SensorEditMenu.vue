@@ -20,7 +20,7 @@
             <v-icon size="small" color="#66615b">mdi-leak</v-icon>
           </button>
         </template>
-        <CustomizedDropdown v-model:selected="selectedSensor.type" :items="sensorType" />
+        <CustomizedDropdown v-model:selected="selectedSensor.type" :items="sensorTypes" />
       </v-menu>
       <v-menu :close-on-content-click="false" offset="10" v-model="isNameMenuOpen">
         <template v-slot:activator="{ props }">
@@ -79,7 +79,7 @@ const selectedSensor = ref<Sensor>({
   selected: false
 })
 
-const sensorType = ['temperature', 'speed']
+const sensorTypes = ['temperature', 'viscosity', 'color']
 let oldType = 'temperature'
 let oldName = ''
 const d3Drag = drag<HTMLDivElement, any, any>()

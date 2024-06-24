@@ -12,7 +12,11 @@
     }"
   >
     <SensorEditMenu :design-canvas-ref="svg" :transform="transform" />
-    <SensorPanel class="sensor-panel" v-show="isDesignCanvasVisible" />
+    <SensorPanel
+      class="sensor-panel"
+      v-show="isDesignCanvasVisible"
+      v-model:isPanelMenuOpen="isPanelMenuOpen"
+    />
     <svg ref="svg" width="100%" height="100%" @click="removeSelectedSensor">
       <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -97,6 +101,7 @@ const d3Selection = ref<D3Selection>()
 const transform = ref({ x: 0, y: 0, k: 1 })
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
+const isPanelMenuOpen = ref(false)
 
 const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
   useSensorStore()
@@ -112,12 +117,14 @@ function onDragOver(event: any) {
 }
 
 function onDrop(event: any) {
-  const type = event.dataTransfer?.getData('application/desgin')
-  if (type !== 'temperature') return
   if (!svg.value) return
-  const left = svg.value.getBoundingClientRect().left
-  const top = svg.value.getBoundingClientRect().top
-  useDrop(left, top, event, transform.value, getSensorId(), addSensor)
+  const type = event.dataTransfer?.getData('application/desgin')
+  if (type === 'temperature' || type === 'color' || type === 'viscosity') {
+    const left = svg.value.getBoundingClientRect().left
+    const top = svg.value.getBoundingClientRect().top
+    useDrop(left, top, event, transform.value, getSensorId(), addSensor)
+  }
+  isPanelMenuOpen.value = false
 }
 
 function removeSelectedSensor() {
@@ -244,7 +251,9 @@ onMounted(() => {
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
-      .attr('fill', (sensor) => (sensor.type === 'temperature' ? '#E0E0E0' : '#BDBDBD'))
+      .attr('fill', (sensor) =>
+        sensor.type === 'temperature' ? '#CFD8DC' : sensor.type === 'color' ? '#B0BEC5' : '#90A4AE'
+      )
 
     // add rect around circle
     sensorEnter
@@ -344,7 +353,9 @@ onMounted(() => {
       .attr('r', (sensor) => sensor.radius)
       .attr('cx', (sensor) => sensor.position.x)
       .attr('cy', (sensor) => sensor.position.y)
-      .attr('fill', (sensor) => (sensor.type === 'temperature' ? '#E0E0E0' : '#BDBDBD'))
+      .attr('fill', (sensor) =>
+        sensor.type === 'temperature' ? '#CFD8DC' : sensor.type === 'color' ? '#B0BEC5' : '#90A4AE'
+      )
 
     sensorText
       .attr('x', (sensor) => sensor.position.x)

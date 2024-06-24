@@ -24,7 +24,7 @@ export function useDrop(
     type,
     position,
     name: sensorId,
-    radius: 20,
+    radius: 15,
     selected: false
   }
   addSensor(newSensor)

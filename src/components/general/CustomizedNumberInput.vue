@@ -5,7 +5,7 @@
     v-model="number"
     :min="min"
     :max="max"
-    class="custom-input nodrag"
+    class="custom-input"
     :style="{
       width: isLargeWidth ? '' : '100px'
     }"

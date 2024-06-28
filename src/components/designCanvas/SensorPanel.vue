@@ -1,6 +1,6 @@
 <template>
   <div class="panel text-center flex-column elevation-1">
-    <v-menu offset="3" v-model="isPanelMenuOpen" :location="'end'">
+    <v-menu offset="3" v-model="isPanelMenuOpen" :location="'end center'">
       <template v-slot:activator="{ props }">
         <button class="icon-padding" v-bind="props" v-tippy="{ content: 'Sensor' }">
           <v-icon size="small" color="#515a6e"> mdi-circle-outline </v-icon>
@@ -59,6 +59,7 @@ function onDragStart(event: DragEvent, sensorType: string) {
   font-size: 12px;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 .dropdown-item:hover {
   background-color: #e0e0e0;

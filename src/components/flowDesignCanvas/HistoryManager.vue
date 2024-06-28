@@ -164,7 +164,7 @@ function undo() {
               name: state.oldState[i].objectName || state.objectId[i],
               type: 'temperature',
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
-              radius: state.oldState[i].objectRadius || 20,
+              radius: state.oldState[i].objectRadius || 15,
               selected: true
             }
             addSensor(sensor)
@@ -298,9 +298,9 @@ function undo() {
       const sensor: Sensor = {
         id: state.objectId,
         name: state.oldState.objectName || state.objectId,
-        type: 'temperature',
+        type: state.oldState.objectType || 'temperature',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
-        radius: state.oldState.objectRadius || 20,
+        radius: state.oldState.objectRadius || 15,
         selected: true
       }
       addSensor(sensor)
@@ -326,7 +326,7 @@ function undo() {
           x: state.oldState.objectPosition?.x || 0,
           y: state.oldState.objectPosition?.y || 0
         },
-        radius: state.oldState.objectRadius || 20,
+        radius: state.oldState.objectRadius || 15,
         selected: true
       })
       toggleRecordState()
@@ -450,7 +450,7 @@ function redo() {
               name: state.oldState[i].objectName || state.objectId[i],
               type: state.oldState[i].objectType || 'temperature',
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
-              radius: state.oldState[i].objectRadius || 20,
+              radius: state.oldState[i].objectRadius || 15,
               selected: true
             }
             addSensor(sensor)
@@ -584,9 +584,9 @@ function redo() {
       const sensor: Sensor = {
         id: state.objectId,
         name: state.objectId,
-        type: 'temperature',
+        type: state.oldState.objectType || 'temperature',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
-        radius: 20,
+        radius: state.oldState.objectRadius || 15,
         selected: true
       }
       addSensor(sensor)
@@ -616,7 +616,7 @@ function redo() {
           x: state.newState?.objectPosition?.x || 0,
           y: state.newState?.objectPosition?.y || 0
         },
-        radius: state.newState?.objectRadius || 20,
+        radius: state.newState?.objectRadius || 15,
         selected: true
       })
       toggleRecordState()

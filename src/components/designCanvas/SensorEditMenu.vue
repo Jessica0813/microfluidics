@@ -28,7 +28,11 @@
             <v-icon size="small" color="#66615b">mdi-rename-outline</v-icon>
           </button>
         </template>
-        <CustomizedTextInput v-model:text="selectedSensor.name" />
+        <InputWithValidation
+          v-model:text="selectedSensor.name"
+          :is-valid="isNameValid"
+          @input="handleInput"
+        />
       </v-menu>
       <button
         class="customized-button"
@@ -58,7 +62,7 @@ import { useStateStore } from '@/stores/useStateStore'
 import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
 
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
-import CustomizedTextInput from '../general/CustomizedTextInput.vue'
+import InputWithValidation from '../general/InputWithValidation.vue'
 
 const props = defineProps<{
   designCanvasRef: HTMLElement | null
@@ -70,6 +74,7 @@ const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isEditMenuOpen = ref(false)
 const isNameMenuOpen = ref(false)
 const isDraggable = ref(true)
+const isNameValid = ref(true)
 const selectedSensor = ref<Sensor>({
   id: '',
   name: '',
@@ -88,10 +93,18 @@ let startOffsetY: number = 0
 let x: number = 0
 let y: number = 0
 
-const { deleteSelectedSensor } = useSensorStore()
+const { deleteSelectedSensor, checkIfSensorNameExists } = useSensorStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 const { addState } = useStateStore()
 const { isZoomingOrDragging } = storeToRefs(useSensorCanvasStore())
+
+function handleInput(value: string) {
+  if (value === '') {
+    isNameValid.value = false
+    return
+  }
+  isNameValid.value = !checkIfSensorNameExists(selectedSensor.value.id, value)
+}
 
 function isSensorinView(target: HTMLElement) {
   if (props.designCanvasRef === null) {
@@ -187,12 +200,11 @@ watch(
 )
 
 watch(isNameMenuOpen, (newValue, oldValue) => {
-  if (
-    !newValue &&
-    oldValue &&
-    selectedSensor.value.id !== '' &&
-    oldName !== selectedSensor.value.name
-  ) {
+  if (!newValue && oldValue && !isNameValid.value) {
+    selectedSensor.value.name = oldName
+    isNameValid.value = true
+  }
+  if (!newValue && oldValue && oldName !== selectedSensor.value.name) {
     const newName = selectedSensor.value.name
     const state: StateController = {
       type: ActionType.UPDATE_SENSOR_NAME,
@@ -209,6 +221,7 @@ watch(isNameMenuOpen, (newValue, oldValue) => {
     }
     addState(state)
     oldName = newName
+    isNameValid.value = true
   }
 })
 

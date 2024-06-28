@@ -170,6 +170,10 @@ export const useSensorStore = defineStore('sensor', () => {
     })
   }
 
+  function checkIfSensorNameExists(sensorId: string, name: string) {
+    return sensors.value.some((sensor) => sensor.name === name && sensor.id !== sensorId)
+  }
+
   return {
     sensors,
     selectedSensors,
@@ -184,7 +188,8 @@ export const useSensorStore = defineStore('sensor', () => {
     removeAllSelectedSensors,
     editMultiSensors,
     toggleIsMetaKeyPressed,
-    onSelectMultiSensors
+    onSelectMultiSensors,
+    checkIfSensorNameExists
   }
 })
 

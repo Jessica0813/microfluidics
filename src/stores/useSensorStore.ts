@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Sensor } from '@/types/sensor.ts'
+import { type Sensor, SensorType } from '@/types/sensor'
 import { useStateStore } from './useStateStore'
 import { type StateController, ActionType } from '@/types/stateController'
 
@@ -21,6 +21,21 @@ export const useSensorStore = defineStore('sensor', () => {
 
   function getSensorId() {
     return `sensor_${sensorId++}`
+  }
+
+  function setSensorName(sensorId: string, sensorType: SensorType | undefined) {
+    if (sensorType === undefined) {
+      return ''
+    }
+    switch (sensorType) {
+      case SensorType.Temperature:
+        return `temp_${sensorId}`
+      case SensorType.Viscosity:
+        return `visc_${sensorId}`
+      case SensorType.Color:
+        return `col_${sensorId}`
+    }
+    return ''
   }
 
   function toggleRecordState() {
@@ -179,6 +194,7 @@ export const useSensorStore = defineStore('sensor', () => {
     selectedSensors,
     toggleRecordState,
     getSensorId,
+    setSensorName,
     addSensor,
     deleteSelectedSensor,
     deleteSensorWithId,

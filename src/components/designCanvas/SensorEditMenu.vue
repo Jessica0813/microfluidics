@@ -52,7 +52,7 @@ import { storeToRefs } from 'pinia'
 import { select } from 'd3'
 import { drag, type D3DragEvent } from 'd3-drag'
 
-import type { Sensor } from '@/types/sensor'
+import { type Sensor, SensorType } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
 
 import { useMenuPositionCalculatorForSensor } from '@/composables/useMenuPositionCalculator'
@@ -78,14 +78,14 @@ const isNameValid = ref(true)
 const selectedSensor = ref<Sensor>({
   id: '',
   name: '',
-  type: 'temperature',
+  type: SensorType.Temperature,
   position: { x: 0, y: 0 },
   radius: 20,
   selected: false
 })
 
-const sensorTypes = ['temperature', 'viscosity', 'color']
-let oldType = 'temperature'
+const sensorTypes = [SensorType.Temperature, SensorType.Viscosity, SensorType.Color]
+let oldType: SensorType = SensorType.Temperature
 let oldName = ''
 const d3Drag = drag<HTMLDivElement, any, any>()
 let startOffsetX: number = 0
@@ -158,13 +158,13 @@ watch([selectedSensors, isZoomingOrDragging], ([newSelectedSensors, newIsZooming
     selectedSensor.value = {
       id: '',
       name: '',
-      type: 'temperature',
+      type: SensorType.Temperature,
       position: { x: 0, y: 0 },
       radius: 20,
       selected: false
     }
     isEditMenuOpen.value = false
-    oldType = 'temperature'
+    oldType = SensorType.Temperature
     oldName = ''
   }
 })

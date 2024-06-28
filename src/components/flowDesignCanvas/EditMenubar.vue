@@ -320,7 +320,7 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
       state.objectId.push(dragEvent.node.id)
       state.oldState.push({
         objectPosition: nodePositionbeforeDrag,
-        objectType: dragEvent.node.type,
+        nodeType: dragEvent.node.type,
         data: dragEvent.node.data.flowControl
       })
     }

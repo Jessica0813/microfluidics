@@ -1,6 +1,12 @@
+export enum SensorType {
+  Temperature = 'temperature',
+  Viscosity = 'viscosity',
+  Color = 'color'
+}
+
 export interface Sensor {
   id: string
-  type: 'temperature' | 'viscosity' | 'color' | string
+  type: SensorType
   name: string
   position: { x: number; y: number }
   radius: number

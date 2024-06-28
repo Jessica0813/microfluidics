@@ -52,7 +52,7 @@ import type { Connection } from '@vue-flow/core'
 import hotkeys from 'hotkeys-js'
 
 import { ActionType } from '@/types/stateController'
-import type { Sensor } from '@/types/sensor'
+import { type Sensor, SensorType } from '@/types/sensor'
 import type { FlowControlProcess } from '@/types/flowControl'
 
 import { useStateStore } from '@/stores/useStateStore'
@@ -67,8 +67,14 @@ const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = use
 const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, removeSelectedElements } =
   useVueFlow()
 
-const { editSensor, addSensor, deleteSensorWithId, toggleRecordState, removeAllSelectedSensors } =
-  useSensorStore()
+const {
+  editSensor,
+  addSensor,
+  setSensorName,
+  deleteSensorWithId,
+  toggleRecordState,
+  removeAllSelectedSensors
+} = useSensorStore()
 
 function undo() {
   removeAllSelectedSensors()
@@ -104,7 +110,7 @@ function undo() {
               ) {
                 const node = {
                   id: state.objectId[i],
-                  type: state.oldState[i].objectType || 'process',
+                  type: state.oldState[i].nodeType || 'process',
                   position: state.oldState[i].objectPosition || { x: 0, y: 0 },
                   data: {},
                   selected: true
@@ -161,8 +167,10 @@ function undo() {
           for (let i = 0; i < state.objectId.length; i++) {
             const sensor: Sensor = {
               id: state.objectId[i],
-              name: state.oldState[i].objectName || state.objectId[i],
-              type: 'temperature',
+              name:
+                state.oldState[i].objectName ||
+                setSensorName(state.objectId[i], state.oldState[i].objectType),
+              type: state.oldState[i].objectType || SensorType.Temperature,
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               radius: state.oldState[i].objectRadius || 15,
               selected: true
@@ -195,7 +203,7 @@ function undo() {
           }
           const node = {
             id: state.objectId[1],
-            type: state.oldState[1].objectType || 'process',
+            type: state.oldState[1].nodeType || 'process',
             position: state.oldState[1].objectPosition || { x: 0, y: 0 },
             data: state.oldState[1].data,
             selected: true
@@ -297,8 +305,8 @@ function undo() {
       toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
-        name: state.oldState.objectName || state.objectId,
-        type: state.oldState.objectType || 'temperature',
+        name: state.oldState.objectName || setSensorName(state.objectId, state.oldState.objectType),
+        type: state.oldState.objectType || SensorType.Temperature,
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: state.oldState.objectRadius || 15,
         selected: true
@@ -335,7 +343,7 @@ function undo() {
     case ActionType.UPDATE_SENSOR_TYPE: {
       toggleRecordState()
       editSensor(state.objectId, {
-        type: state.oldState.objectType || 'temperature',
+        type: state.oldState.objectType || SensorType.Temperature,
         selected: true
       })
       toggleRecordState()
@@ -433,7 +441,7 @@ function redo() {
           for (let i = 0; i < state.objectId.length; i++) {
             let node = {
               id: state.objectId[i],
-              type: state.oldState[i].objectType || 'process',
+              type: state.oldState[i].nodeType || 'process',
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               data: state.oldState[i].data,
               selected: true
@@ -447,8 +455,10 @@ function redo() {
           for (let i = 0; i < state.objectId.length; i++) {
             const sensor: Sensor = {
               id: state.objectId[i],
-              name: state.oldState[i].objectName || state.objectId[i],
-              type: state.oldState[i].objectType || 'temperature',
+              name:
+                state.oldState[i].objectName ||
+                setSensorName(state.objectId[i], state.oldState[i].objectType),
+              type: state.oldState[i].objectType || SensorType.Temperature,
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               radius: state.oldState[i].objectRadius || 15,
               selected: true
@@ -488,7 +498,7 @@ function redo() {
     case ActionType.CREATE_NODE: {
       let node = {
         id: state.objectId,
-        type: state.oldState.objectType || 'process',
+        type: state.oldState.nodeType || 'process',
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         data: {},
         selected: true
@@ -583,8 +593,8 @@ function redo() {
       toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
-        name: state.objectId,
-        type: state.oldState.objectType || 'temperature',
+        name: state.oldState.objectName || setSensorName(state.objectId, state.oldState.objectType),
+        type: state.oldState.objectType || SensorType.Temperature,
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: state.oldState.objectRadius || 15,
         selected: true
@@ -625,7 +635,7 @@ function redo() {
     case ActionType.UPDATE_SENSOR_TYPE: {
       toggleRecordState()
       editSensor(state.objectId, {
-        type: state.newState?.objectType || 'temperature',
+        type: state.newState?.objectType || SensorType.Temperature,
         selected: true
       })
       toggleRecordState()

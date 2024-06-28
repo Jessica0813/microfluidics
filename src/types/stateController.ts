@@ -1,6 +1,6 @@
 import type { FlowControl, ScheduledFlowControl } from './flowControl'
 import type { Condition } from './condition'
-import type { Sensor } from './sensor'
+import { type Sensor, SensorType } from './sensor'
 
 export enum ActionType {
   CREATE_NODE = 'CREATE_NODE',
@@ -31,9 +31,10 @@ export enum ActionType {
 export interface state {
   objectName?: string
   objectPosition?: { x: number; y: number }
-  objectType?: string
+  objectType?: SensorType
   objectRadius?: number
   data: FlowControl | ScheduledFlowControl | Condition | Sensor | any
+  nodeType?: string
   changedSubprocessId?: string
   source?: string
   target?: string

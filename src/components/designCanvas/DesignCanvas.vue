@@ -71,7 +71,7 @@ import { select } from 'd3-selection'
 import type { D3Zoom, D3Selection } from '@/types/d3'
 import hotkeys from 'hotkeys-js'
 
-import type { Sensor } from '@/types/sensor'
+import { type Sensor, SensorType } from '@/types/sensor'
 
 import { useDrop } from '@/composables/useDrop'
 import {
@@ -103,8 +103,15 @@ const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
 const isPanelMenuOpen = ref(false)
 
-const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
-  useSensorStore()
+const {
+  sensors,
+  removeAllSelectedSensors,
+  addSensor,
+  getSensorId,
+  editSensor,
+  editMultiSensors,
+  setSensorName
+} = useSensorStore()
 const { setZooming } = useSensorCanvasStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 
@@ -119,10 +126,14 @@ function onDragOver(event: any) {
 function onDrop(event: any) {
   if (!svg.value) return
   const type = event.dataTransfer?.getData('application/desgin')
-  if (type === 'temperature' || type === 'color' || type === 'viscosity') {
+  if (
+    type === SensorType.Temperature ||
+    type === SensorType.Viscosity ||
+    type === SensorType.Color
+  ) {
     const left = svg.value.getBoundingClientRect().left
     const top = svg.value.getBoundingClientRect().top
-    useDrop(left, top, event, transform.value, getSensorId(), addSensor)
+    useDrop(left, top, event, transform.value, getSensorId(), addSensor, setSensorName)
   }
   isPanelMenuOpen.value = false
 }

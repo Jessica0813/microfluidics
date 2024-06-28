@@ -47,7 +47,7 @@ export function createDeleteNodeState(
     state.objectId.push(node.id)
     state.oldState.push({
       objectPosition: node.position,
-      objectType: node.type,
+      nodeType: node.type,
       data: data
     })
     removeNodes([node])
@@ -163,7 +163,7 @@ export function createDeleteMultiNodesState(
       state.objectId.push(node.id)
       state.oldState.push({
         objectPosition: node.position,
-        objectType: node.type,
+        nodeType: node.type,
         data: data
       })
       removeNodes([node])

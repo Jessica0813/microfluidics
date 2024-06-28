@@ -312,7 +312,7 @@ function onDrop(event: any) {
             objectId: newNode.id,
             oldState: {
               objectPosition: node.position,
-              objectType: newNode.type,
+              nodeType: newNode.type,
               data: stringifiedData
             }
           }

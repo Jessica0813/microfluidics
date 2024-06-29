@@ -38,7 +38,6 @@ const { contentsType } = storeToRefs(useClipboardStore())
 const {
   deleteSelectedSensor,
   addSensor,
-  setSensorName,
   toggleRecordState,
   getSensorId,
   onSelectMultiSensors,
@@ -120,11 +119,10 @@ hotkeys('command+v', function (event) {
     copiedIds.forEach((id) => {
       const sensor = sensors.find((sensor) => sensor.id === id)
       if (sensor) {
-        let newId = getSensorId()
-        const sensorName = setSensorName(newId, sensor.type)
+        let newId = getSensorId(sensor.type)
         const newSensor = {
           id: newId,
-          name: sensorName,
+          name: newId,
           type: sensor.type,
           position: { x: sensor.position.x, y: sensor.position.y + 2 * sensor.radius + 10 },
           radius: sensor.radius,

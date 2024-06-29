@@ -17,25 +17,22 @@ export const useSensorStore = defineStore('sensor', () => {
 
   const isMetaKeyPressed = ref(false)
 
-  let sensorId = 0
+  let tempSensorId = 1
+  let viscSensorId = 1
+  let colorSensorId = 1
 
-  function getSensorId() {
-    return `sensor_${sensorId++}`
-  }
-
-  function setSensorName(sensorId: string, sensorType: SensorType | undefined) {
+  function getSensorId(sensorType: SensorType | undefined) {
     if (sensorType === undefined) {
       return ''
     }
     switch (sensorType) {
       case SensorType.Temperature:
-        return `temp_${sensorId}`
+        return `temp_sensor_${tempSensorId++}`
       case SensorType.Viscosity:
-        return `visc_${sensorId}`
+        return `visc_sensor_${viscSensorId++}`
       case SensorType.Color:
-        return `col_${sensorId}`
+        return `col_sensor_${colorSensorId++}`
     }
-    return ''
   }
 
   function toggleRecordState() {
@@ -194,7 +191,6 @@ export const useSensorStore = defineStore('sensor', () => {
     selectedSensors,
     toggleRecordState,
     getSensorId,
-    setSensorName,
     addSensor,
     deleteSelectedSensor,
     deleteSensorWithId,

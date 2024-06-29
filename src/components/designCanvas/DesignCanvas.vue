@@ -103,15 +103,8 @@ const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
 const isPanelMenuOpen = ref(false)
 
-const {
-  sensors,
-  removeAllSelectedSensors,
-  addSensor,
-  getSensorId,
-  editSensor,
-  editMultiSensors,
-  setSensorName
-} = useSensorStore()
+const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
+  useSensorStore()
 const { setZooming } = useSensorCanvasStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 
@@ -133,7 +126,7 @@ function onDrop(event: any) {
   ) {
     const left = svg.value.getBoundingClientRect().left
     const top = svg.value.getBoundingClientRect().top
-    useDrop(left, top, event, transform.value, getSensorId(), addSensor, setSensorName)
+    useDrop(left, top, event, transform.value, getSensorId(type), addSensor)
   }
   isPanelMenuOpen.value = false
 }

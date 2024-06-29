@@ -67,14 +67,8 @@ const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = use
 const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, removeSelectedElements } =
   useVueFlow()
 
-const {
-  editSensor,
-  addSensor,
-  setSensorName,
-  deleteSensorWithId,
-  toggleRecordState,
-  removeAllSelectedSensors
-} = useSensorStore()
+const { editSensor, addSensor, deleteSensorWithId, toggleRecordState, removeAllSelectedSensors } =
+  useSensorStore()
 
 function undo() {
   removeAllSelectedSensors()
@@ -167,9 +161,7 @@ function undo() {
           for (let i = 0; i < state.objectId.length; i++) {
             const sensor: Sensor = {
               id: state.objectId[i],
-              name:
-                state.oldState[i].objectName ||
-                setSensorName(state.objectId[i], state.oldState[i].objectType),
+              name: state.oldState[i].objectName || state.objectId[i],
               type: state.oldState[i].objectType || SensorType.Temperature,
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               radius: state.oldState[i].objectRadius || 15,
@@ -305,7 +297,7 @@ function undo() {
       toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
-        name: state.oldState.objectName || setSensorName(state.objectId, state.oldState.objectType),
+        name: state.oldState.objectName || state.objectId,
         type: state.oldState.objectType || SensorType.Temperature,
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: state.oldState.objectRadius || 15,
@@ -455,9 +447,7 @@ function redo() {
           for (let i = 0; i < state.objectId.length; i++) {
             const sensor: Sensor = {
               id: state.objectId[i],
-              name:
-                state.oldState[i].objectName ||
-                setSensorName(state.objectId[i], state.oldState[i].objectType),
+              name: state.oldState[i].objectName || state.objectId[i],
               type: state.oldState[i].objectType || SensorType.Temperature,
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               radius: state.oldState[i].objectRadius || 15,
@@ -593,7 +583,7 @@ function redo() {
       toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
-        name: state.oldState.objectName || setSensorName(state.objectId, state.oldState.objectType),
+        name: state.oldState.objectName || state.objectId,
         type: state.oldState.objectType || SensorType.Temperature,
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         radius: state.oldState.objectRadius || 15,

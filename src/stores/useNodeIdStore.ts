@@ -1,46 +1,79 @@
 import { defineStore } from 'pinia'
 
 export const useNodeIdStore = defineStore('nodeId', () => {
-  let processNodeId = 1
-  let pauseNodeId = 1
-  let conditionNodeId = 1
-  let processScheduleNodeId = 1
-  let subProcessId = 1
+  let processNodeIndex = 1
+  let pauseNodeIndex = 1
+  let conditionNodeIndex = 1
+  let scheduleNodeIndex = 1
+  let subProcessIndex = 1
 
-  let edgeId = 1
-  let edgeTrueId = 1
-  let edgeFalseId = 1
+  let edgeIndex = 1
+  let edgeTrueIndex = 1
+  let edgeFalseIndex = 1
 
   function getProcessNodeId() {
-    return `process_${processNodeId++}`
+    return `process_${processNodeIndex++}`
   }
 
   function getPauseNodeId() {
-    return `pause_${pauseNodeId++}`
+    return `pause_${pauseNodeIndex++}`
   }
 
   function getConditionNodeId() {
-    return `condition_${conditionNodeId++}`
+    return `condition_${conditionNodeIndex++}`
   }
 
   function getProcessScheduleNodeId() {
-    return `schedule_${processScheduleNodeId++}`
+    return `schedule_${scheduleNodeIndex++}`
   }
 
   function getSubProcessId() {
-    return `${subProcessId++}`
+    return `${subProcessIndex++}`
   }
 
   function getEdgeId() {
-    return `edge_${edgeId++}`
+    return `edge_${edgeIndex++}`
   }
 
   function getEdgeTrueId() {
-    return `edgeTrue_${edgeTrueId++}`
+    return `edgeTrue_${edgeTrueIndex++}`
   }
 
   function getEdgeFalseId() {
-    return `edgeFalse_${edgeFalseId++}`
+    return `edgeFalse_${edgeFalseIndex++}`
+  }
+
+  function getIndexes() {
+    return {
+      processNodeIndex: processNodeIndex,
+      pauseNodeIndex: pauseNodeIndex,
+      conditionNodeIndex: conditionNodeIndex,
+      scheduleNodeIndex: scheduleNodeIndex,
+      subProcessIndex: subProcessIndex,
+      edgeIndex: edgeIndex,
+      edgeTrueIndex: edgeTrueIndex,
+      edgeFalseIndex: edgeFalseIndex
+    }
+  }
+
+  function initIndexes(indexes: {
+    initalProcessNodeIndex: number
+    initalpauseNodeIndex: number
+    initalconditionNodeIndex: number
+    initalscheduleNodeIndex: number
+    initalsubProcessIndex: number
+    initaledgeIndex: number
+    initaledgeTrueIndex: number
+    initaledgeFalseIndex: number
+  }) {
+    processNodeIndex = indexes.initalProcessNodeIndex
+    pauseNodeIndex = indexes.initalpauseNodeIndex
+    conditionNodeIndex = indexes.initalconditionNodeIndex
+    scheduleNodeIndex = indexes.initalscheduleNodeIndex
+    subProcessIndex = indexes.initalsubProcessIndex
+    edgeIndex = indexes.initaledgeIndex
+    edgeTrueIndex = indexes.initaledgeTrueIndex
+    edgeFalseIndex = indexes.initaledgeFalseIndex
   }
 
   return {
@@ -51,6 +84,8 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     getSubProcessId,
     getEdgeId,
     getEdgeTrueId,
-    getEdgeFalseId
+    getEdgeFalseId,
+    getIndexes,
+    initIndexes
   }
 })

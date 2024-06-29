@@ -1,15 +1,52 @@
 <template>
   <div class="menu">
-    <label for="upload" class="button">
+    <label for="uploadSvg" class="button">
       <p>svg</p>
-      <input type="file" id="upload" accept=".svg" style="display: none" />
+      <input type="file" id="uploadSvg" accept=".svg" style="display: none" />
     </label>
-    <label for="upload" class="button">
-      <p>zip</p>
-      <input type="file" id="upload" accept=".zip" style="display: none" />
+    <label for="uploadJson" class="button">
+      <p>json</p>
+      <input
+        type="file"
+        id="uploadJson"
+        accept=".json"
+        style="display: none"
+        @change="handleJsonUpload"
+      />
     </label>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useVueFlow } from '@vue-flow/core'
+import { useNodeIdStore } from '@/stores/useNodeIdStore'
+
+const { addNodes, addEdges } = useVueFlow()
+const { initIndexes } = useNodeIdStore()
+
+function handleJsonUpload(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const result = e.target?.result
+    if (typeof result !== 'string') return
+
+    const data = JSON.parse(result)
+
+    addNodes([...data.nodes])
+
+    setTimeout(() => {
+      addEdges([...data.edges])
+    }, 800)
+
+    initIndexes(data.indexes)
+  }
+  reader.readAsText(file)
+}
+</script>
 
 <style scoped>
 .menu {

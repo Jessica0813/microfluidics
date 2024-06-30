@@ -159,6 +159,6 @@ watch(isOverScheduleNode, (newVal, oldVal) => {
 }
 
 .new-node {
-  animation: scaleIn 0.8s ease forwards;
+  animation: fadeIn 0.8s ease;
 }
 </style>

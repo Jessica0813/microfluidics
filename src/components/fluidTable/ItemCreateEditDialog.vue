@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineModel } from 'vue'
+import { computed } from 'vue'
 import type { Fluid } from '@/types/fluid'
 import { useFluidStore } from '@/stores/useFluidStore'
 import CustomizedColorInputVue from '../general/CustomizedColorInput.vue'

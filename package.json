@@ -21,6 +21,7 @@
     "@vue-flow/node-resizer": "^1.4.0",
     "d3": "^7.9.0",
     "hotkeys-js": "^3.13.7",
+    "html-to-image": "^1.11.11",
     "pinia": "^2.1.7",
     "tippy.js": "^6.3.7",
     "vue": "^3.4.27",

@@ -9,9 +9,17 @@
         </template>
         <UploadMenu />
       </v-menu>
-      <button class="icon-button" @click="downloadData">
-        <v-icon color="#66615b" size="small">mdi-download</v-icon>
-      </button>
+      <v-menu offset="1" z-index="5">
+        <template v-slot:activator="{ props }">
+          <button class="icon-button" v-bind="props">
+            <v-icon color="#66615b" size="small">mdi-download</v-icon>
+          </button>
+        </template>
+        <div class="menu">
+          <button class="button" @click="downloadData">download flow chart data</button>
+          <button class="button" @click="doScreenshot">download screenshot</button>
+        </div>
+      </v-menu>
     </div>
   </div>
 </template>
@@ -19,19 +27,23 @@
 <script setup lang="ts">
 import { useVueFlow } from '@vue-flow/core'
 import type { NodeExportModel, EdgeExportModel } from '../../types/exportObject'
+import { useScreenshot } from '@/composables/useScreenshot'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
 import UploadMenu from './UploadMenu.vue'
 
-const { nodes, edges } = useVueFlow()
+const { nodes, edges, vueFlowRef } = useVueFlow()
 const { getIndexes } = useNodeIdStore()
-
-// console.log('1', nodes.value)
-// console.log('2', edges.value)
+const { capture } = useScreenshot()
 
 let nodeExportData: NodeExportModel[] = []
 let edgeExportData: EdgeExportModel[] = []
 
 function downloadData() {
+  if (!vueFlowRef.value) {
+    console.warn('VueFlow element not found')
+    return
+  }
+
   for (const node of nodes.value) {
     const exportNode = {
       id: node.id,
@@ -72,15 +84,24 @@ function downloadData() {
   const aId = 'downloadLink'
   a.id = aId
   a.href = url
-  a.download = 'flowChartCanvas.json'
+  a.download = 'flowChartCanvas' + Date.now() + '.json'
 
   // Programmatically click the link to trigger the download
   document.body.appendChild(a)
   a.click()
 
   // Clean up by removing the link element
-  document.body.removeChild(document.getElementById(aId)!)
+  document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+function doScreenshot() {
+  if (!vueFlowRef.value) {
+    console.warn('VueFlow element not found')
+    return
+  }
+
+  capture(vueFlowRef.value, { shouldDownload: true })
 }
 </script>
 
@@ -90,5 +111,23 @@ function downloadData() {
   border: 1px solid #dfdfdf;
   border-radius: 4px;
   width: fit-content;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #dfdfdf;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 60px;
+}
+.button {
+  text-align: center;
+  padding: 4px 0px;
+  cursor: pointer;
+}
+.button:hover {
+  background-color: #e0e0e0;
 }
 </style>

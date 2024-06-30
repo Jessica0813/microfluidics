@@ -16,8 +16,8 @@
           </button>
         </template>
         <div class="menu">
-          <button class="button" @click="downloadData">download flow chart data</button>
-          <button class="button" @click="doScreenshot">download screenshot</button>
+          <button class="button" @click="downloadData">Export Flow Chart Data</button>
+          <button class="button" @click="doScreenshot">Capture Flow Chart Image</button>
         </div>
       </v-menu>
     </div>
@@ -117,17 +117,18 @@ function doScreenshot() {
   display: flex;
   flex-direction: column;
   background-color: white;
-  border: 1px solid #dfdfdf;
+  border: 0.5px solid lightgray;
   border-radius: 4px;
-  font-size: 14px;
-  min-width: 60px;
+  font-size: 12px;
+  padding: 4px;
 }
 .button {
   text-align: center;
-  padding: 4px 0px;
+  padding: 4px 8px;
   cursor: pointer;
+  border-radius: 2px;
 }
 .button:hover {
-  background-color: #e0e0e0;
+  background-color: #eeeeee;
 }
 </style>

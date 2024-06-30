@@ -1,11 +1,11 @@
 <template>
   <div class="menu">
     <label for="uploadSvg" class="button">
-      <p>svg</p>
+      <p>upload svg</p>
       <input type="file" id="uploadSvg" accept=".svg" style="display: none" />
     </label>
     <label for="uploadJson" class="button">
-      <p>json</p>
+      <p>upload json</p>
       <input
         type="file"
         id="uploadJson"
@@ -53,17 +53,18 @@ function handleJsonUpload(e: Event) {
   display: flex;
   flex-direction: column;
   background-color: white;
-  border: 1px solid #dfdfdf;
+  border: 0.5px solid lightgray;
   border-radius: 4px;
-  font-size: 14px;
-  min-width: 60px;
+  font-size: 12px;
+  padding: 4px;
 }
 .button {
   text-align: center;
-  padding: 4px 0px;
+  padding: 4px 8px;
   cursor: pointer;
+  border-radius: 2px;
 }
 .button:hover {
-  background-color: #e0e0e0;
+  background-color: #eeeeee;
 }
 </style>

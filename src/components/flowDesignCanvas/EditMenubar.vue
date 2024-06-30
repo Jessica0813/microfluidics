@@ -37,7 +37,7 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { useVueFlow } from '@vue-flow/core'
+import { useVueFlow, type Node } from '@vue-flow/core'
 import type { NodeDragEvent } from '@vue-flow/core'
 import { select } from 'd3'
 import { drag, type D3DragEvent } from 'd3-drag'
@@ -78,11 +78,13 @@ const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
 const isNodeOverScheduleNode = ref(false)
+const intersectionScheduleNode = ref<Node | null>(null)
 let nodePositionbeforeDrag = { x: 0, y: 0 }
 
 const { getSubProcessId } = useNodeIdStore()
 const { addState } = useStateStore()
 const {
+  nodes,
   findNode,
   findEdge,
   onNodeDragStart,
@@ -136,44 +138,40 @@ function showEditMenuBar() {
 }
 
 function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
-  if (dragEvent.nodes.length > 1) {
+  if (dragEvent.nodes.length > 1 || dragEvent.nodes.length === 0) {
     return
   }
-  if (dragEvent.node.type !== 'process') {
-    return
-  }
-  if (dragEvent.intersections !== undefined) {
-    if (dragEvent.intersections.length === 0) {
-      isNodeOverScheduleNode.value = false
-      dragEvent.node.data.isOverScheduleNode = false
-      return
-    }
-    dragEvent.intersections.forEach((intersection) => {
-      if (intersection.type === 'schedule') {
-        const scheduleNode = document.getElementById(intersection.id)
-        const { left, top, right, bottom } = scheduleNode!.getBoundingClientRect()
-        const mousePosition = { x: dragEvent.event.x, y: dragEvent.event.y }
-        if (
-          mousePosition.x > left &&
-          mousePosition.x < right &&
-          mousePosition.y > top &&
-          mousePosition.y < bottom
-        ) {
-          isNodeOverScheduleNode.value = true
-          dragEvent.node.data.isOverScheduleNode = true
-        } else {
-          isNodeOverScheduleNode.value = false
-          dragEvent.node.data.isOverScheduleNode = false
-        }
+
+  for (const node of nodes.value) {
+    if (node.type === 'schedule') {
+      const scheduleNode = document.getElementById(node.id)
+      const { left, top, right, bottom } = scheduleNode!.getBoundingClientRect()
+      const mousePosition = { x: dragEvent.event.x, y: dragEvent.event.y }
+      if (
+        mousePosition.x > left &&
+        mousePosition.x < right &&
+        mousePosition.y > top &&
+        mousePosition.y < bottom
+      ) {
+        isNodeOverScheduleNode.value = true
+        dragEvent.node.data.isOverScheduleNode = true
+        intersectionScheduleNode.value = node
+        return
       } else {
         isNodeOverScheduleNode.value = false
         dragEvent.node.data.isOverScheduleNode = false
+        intersectionScheduleNode.value = null
       }
-    })
-  } else {
-    isNodeOverScheduleNode.value = false
-    dragEvent.node.data.isOverScheduleNode = false
+    } else {
+      isNodeOverScheduleNode.value = false
+      dragEvent.node.data.isOverScheduleNode = false
+      intersectionScheduleNode.value = null
+    }
   }
+
+  isNodeOverScheduleNode.value = false
+  dragEvent.node.data.isOverScheduleNode = false
+  intersectionScheduleNode.value = null
 }
 
 watch(getSelectedElements, (newSelectedElements, oldSelectedElements) => {
@@ -273,9 +271,9 @@ onNodeDrag((dragEvent: NodeDragEvent) => {
 
 onNodeDragStop((dragEvent: NodeDragEvent) => {
   checkIfNodeIsOverScheduleNode(dragEvent)
-  if (isNodeOverScheduleNode.value && dragEvent.intersections) {
+  if (isNodeOverScheduleNode.value && intersectionScheduleNode.value) {
     const processNodeData = dragEvent.node.data.flowControl
-    const scheduleNodeData = dragEvent.intersections[0].data.scheduledFlowControl
+    const scheduleNodeData = intersectionScheduleNode.value.data.scheduledFlowControl
     const flowControlSubprocesses = scheduleNodeData.processes
     const oldData = JSON.parse(JSON.stringify(scheduleNodeData))
     const subProcessId = getSubProcessId()
@@ -298,17 +296,17 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
     const newData = JSON.parse(JSON.stringify(scheduleNodeData))
     const state: StateController = {
       type: ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS,
-      name: 'update node data ' + dragEvent.intersections[0].id,
-      objectId: [dragEvent.intersections[0].id],
+      name: 'update node data ' + intersectionScheduleNode.value.id,
+      objectId: [intersectionScheduleNode.value.id],
       oldState: [
         {
-          objectPosition: dragEvent.intersections[0].position,
+          objectPosition: intersectionScheduleNode.value.position,
           data: oldData
         }
       ],
       newState: [
         {
-          objectPosition: dragEvent.intersections[0].position,
+          objectPosition: intersectionScheduleNode.value.position,
           data: newData,
           changedSubprocessId: subProcessId
         }

@@ -24,6 +24,7 @@
           <v-icon size="small" color="#66615b">mdi-cached</v-icon>
         </button>
       </template>
+
       <div class="dropdown-menu">
         <button
           class="dropdown-item"
@@ -689,7 +690,7 @@ hotkeys('ctrl+y, command+y', function (event) {
 .dropdown-menu {
   display: flex;
   flex-direction: column;
-  padding: 8px 0px;
+  padding: 4px;
   background-color: white;
   border-radius: 4px;
   width: fit-content;
@@ -699,18 +700,18 @@ hotkeys('ctrl+y, command+y', function (event) {
 .dropdown-item {
   width: 100%;
   padding: 4px;
-  font-size: 14px;
+  font-size: 12px;
   padding: 4px 8px;
 }
 
 .dropdown-item:hover {
-  background-color: #bdbdbd;
+  background-color: #eeeeee;
 }
 
 .dropdown-item-withBackground {
   width: 100%;
   padding: 4px;
-  font-size: 14px;
+  font-size: 12px;
   background-color: #e0e0e0;
   padding: 4px 8px;
 }

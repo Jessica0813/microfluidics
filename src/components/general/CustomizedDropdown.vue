@@ -43,17 +43,18 @@ const selectItem = (item: string) => {
 }
 .dropdown-item {
   width: 100%;
-  padding: 8px 12px;
-  font-size: 14px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 2px;
 }
 .dropdown-item:hover {
-  background-color: #e0e0e0;
+  background-color: #eeeeee;
 }
 
 .dropdown-menu {
   display: flex;
   flex-direction: column;
-  padding: 4px 0px;
+  padding: 4px;
   background-color: white;
   border-radius: 4px;
   width: fit-content;

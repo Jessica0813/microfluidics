@@ -9,24 +9,28 @@
     }"
   >
     <Handle
+      :id="id + '-top-handle'"
       type="source"
       :position="Position.Top"
       :class="selected || nodeIsHovered ? '' : 'top-handle'"
       v-if="!isOverScheduleNode"
     />
     <Handle
+      :id="id + '-bottom-handle'"
       type="source"
       :position="Position.Bottom"
       :class="selected || nodeIsHovered ? '' : 'bottom-handle'"
       v-if="!isOverScheduleNode"
     />
     <Handle
+      :id="id + '-right-handle'"
       type="source"
       :position="Position.Right"
       :class="selected || nodeIsHovered ? '' : 'right-handle'"
       v-if="!isOverScheduleNode"
     />
     <Handle
+      :id="id + '-left-handle'"
       type="source"
       :position="Position.Left"
       :class="selected || nodeIsHovered ? '' : 'left-handle'"

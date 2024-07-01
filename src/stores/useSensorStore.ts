@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 import { type Sensor, SensorType } from '@/types/sensor'
 import { useStateStore } from './useStateStore'
@@ -6,14 +7,13 @@ import { type StateController, ActionType } from '@/types/stateController'
 
 export const useSensorStore = defineStore('sensor', () => {
   const { addState } = useStateStore()
+  const { shouldRecordState } = storeToRefs(useStateStore())
 
   const tolerance = 0.0001
 
   const sensors = ref<Sensor[]>([])
 
   const selectedSensors = computed(() => sensors.value.filter((sensor) => sensor.selected))
-
-  const shouldRecordState = ref(true)
 
   const isMetaKeyPressed = ref(false)
 
@@ -33,10 +33,6 @@ export const useSensorStore = defineStore('sensor', () => {
       case SensorType.Color:
         return `col_sensor_${colorSensorId++}`
     }
-  }
-
-  function toggleRecordState() {
-    shouldRecordState.value = !shouldRecordState.value
   }
 
   function toggleIsMetaKeyPressed() {
@@ -189,7 +185,6 @@ export const useSensorStore = defineStore('sensor', () => {
   return {
     sensors,
     selectedSensors,
-    toggleRecordState,
     getSensorId,
     addSensor,
     deleteSelectedSensor,

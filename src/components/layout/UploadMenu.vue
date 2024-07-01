@@ -20,29 +20,43 @@
 <script setup lang="ts">
 import { useVueFlow } from '@vue-flow/core'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import { useStateStore } from '@/stores/useStateStore'
 
 const { addNodes, addEdges } = useVueFlow()
 const { initIndexes } = useNodeIdStore()
+const { toggleShouldRecordState } = useStateStore()
 
 function handleJsonUpload(e: Event) {
+  toggleShouldRecordState()
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
-  if (!file) return
+  if (!file) {
+    toggleShouldRecordState()
+    return
+  }
 
   const reader = new FileReader()
   reader.onload = (e) => {
-    const result = e.target?.result
-    if (typeof result !== 'string') return
+    try {
+      const result = e.target?.result
+      if (typeof result !== 'string') return
 
-    const data = JSON.parse(result)
+      const data = JSON.parse(result)
 
-    addNodes([...data.nodes])
+      addNodes([...data.nodes])
 
-    setTimeout(() => {
-      addEdges([...data.edges])
-    }, 800)
+      setTimeout(() => {
+        addEdges([...data.edges])
+      }, 800)
 
-    initIndexes(data.indexes)
+      initIndexes(data.indexes)
+    } catch (error) {
+      console.error('An error occurred while processing the file:', error)
+    } finally {
+      setTimeout(() => {
+        toggleShouldRecordState()
+      }, 800)
+    }
   }
   reader.readAsText(file)
 }

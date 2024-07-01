@@ -38,14 +38,13 @@ const { contentsType } = storeToRefs(useClipboardStore())
 const {
   deleteSelectedSensor,
   addSensor,
-  toggleRecordState,
   getSensorId,
   onSelectMultiSensors,
   removeAllSelectedSensors,
   sensors
 } = useSensorStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
-const { addState } = useStateStore()
+const { addState, toggleShouldRecordState } = useStateStore()
 
 hotkeys('backspace,del,delete', function (event) {
   event.preventDefault()
@@ -115,7 +114,7 @@ hotkeys('command+v', function (event) {
       newState: []
     }
     let newIds: string[] = []
-    toggleRecordState()
+    toggleShouldRecordState()
     copiedIds.forEach((id) => {
       const sensor = sensors.find((sensor) => sensor.id === id)
       if (sensor) {
@@ -141,7 +140,7 @@ hotkeys('command+v', function (event) {
         newIds.push(newId)
       }
     })
-    toggleRecordState()
+    toggleShouldRecordState()
     if (state.objectId.length > 0) {
       addState(state)
     }

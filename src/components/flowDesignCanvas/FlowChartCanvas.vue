@@ -6,7 +6,7 @@
     </div>
     <div class="top-bar">
       <ZoomSlider />
-      <HistoryManager v-model:should-record-state="shouldRecordState" />
+      <HistoryManager />
       <UploadDownLoadControls />
       <RightSideBar />
       <HotkeysManager />
@@ -44,7 +44,8 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, watch, ref } from 'vue'
+import { nextTick, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -66,8 +67,6 @@ import RightSideBar from '../layout/RightSideBar.vue'
 import EditMenubar from './EditMenubar.vue'
 import HistoryManager from './HistoryManager.vue'
 import HotkeysManager from './HotkeysManager.vue'
-
-const shouldRecordState = ref(true)
 
 const {
   getProcessNodeId,
@@ -94,6 +93,8 @@ const {
 } = useVueFlow()
 
 const { addState } = useStateStore()
+
+const { shouldRecordState } = storeToRefs(useStateStore())
 
 function onDragOver(event: any) {
   event.preventDefault()

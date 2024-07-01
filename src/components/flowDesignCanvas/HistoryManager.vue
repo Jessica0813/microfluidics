@@ -4,19 +4,19 @@
       class="icon-button with-right-border"
       title="undo"
       @click="undo"
-      :disabled="!isUndoable()"
-      :class="isUndoable() ? '' : 'disable-hover'"
+      :disabled="undoList.length === 0"
+      :class="undoList.length > 0 ? '' : 'disable-hover'"
     >
-      <v-icon size="small" :color="isUndoable() ? '#66615b' : '#BDBDBD'">mdi-undo</v-icon>
+      <v-icon size="small" :color="undoList.length > 0 ? '#66615b' : '#BDBDBD'">mdi-undo</v-icon>
     </button>
     <button
       class="icon-button with-right-border"
       title="redo"
-      :disabled="!isRedoable"
-      :class="isUndoable() ? '' : 'disable-hover'"
+      :disabled="redoList.length === 0"
+      :class="redoList.length > 0 ? '' : 'disable-hover'"
       @click="redo"
     >
-      <v-icon size="small" :color="isRedoable() ? '#66615b' : '#BDBDBD'">mdi-redo</v-icon>
+      <v-icon size="small" :color="redoList.length > 0 ? '#66615b' : '#BDBDBD'">mdi-redo</v-icon>
     </button>
     <v-menu offset="1">
       <template v-slot:activator="{ props }">
@@ -25,7 +25,7 @@
         </button>
       </template>
 
-      <div class="dropdown-menu">
+      <div class="dropdown-menu" v-if="undoList.length > 0 && redoList.length > 0">
         <button
           class="dropdown-item"
           v-for="(item, index) in undoList"
@@ -48,6 +48,7 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useVueFlow } from '@vue-flow/core'
 import type { Connection } from '@vue-flow/core'
 import hotkeys from 'hotkeys-js'
@@ -59,25 +60,21 @@ import type { FlowControlProcess } from '@/types/flowControl'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
 
-const shouldRecordState = defineModel<Boolean>('shouldRecordState', {
-  default: true
-})
-
-const { undoState, redoState, isUndoable, isRedoable, redoList, undoList } = useStateStore()
+const { undoState, redoState, toggleShouldRecordState } = useStateStore()
+const { redoList, undoList } = storeToRefs(useStateStore())
 
 const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, removeSelectedElements } =
   useVueFlow()
 
-const { editSensor, addSensor, deleteSensorWithId, toggleRecordState, removeAllSelectedSensors } =
-  useSensorStore()
+const { editSensor, addSensor, deleteSensorWithId, removeAllSelectedSensors } = useSensorStore()
 
 function undo() {
   removeAllSelectedSensors()
   removeSelectedElements()
-  shouldRecordState.value = false
+  toggleShouldRecordState()
   const state = undoState()
   if (!state) {
-    shouldRecordState.value = true
+    toggleShouldRecordState()
     return
   }
   if (Array.isArray(state.oldState) || typeof state.objectId !== 'string') {
@@ -144,7 +141,6 @@ function undo() {
           break
         }
         case ActionType.MOVE_MULTI_SENSORS: {
-          toggleRecordState()
           for (let i = 0; i < state.objectId.length; i++) {
             editSensor(state.objectId[i], {
               position: {
@@ -154,11 +150,9 @@ function undo() {
               selected: true
             })
           }
-          toggleRecordState()
           break
         }
         case ActionType.DELETE_MULTI_SENSORS: {
-          toggleRecordState()
           for (let i = 0; i < state.objectId.length; i++) {
             const sensor: Sensor = {
               id: state.objectId[i],
@@ -170,7 +164,6 @@ function undo() {
             }
             addSensor(sensor)
           }
-          toggleRecordState()
           break
         }
         case ActionType.PASTE_NODES: {
@@ -206,7 +199,7 @@ function undo() {
         }
       }
     }
-    shouldRecordState.value = true
+    toggleShouldRecordState()
     return
   }
   switch (state.type) {
@@ -295,7 +288,6 @@ function undo() {
       break
     }
     case ActionType.DELETE_SENSOR: {
-      toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
         name: state.oldState.objectName || state.objectId,
@@ -305,11 +297,9 @@ function undo() {
         selected: true
       }
       addSensor(sensor)
-      toggleRecordState()
       break
     }
     case ActionType.MOVE_SENSOR: {
-      toggleRecordState()
       editSensor(state.objectId, {
         position: {
           x: state.oldState.objectPosition?.x || 0,
@@ -317,11 +307,9 @@ function undo() {
         },
         selected: true
       })
-      toggleRecordState()
       break
     }
     case ActionType.RESIZE_SENSOR: {
-      toggleRecordState()
       editSensor(state.objectId, {
         position: {
           x: state.oldState.objectPosition?.x || 0,
@@ -330,39 +318,34 @@ function undo() {
         radius: state.oldState.objectRadius || 15,
         selected: true
       })
-      toggleRecordState()
       break
     }
     case ActionType.UPDATE_SENSOR_TYPE: {
-      toggleRecordState()
       editSensor(state.objectId, {
         type: state.oldState.objectType || SensorType.Temperature,
         selected: true
       })
-      toggleRecordState()
       break
     }
     case ActionType.UPDATE_SENSOR_NAME: {
-      toggleRecordState()
       editSensor(state.objectId, {
         name: state.oldState.objectName,
         selected: true
       })
-      toggleRecordState()
       break
     }
   }
 
-  shouldRecordState.value = true
+  toggleShouldRecordState()
 }
 
 function redo() {
   removeAllSelectedSensors()
   removeSelectedElements()
-  shouldRecordState.value = false
+  toggleShouldRecordState()
   const state = redoState()
   if (!state) {
-    shouldRecordState.value = true
+    toggleShouldRecordState()
     return
   }
   if (
@@ -411,7 +394,6 @@ function redo() {
           break
         }
         case ActionType.MOVE_MULTI_SENSORS: {
-          toggleRecordState()
           for (let i = 0; i < state.objectId.length; i++) {
             editSensor(state.objectId[i], {
               position: {
@@ -421,7 +403,6 @@ function redo() {
               selected: true
             })
           }
-          toggleRecordState()
           break
         }
         case ActionType.DELETE_MULTI_SENSORS: {
@@ -444,7 +425,6 @@ function redo() {
           break
         }
         case ActionType.PASTE_SENSORS: {
-          toggleRecordState()
           for (let i = 0; i < state.objectId.length; i++) {
             const sensor: Sensor = {
               id: state.objectId[i],
@@ -456,7 +436,6 @@ function redo() {
             }
             addSensor(sensor)
           }
-          toggleRecordState()
           break
         }
         case ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS: {
@@ -482,7 +461,7 @@ function redo() {
         }
       }
     }
-    shouldRecordState.value = true
+    toggleShouldRecordState()
     return
   }
   switch (state.type) {
@@ -581,7 +560,6 @@ function redo() {
       break
     }
     case ActionType.CREATE_SENSOR: {
-      toggleRecordState()
       const sensor: Sensor = {
         id: state.objectId,
         name: state.oldState.objectName || state.objectId,
@@ -591,7 +569,6 @@ function redo() {
         selected: true
       }
       addSensor(sensor)
-      toggleRecordState()
       break
     }
     case ActionType.DELETE_SENSOR: {
@@ -599,7 +576,6 @@ function redo() {
       break
     }
     case ActionType.MOVE_SENSOR: {
-      toggleRecordState()
       editSensor(state.objectId, {
         position: {
           x: state.newState?.objectPosition?.x || 0,
@@ -607,11 +583,9 @@ function redo() {
         },
         selected: true
       })
-      toggleRecordState()
       break
     }
     case ActionType.RESIZE_SENSOR: {
-      toggleRecordState()
       editSensor(state.objectId, {
         position: {
           x: state.newState?.objectPosition?.x || 0,
@@ -620,34 +594,29 @@ function redo() {
         radius: state.newState?.objectRadius || 15,
         selected: true
       })
-      toggleRecordState()
       break
     }
     case ActionType.UPDATE_SENSOR_TYPE: {
-      toggleRecordState()
       editSensor(state.objectId, {
         type: state.newState?.objectType || SensorType.Temperature,
         selected: true
       })
-      toggleRecordState()
       break
     }
     case ActionType.UPDATE_SENSOR_NAME: {
-      toggleRecordState()
       editSensor(state.objectId, {
         name: state.newState?.objectName,
         selected: true
       })
-      toggleRecordState()
       break
     }
   }
 
-  shouldRecordState.value = true
+  toggleShouldRecordState()
 }
 
 function undoToStep(index: number) {
-  for (let i = undoList.length; i > index; i--) {
+  for (let i = undoList.value.length; i > index; i--) {
     undo()
   }
 }
@@ -660,14 +629,14 @@ function redoToStep(index: number) {
 
 hotkeys('ctrl+z, command+z', function (event) {
   event.preventDefault()
-  if (isUndoable()) {
+  if (undoList.value.length > 0) {
     undo()
   }
 })
 
 hotkeys('ctrl+y, command+y', function (event) {
   event.preventDefault()
-  if (isRedoable()) {
+  if (redoList.value.length > 0) {
     redo()
   }
 })

@@ -5,6 +5,7 @@ import type { StateController } from '@/types/stateController.ts'
 export const useStateStore = defineStore('state', () => {
   const redoList = ref<StateController[]>([])
   const undoList = ref<StateController[]>([])
+  const shouldRecordState = ref<boolean>(true)
 
   function addState(stateController: StateController) {
     if (redoList.value.length > 0) {
@@ -32,21 +33,17 @@ export const useStateStore = defineStore('state', () => {
     return null
   }
 
-  function isUndoable() {
-    return undoList.value.length > 0
-  }
-
-  function isRedoable() {
-    return redoList.value.length > 0
+  function toggleShouldRecordState() {
+    shouldRecordState.value = !shouldRecordState.value
   }
 
   return {
     redoList,
     undoList,
+    shouldRecordState,
     addState,
     undoState,
     redoState,
-    isUndoable,
-    isRedoable
+    toggleShouldRecordState
   }
 })

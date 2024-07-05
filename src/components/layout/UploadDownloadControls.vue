@@ -17,24 +17,39 @@
         </template>
         <div class="menu">
           <button class="button" @click="downloadData">Export Flow Chart Data</button>
-          <button class="button" @click="doScreenshot">Capture Flow Chart Image</button>
+          <button
+            class="button"
+            @click="
+              async () => {
+                await doScreenshot()
+              }
+            "
+          >
+            Capture Flow Chart Image
+          </button>
         </div>
       </v-menu>
     </div>
   </div>
+  <LoadingIndicator v-model:is-dialog-visible="isDialogVisible" />
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
 import type { NodeExportModel, EdgeExportModel } from '../../types/exportObject'
 import { useScreenshot } from '@/composables/useScreenshot'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 import UploadMenu from './UploadMenu.vue'
+import LoadingIndicator from '../general/LoadingIndicator.vue'
 
-const { nodes, edges, vueFlowRef } = useVueFlow()
+const { nodes, edges, vueFlowRef, viewport, setViewport, fitView } = useVueFlow()
 const { getIndexes } = useNodeIdStore()
 const { capture } = useScreenshot()
+const { toggleShowPatternedBackground } = useFlowChartCanvasStore()
 
+const isDialogVisible = ref(false)
 let nodeExportData: NodeExportModel[] = []
 let edgeExportData: EdgeExportModel[] = []
 
@@ -95,13 +110,17 @@ function downloadData() {
   URL.revokeObjectURL(url)
 }
 
-function doScreenshot() {
+async function doScreenshot() {
   if (!vueFlowRef.value) {
     console.warn('VueFlow element not found')
     return
   }
-
-  capture(vueFlowRef.value, { shouldDownload: true })
+  let { x, y, zoom } = viewport.value
+  toggleShowPatternedBackground()
+  await fitView()
+  await capture(vueFlowRef.value, { shouldDownload: true })
+  setViewport({ x, y, zoom })
+  toggleShowPatternedBackground()
 }
 </script>
 

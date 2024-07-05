@@ -22,7 +22,10 @@
       @edge-update="onEdgeUpdate"
       :delete-key-code="null"
     >
-      <Background style="background-color: #faf9f7" pattern-color="black" />
+      <Background
+        :style="{ backgroundColor: showPatternedBackground ? '#faf9f7' : 'white' }"
+        :pattern-color="showPatternedBackground ? 'black' : 'none'"
+      />
       <template #node-process="processNodeProps">
         <ProcessNode v-bind="processNodeProps" />
       </template>
@@ -54,6 +57,7 @@ import { type StateController, ActionType } from '@/types/stateController'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
+import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 
 import NodePanel from './NodePanel.vue'
 import ProcessNode from './ProcessNode.vue'
@@ -95,6 +99,8 @@ const {
 const { addState } = useStateStore()
 
 const { shouldRecordState } = storeToRefs(useStateStore())
+
+const { showPatternedBackground } = storeToRefs(useFlowChartCanvasStore())
 
 function onDragOver(event: any) {
   event.preventDefault()

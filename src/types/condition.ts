@@ -1,7 +1,8 @@
+import { type Sensor } from './sensor'
 export interface Condition {
   name: string
-  sensor: string
+  sensor: Sensor
   operator: string
   color: string
-  viscosity: number
+  measurement: number
 }

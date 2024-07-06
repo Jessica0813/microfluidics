@@ -6,7 +6,7 @@
           <v-icon size="small" color="#66615b">mdi-leak</v-icon>
         </button>
       </template>
-      <CustomizedDropdown v-model:selected="condition.sensor" :items="sensors" />
+      <SensorDropdown :items="sensors" :node-id="id" v-model:selected="condition.sensor" />
     </v-menu>
     <v-menu offset="10" v-model="isOperatorMenuOpen">
       <template v-slot:activator="{ props }">
@@ -21,7 +21,7 @@
       v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
     /> -->
     <v-menu
-      v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
+      v-if="condition.sensor === undefined || condition.sensor.type === SensorType.Color"
       v-model="isColorMenuOpen"
       :close-on-content-click="false"
       offset="10"
@@ -38,12 +38,7 @@
         mode="hex"
       ></v-color-picker>
     </v-menu>
-    <v-menu
-      :close-on-content-click="false"
-      offset="10"
-      v-else-if="condition.sensor === 'viscosity sensor'"
-      v-model="isViscosityMenuOpen"
-    >
+    <v-menu :close-on-content-click="false" offset="10" v-else v-model="isViscosityMenuOpen">
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Viscosity' }">
           <v-icon size="small" color="#66615b">mdi-numeric</v-icon>
@@ -63,12 +58,16 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
+import { SensorType } from '@/types/sensor'
 import { useStateStore } from '@/stores/useStateStore'
+import { useSensorStore } from '@/stores/useSensorStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import SensorDropdown from '../general/SensorDropdown.vue'
 // import CustomizedColorInput from '../general/CustomizedColorInput.vue'
 
 const props = defineProps<{
@@ -81,6 +80,7 @@ const isOperatorMenuOpen = ref(false)
 const isColorMenuOpen = ref(false)
 const isViscosityMenuOpen = ref(false)
 
+const { sensors } = storeToRefs(useSensorStore())
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 
@@ -89,7 +89,7 @@ const condition = computed(() => {
   if (data === undefined || data.condition === undefined) {
     return {
       name: 'xxx',
-      sensor: 'color sensor',
+      sensor: undefined,
       operator: '=',
       color: '#FFFFFF',
       viscosity: 0
@@ -101,9 +101,12 @@ const condition = computed(() => {
 const dynamicOperators = computed(() => {
   const selectedSensor = condition.value.sensor
 
-  if (selectedSensor === 'color sensor' || selectedSensor === undefined) {
+  if (selectedSensor === undefined || selectedSensor.type === SensorType.Color) {
     return ['=', '!=']
-  } else if (selectedSensor === 'viscosity sensor') {
+  } else if (
+    selectedSensor.type === SensorType.Viscosity ||
+    selectedSensor.type === SensorType.Temperature
+  ) {
     return ['>', '<', '=', '!=', '>=', '<=']
   } else {
     return []
@@ -119,8 +122,7 @@ const isMenuOpen = computed(() => {
   )
 })
 
-const sensors = ['color sensor', 'viscosity sensor']
-let oldCondition = Object.assign({}, condition.value)
+let oldCondition = JSON.parse(JSON.stringify(condition.value))
 
 watch(
   () => props.isEditMenuOpen,
@@ -137,12 +139,15 @@ watch(
   (newValue, oldValue) => {
     if (newValue === false && oldValue === true) {
       const node = findNode(props.id)
-      const newCondition = Object.assign({}, condition.value)
+      const newCondition = JSON.parse(JSON.stringify(condition.value))
       if (
         node &&
         (newCondition.viscosity !== oldCondition.viscosity ||
           newCondition.color !== oldCondition.color ||
-          newCondition.sensor !== oldCondition.sensor ||
+          (oldCondition.sensor &&
+            newCondition.sensor &&
+            newCondition.sensor.id !== oldCondition.sensor.id) ||
+          (!oldCondition.sensor && newCondition.sensor !== oldCondition.sensor) ||
           newCondition.operator !== oldCondition.operator)
       ) {
         const state: StateController = {

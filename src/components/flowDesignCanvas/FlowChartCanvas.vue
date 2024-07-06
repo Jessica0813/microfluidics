@@ -277,10 +277,10 @@ function onDrop(event: any) {
   } else if (type === 'condition') {
     nodeData = {
       name: 'xxx',
-      sensor: 'color sensor',
+      sensor: undefined,
       operator: '=',
       color: '#FFFFFF',
-      viscosity: 0
+      measurement: 0
     }
     newNode = { ...newNode, data: { condition: nodeData } }
   }

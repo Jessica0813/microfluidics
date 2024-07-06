@@ -48,54 +48,45 @@
         flex-direction: row;
       "
     >
-      <div v-if="condition.sensor === 'color sensor' || condition.sensor === ''" class="wrap">
+      <div
+        v-if="condition.sensor === undefined || condition.sensor.type === SensorType.Color"
+        class="wrap"
+      >
         <p>
-          color <strong> {{ condition.operator }}</strong>
+          {{ condition.sensor === undefined ? 'color' : condition.sensor.name
+          }}<strong> {{ ' ' + condition.operator }}</strong>
         </p>
         <div class="color-square" :style="{ backgroundColor: condition.color }"></div>
         <p>?</p>
       </div>
-      <p style="font-size: 14px" v-if="condition.sensor === 'viscosity sensor'">
-        viscosity <strong> {{ condition.operator }}</strong> {{ condition.viscosity }}?
+      <p style="font-size: 14px" v-else>
+        {{ condition.sensor.name }} <strong> {{ ' ' + condition.operator }}</strong>
+        {{ condition.measurement }}?
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
+import { ref, computed } from 'vue'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
+import { SensorType } from '@/types/sensor'
 
 const { id, selected, data } = defineProps<NodeProps>()
 
-const isMenuOpen = ref<boolean>(false)
 const nodeIsHovered = ref<boolean>(false)
 
 const condition = computed(() => {
   if (data === undefined || data.condition === undefined) {
     return {
       name: 'xxx',
-      sensor: 'color sensor',
+      sensor: undefined,
       operator: '=',
       color: '#ffffff',
-      viscosity: 0
+      measurement: 0
     }
   }
   return data.condition
-})
-
-const { findNode } = useVueFlow()
-
-watch(isMenuOpen, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
-    const node = findNode(id)
-    if (node === undefined) {
-      return
-    }
-    if (node.data === undefined || node.data.condition !== condition.value) {
-      node.data.condition = condition.value
-    }
-  }
 })
 </script>
 

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
-import { type Sensor, SensorType } from '@/types/sensor'
+import { type Sensor } from '@/types/sensor'
 import { useStateStore } from './useStateStore'
 import { type StateController, ActionType } from '@/types/stateController'
 
@@ -17,22 +17,25 @@ export const useSensorStore = defineStore('sensor', () => {
 
   const isMetaKeyPressed = ref(false)
 
-  let tempSensorId = 1
-  let viscSensorId = 1
-  let colorSensorId = 1
+  let sensorId = 1
 
-  function getSensorId(sensorType: SensorType | undefined) {
-    if (sensorType === undefined) {
-      return ''
-    }
-    switch (sensorType) {
-      case SensorType.Temperature:
-        return `temp_sensor_${tempSensorId++}`
-      case SensorType.Viscosity:
-        return `visc_sensor_${viscSensorId++}`
-      case SensorType.Color:
-        return `col_sensor_${colorSensorId++}`
-    }
+  // let tempSensorId = 1
+  // let viscSensorId = 1
+  // let colorSensorId = 1
+
+  function getSensorId() {
+    return `sensor_${sensorId++}`
+    // if (sensorType === undefined) {
+    //   return ''
+    // }
+    // switch (sensorType) {
+    //   case SensorType.Temperature:
+    //     return `temp_sensor_${tempSensorId++}`
+    //   case SensorType.Viscosity:
+    //     return `visc_sensor_${viscSensorId++}`
+    //   case SensorType.Color:
+    //     return `col_sensor_${colorSensorId++}`
+    // }
   }
 
   function toggleIsMetaKeyPressed() {

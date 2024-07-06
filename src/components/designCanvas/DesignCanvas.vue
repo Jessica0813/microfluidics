@@ -126,7 +126,7 @@ function onDrop(event: any) {
   ) {
     const left = svg.value.getBoundingClientRect().left
     const top = svg.value.getBoundingClientRect().top
-    useDrop(left, top, event, transform.value, getSensorId(type), addSensor)
+    useDrop(left, top, event, transform.value, getSensorId(), addSensor)
   }
   isPanelMenuOpen.value = false
 }

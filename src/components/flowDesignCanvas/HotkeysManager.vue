@@ -118,7 +118,7 @@ hotkeys('command+v', function (event) {
     copiedIds.forEach((id) => {
       const sensor = sensors.find((sensor) => sensor.id === id)
       if (sensor) {
-        let newId = getSensorId(sensor.type)
+        let newId = getSensorId()
         const newSensor = {
           id: newId,
           name: newId,

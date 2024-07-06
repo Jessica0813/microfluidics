@@ -21,7 +21,7 @@
       v-if="condition.sensor === '' || condition.sensor === 'color sensor'"
     /> -->
     <v-menu
-      v-if="condition.sensor === undefined || condition.sensor.type === SensorType.Color"
+      v-if="condition.sensor === null || condition.sensor.type === SensorType.Color"
       v-model="isColorMenuOpen"
       :close-on-content-click="false"
       offset="10"
@@ -89,7 +89,7 @@ const condition = computed(() => {
   if (data === undefined || data.condition === undefined) {
     return {
       name: 'xxx',
-      sensor: undefined,
+      sensor: null,
       operator: '=',
       color: '#FFFFFF',
       viscosity: 0
@@ -101,7 +101,7 @@ const condition = computed(() => {
 const dynamicOperators = computed(() => {
   const selectedSensor = condition.value.sensor
 
-  if (selectedSensor === undefined || selectedSensor.type === SensorType.Color) {
+  if (selectedSensor === null || selectedSensor.type === SensorType.Color) {
     return ['=', '!=']
   } else if (
     selectedSensor.type === SensorType.Viscosity ||
@@ -138,6 +138,7 @@ watch(
   isMenuOpen,
   (newValue, oldValue) => {
     if (newValue === false && oldValue === true) {
+      console.log('1', oldCondition)
       const node = findNode(props.id)
       const newCondition = JSON.parse(JSON.stringify(condition.value))
       if (

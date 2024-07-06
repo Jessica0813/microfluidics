@@ -49,11 +49,11 @@
       "
     >
       <div
-        v-if="condition.sensor === undefined || condition.sensor.type === SensorType.Color"
+        v-if="condition.sensor === null || condition.sensor.type === SensorType.Color"
         class="wrap"
       >
         <p>
-          {{ condition.sensor === undefined ? 'color' : condition.sensor.name
+          {{ condition.sensor === null ? 'color' : condition.sensor.name
           }}<strong> {{ ' ' + condition.operator }}</strong>
         </p>
         <div class="color-square" :style="{ backgroundColor: condition.color }"></div>
@@ -80,7 +80,7 @@ const condition = computed(() => {
   if (data === undefined || data.condition === undefined) {
     return {
       name: 'xxx',
-      sensor: undefined,
+      sensor: null,
       operator: '=',
       color: '#ffffff',
       measurement: 0

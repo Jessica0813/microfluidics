@@ -66,7 +66,8 @@ const { redoList, undoList } = storeToRefs(useStateStore())
 const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, removeSelectedElements } =
   useVueFlow()
 
-const { editSensor, addSensor, deleteSensorWithId, removeAllSelectedSensors } = useSensorStore()
+const { editSensor, addSensor, deleteSensorWithId, removeAllSelectedSensors, findSensor } =
+  useSensorStore()
 
 function undo() {
   removeAllSelectedSensors()
@@ -229,6 +230,12 @@ function undo() {
           node.data.pause = data
         } else if (node.type === 'condition') {
           node.data.condition = data
+          if (node.data.condition.sensor !== null) {
+            const sensor = findSensor(node.data.condition.sensor.id)
+            if (sensor) {
+              node.data.condition.sensor = sensor
+            }
+          }
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
           if (state.oldState.changedSubprocessId) {
@@ -505,6 +512,12 @@ function redo() {
           node.data.pause = data
         } else if (node.type === 'condition') {
           node.data.condition = data
+          if (node.data.condition.sensor !== null) {
+            const sensor = findSensor(node.data.condition.sensor.id)
+            if (sensor) {
+              node.data.condition.sensor = sensor
+            }
+          }
         } else if (node.type === 'schedule') {
           node.data.scheduledFlowControl = data
           if (state.newState?.changedSubprocessId) {

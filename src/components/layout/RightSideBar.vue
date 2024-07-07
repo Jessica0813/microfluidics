@@ -70,6 +70,7 @@ function checkNodeDataValidity() {
               flowControl.duration <= 0
             ) {
               node.selected = true
+              break
             }
           }
         } else {

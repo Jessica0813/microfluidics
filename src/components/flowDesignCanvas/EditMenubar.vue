@@ -37,7 +37,7 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { useVueFlow, type Node } from '@vue-flow/core'
+import { useVueFlow, type GraphNode } from '@vue-flow/core'
 import type { NodeDragEvent } from '@vue-flow/core'
 import { select } from 'd3'
 import { drag, type D3DragEvent } from 'd3-drag'
@@ -78,7 +78,7 @@ const selectedId = ref<string | null>(null)
 const position = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const isDraggable = ref(false)
 const isNodeOverScheduleNode = ref(false)
-const intersectionScheduleNode = ref<Node | null>(null)
+const intersectionScheduleNode = ref<GraphNode | null>(null)
 let nodePositionbeforeDrag = { x: 0, y: 0 }
 
 const { getSubProcessId } = useNodeIdStore()
@@ -266,11 +266,15 @@ onNodeDrag((dragEvent: NodeDragEvent) => {
   if (isEditMenuOpen.value) {
     isEditMenuOpen.value = false
   }
-  checkIfNodeIsOverScheduleNode(dragEvent)
+  if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
+    checkIfNodeIsOverScheduleNode(dragEvent)
+  }
 })
 
 onNodeDragStop((dragEvent: NodeDragEvent) => {
-  checkIfNodeIsOverScheduleNode(dragEvent)
+  if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
+    checkIfNodeIsOverScheduleNode(dragEvent)
+  }
   if (isNodeOverScheduleNode.value && intersectionScheduleNode.value) {
     const processNodeData = dragEvent.node.data.flowControl
     const scheduleNodeData = intersectionScheduleNode.value.data.scheduledFlowControl

@@ -50,5 +50,18 @@ export const useFluidStore = defineStore('fluid', () => {
     return fluids.value.some((fluid) => fluid.name === name && fluid.id !== id)
   }
 
-  return { fluids, fluidNames, generateFluidId, addFluid, removeFluid, editFluid, isNameExist }
+  function getFluidById(id: string) {
+    return fluids.value.find((fluid) => fluid.id === id)
+  }
+
+  return {
+    fluids,
+    fluidNames,
+    generateFluidId,
+    addFluid,
+    removeFluid,
+    editFluid,
+    isNameExist,
+    getFluidById
+  }
 })

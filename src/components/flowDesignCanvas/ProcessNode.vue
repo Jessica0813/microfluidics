@@ -49,16 +49,17 @@
     >
       <p v-if="flowControl.injection === '' || flowControl.injection === 'pump'">
         <strong>{{ flowControl.injection + ' ' }}</strong>
-        <strong>{{ flowControl.fluid }}</strong> into <strong>{{ flowControl.inlet }}</strong> at
+        <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'Fluid' }}</strong> into
+        <strong>{{ flowControl.inlet }}</strong> at
         <strong>{{ flowControl.pressure }}</strong> pressure for
         <strong>{{ flowControl.duration }}</strong
         >s
       </p>
       <p v-else>
         <strong>{{ flowControl.injection + ' ' }}</strong>
-        <strong>{{ flowControl.fluid }}</strong> into <strong>{{ flowControl.inlet }}</strong> at a
-        rate of <strong>{{ flowControl.flowrate }}</strong> for
-        <strong>{{ flowControl.duration }}</strong
+        <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'Fluid' }}</strong> into
+        <strong>{{ flowControl.inlet }}</strong> at a rate of
+        <strong>{{ flowControl.flowrate }}</strong> for <strong>{{ flowControl.duration }}</strong
         >s
       </p>
     </div>

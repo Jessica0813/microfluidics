@@ -59,6 +59,7 @@ import type { FlowControlProcess } from '@/types/flowControl'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
+import { useFluidStore } from '@/stores/useFluidStore'
 
 const { undoState, redoState, toggleShouldRecordState } = useStateStore()
 const { redoList, undoList } = storeToRefs(useStateStore())
@@ -68,6 +69,8 @@ const { removeEdges, removeNodes, findNode, addNodes, findEdge, addEdges, remove
 
 const { editSensor, addSensor, deleteSensorWithId, removeAllSelectedSensors, findSensor } =
   useSensorStore()
+
+const { getFluidById } = useFluidStore()
 
 function undo() {
   removeAllSelectedSensors()
@@ -226,6 +229,12 @@ function undo() {
         if (node.type === 'process') {
           node.data.flowControl = data
           node.data.isOverScheduleNode = false
+          if (node.data.flowControl.fluid !== null) {
+            const fluid = getFluidById(node.data.flowControl.fluid.id)
+            if (fluid) {
+              node.data.flowControl.fluid = fluid
+            }
+          }
         } else if (node.type === 'pause') {
           node.data.pause = data
         } else if (node.type === 'condition') {
@@ -245,6 +254,14 @@ function undo() {
             )
             if (subprocess) {
               subprocess.selected = true
+            }
+          }
+          for (const process of node.data.scheduledFlowControl.processes) {
+            if (process.fluid !== null) {
+              const fluid = getFluidById(process.fluid.id)
+              if (fluid) {
+                process.fluid = fluid
+              }
             }
           }
         }
@@ -508,6 +525,12 @@ function redo() {
         if (node.type === 'process') {
           node.data.flowControl = data
           node.data.isOverScheduleNode = false
+          if (node.data.flowControl.fluid !== null) {
+            const fluid = getFluidById(node.data.flowControl.fluid.id)
+            if (fluid) {
+              node.data.flowControl.fluid = fluid
+            }
+          }
         } else if (node.type === 'pause') {
           node.data.pause = data
         } else if (node.type === 'condition') {
@@ -527,6 +550,14 @@ function redo() {
             )
             if (subprocess) {
               subprocess.selected = true
+            }
+          }
+          for (const process of node.data.scheduledFlowControl.processes) {
+            if (process.fluid !== null) {
+              const fluid = getFluidById(process.fluid.id)
+              if (fluid) {
+                process.fluid = fluid
+              }
             }
           }
         }

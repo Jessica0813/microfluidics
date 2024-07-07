@@ -1,7 +1,8 @@
+import type { Fluid } from './fluid'
 export interface FlowControl {
   inlet: string
   injection: string
-  fluid: string
+  fluid: Fluid | null
   pressure: number
   duration: number
   flowrate: number
@@ -22,7 +23,7 @@ export interface FlowControlProcess {
   duration: number
   inlet: string
   injection: string
-  fluid: string
+  fluid: Fluid | null
   pressure: number
   flowrate: number
 }

@@ -23,7 +23,7 @@
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
         </button>
       </template>
-      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluidNames" />
+      <FluidDropdown v-model:selected="flowControl.fluid" :items="fluids" />
     </v-menu>
     <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
@@ -112,6 +112,7 @@ import { useStateStore } from '@/stores/useStateStore'
 
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import FluidDropdown from '../general/FluidDropdown.vue'
 
 const props = defineProps<{
   id: string | null
@@ -128,7 +129,7 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
     duration: 1.0,
     inlet: 'inlet 1',
     injection: 'pump',
-    fluid: 'water',
+    fluid: null,
     pressure: 0,
     flowrate: 0
   }
@@ -159,7 +160,7 @@ const isMenuOpen = computed(() => {
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 const { isDraggingOrResizingSubProcess } = storeToRefs(useFlowChartCanvasStore())
-const { fluidNames } = storeToRefs(useFluidStore())
+const { fluids } = storeToRefs(useFluidStore())
 
 const scheduledFlowControl = computed(() => {
   const data = findNode(props.id)?.data
@@ -221,7 +222,7 @@ watch(
         duration: 1.0,
         inlet: 'inlet 1',
         injection: 'pump',
-        fluid: 'water',
+        fluid: null,
         pressure: 0,
         flowrate: 0
       }
@@ -281,7 +282,10 @@ watch(isMenuOpen, (newValue, oldValue) => {
         flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
         flowControl.value.flowrate !== oldFlowControl.flowrate ||
-        flowControl.value.fluid !== oldFlowControl.fluid ||
+        (!oldFlowControl.fluid && flowControl.value.fluid !== oldFlowControl.fluid) ||
+        (oldFlowControl.fluid &&
+          flowControl.value.fluid &&
+          flowControl.value.fluid.id !== oldFlowControl.fluid.id) ||
         flowControl.value.injection !== oldFlowControl.injection ||
         flowControl.value.inlet !== oldFlowControl.inlet
       ) {

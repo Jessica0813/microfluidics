@@ -6,7 +6,7 @@
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
         </button>
       </template>
-      <CustomizedDropdown v-model:selected="flowControl.fluid" :items="fluidNames" />
+      <FluidDropdown v-model:selected="flowControl.fluid" :items="fluids" />
     </v-menu>
     <v-menu offset="10" v-model="isInletMenuOpen">
       <template v-slot:activator="{ props }">
@@ -69,16 +69,17 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { computed, watch, ref } from 'vue'
-import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
-import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 import type { FlowControl } from '@/types/flowControl'
 import { useFluidStore } from '@/stores/useFluidStore'
-import { storeToRefs } from 'pinia'
+import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
+import CustomizedDropdown from '../general/CustomizedDropdown.vue'
+import FluidDropdown from '../general/FluidDropdown.vue'
 
 const props = defineProps<{
   id: string | null
@@ -105,7 +106,7 @@ const isMenuOpen = computed(() => {
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
-const { fluidNames } = storeToRefs(useFluidStore())
+const { fluids } = storeToRefs(useFluidStore())
 
 const flowControl = computed(() => {
   const data = findNode(props.id)?.data
@@ -113,7 +114,7 @@ const flowControl = computed(() => {
     return {
       inlet: 'inlet 1',
       injection: 'pump',
-      fluid: 'water',
+      fluid: null,
       pressure: 0,
       duration: 0,
       flowrate: 0
@@ -124,7 +125,7 @@ const flowControl = computed(() => {
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
-let oldFlowControl: FlowControl = Object.assign({}, flowControl.value)
+let oldFlowControl: FlowControl = JSON.parse(JSON.stringify(flowControl.value))
 
 watch(
   () => props.isEditMenuOpen,
@@ -147,11 +148,14 @@ watch(isMenuOpen, (newValue, oldValue) => {
       (flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
         flowControl.value.flowrate !== oldFlowControl.flowrate ||
-        flowControl.value.fluid !== oldFlowControl.fluid ||
+        (!oldFlowControl.fluid && flowControl.value.fluid !== oldFlowControl.fluid) ||
+        (oldFlowControl.fluid &&
+          flowControl.value.fluid &&
+          flowControl.value.fluid.id !== oldFlowControl.fluid.id) ||
         flowControl.value.injection !== oldFlowControl.injection ||
         flowControl.value.inlet !== oldFlowControl.inlet)
     ) {
-      const newFlowControl = Object.assign({}, flowControl.value)
+      const newFlowControl = JSON.parse(JSON.stringify(flowControl.value))
       const state: StateController = {
         type: ActionType.UPDATE_NODE_DATA,
         name: 'update node data ' + node.id,

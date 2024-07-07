@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-const color = defineModel<string>('color', { default: '' })
+const color = defineModel<string>('color', { default: '#000000' })
 </script>
 
 <style>

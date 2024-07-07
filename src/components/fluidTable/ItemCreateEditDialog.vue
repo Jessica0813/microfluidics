@@ -131,26 +131,25 @@ import CustomizedColorInputVue from '../general/CustomizedColorInput.vue'
 import CustomizedButton from './CustomizedButton.vue'
 
 const props = defineProps({
-  itemIndex: Number
+  itemId: String
 })
 
 const emit = defineEmits(['close', 'cancel', 'save'])
 
 const isDialogVisible = defineModel<boolean>('isDialogVisible')
 const nameInput = defineModel<string>('nameInput')
-const colorInput = defineModel<string>('colorInput', { default: '' })
+const colorInput = defineModel<string>('colorInput', { default: '#000000' })
 const viscosityInput = defineModel('viscosityInput', { default: 0 })
 const withParticle = defineModel<string>('withParticle', { default: 'No' })
 const particleSize = defineModel('particleSize', { default: 0 })
 const particleDensity = defineModel('particleDensity', { default: 0 })
 
+const fluidStore = useFluidStore()
+
 const isNameExisted = computed(() => {
   const enteredName = nameInput.value?.trim().toLowerCase()
   return fluidStore.fluids.some(
-    (fluid: Fluid, index: number) =>
-      index !== props.itemIndex && fluid.name.toLowerCase() === enteredName
+    (fluid: Fluid) => fluid.id !== props.itemId && fluid.name.toLowerCase() === enteredName
   )
 })
-
-const fluidStore = useFluidStore()
 </script>

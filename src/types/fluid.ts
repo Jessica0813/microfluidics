@@ -1,4 +1,5 @@
 export interface Fluid {
+  id: string
   name: string
   color: string
   viscosity: number

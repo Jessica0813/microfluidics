@@ -18,7 +18,7 @@
         @close="closeCreateOrEditDialog"
         @cancel="cancelItemCreateOrEdit"
         @save="confirmItemCreateOrEdit"
-        :itemIndex="createOrEditItemIndex"
+        :itemId="createOrEditItemId"
       />
       <v-card-title class="d-flex align-center pe-2">
         Fluids
@@ -27,12 +27,7 @@
       </v-card-title>
 
       <v-divider></v-divider>
-      <v-data-table-virtual
-        :headers="headers"
-        :items="fluidStore.fluids"
-        density="comfortable"
-        :hover="true"
-      >
+      <v-data-table-virtual :headers="headers" :items="fluids" density="comfortable" :hover="true">
         <template v-slot:headers="{ columns }">
           <tr class="bg-grey-lighten-3">
             <template v-for="column in columns" :key="column.key">
@@ -61,16 +56,11 @@
         <template v-slot:item.particleDensity="{ item }">
           <div>{{ item.withParticle === 'Yes' ? item.particleDensity : '-' }}</div>
         </template>
-        <template v-slot:item.actions="{ item, index }">
-          <v-icon
-            size="small"
-            class="me-2"
-            color="grey-darken-3"
-            @click="handleEditFluid(index, item)"
-          >
+        <template v-slot:item.actions="{ item }">
+          <v-icon size="small" class="me-2" color="grey-darken-3" @click="handleEditFluid(item)">
             mdi-pencil-outline
           </v-icon>
-          <v-icon size="small" color="grey-darken-3" @click="deleteItem(index)">
+          <v-icon size="small" color="grey-darken-3" @click="deleteItem(item.id)">
             mdi-delete-outline
           </v-icon>
         </template>
@@ -81,6 +71,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { type Fluid } from '@/types/fluid'
 import { useFluidStore } from '@/stores/useFluidStore'
 import CustomizedButton from './CustomizedButton.vue'
@@ -90,10 +81,10 @@ import ItemCreateEditDialog from './ItemCreateEditDialog.vue'
 const isTableVisible = defineModel<boolean>('isTableVisible')
 
 const dialogDelete = ref(false)
-const deleteItemIndex = ref(-1)
+const deleteItemId = ref('')
 
 const dialogCreateOrEdit = ref(false)
-const createOrEditItemIndex = ref(-1)
+const createOrEditItemId = ref('')
 const name = ref('')
 const color = ref('')
 const viscosity = ref(0)
@@ -123,20 +114,21 @@ const headers: any = [
   { title: 'Actions', align: 'start', sortable: false, key: 'actions', width: '15%' }
 ]
 
-const fluidStore = useFluidStore()
+const { generateFluidId, addFluid, removeFluid, editFluid } = useFluidStore()
+const { fluids } = storeToRefs(useFluidStore())
 
-function deleteItem(index: number) {
+function deleteItem(id: string) {
   dialogDelete.value = true
-  deleteItemIndex.value = index
+  deleteItemId.value = id
 }
 
 function closeDeleteDialog() {
   dialogDelete.value = false
-  deleteItemIndex.value = -1
+  deleteItemId.value = ''
 }
 
 function confirmItemDelete() {
-  fluidStore.removeFluid(deleteItemIndex.value)
+  removeFluid(deleteItemId.value)
   closeDeleteDialog()
 }
 
@@ -146,7 +138,7 @@ function cancelItemDelete() {
 
 function closeCreateOrEditDialog() {
   dialogCreateOrEdit.value = false
-  createOrEditItemIndex.value = -1
+  createOrEditItemId.value = ''
 }
 
 function cancelItemCreateOrEdit() {
@@ -154,8 +146,9 @@ function cancelItemCreateOrEdit() {
 }
 
 function confirmItemCreateOrEdit() {
-  if (createOrEditItemIndex.value === -1) {
-    fluidStore.addFluid({
+  if (createOrEditItemId.value === '') {
+    addFluid({
+      id: generateFluidId(),
       name: name.value,
       color: color.value,
       viscosity: viscosity.value,
@@ -164,7 +157,7 @@ function confirmItemCreateOrEdit() {
       particleSize: particleSize.value || undefined
     })
   } else {
-    fluidStore.editFluid(createOrEditItemIndex.value, {
+    editFluid(createOrEditItemId.value, {
       name: name.value,
       color: color.value,
       viscosity: viscosity.value,
@@ -179,15 +172,15 @@ function confirmItemCreateOrEdit() {
 function handleAddNewFluid() {
   dialogCreateOrEdit.value = true
   name.value = ''
-  color.value = ''
+  color.value = '#000000'
   viscosity.value = 0
   withParticle.value = 'No'
   particleSize.value = 0
   particleDensity.value = 0
-  createOrEditItemIndex.value = -1
+  createOrEditItemId.value = ''
 }
 
-function handleEditFluid(index: number, fluid: Fluid) {
+function handleEditFluid(fluid: Fluid) {
   dialogCreateOrEdit.value = true
   name.value = fluid.name
   color.value = fluid.color
@@ -197,6 +190,6 @@ function handleEditFluid(index: number, fluid: Fluid) {
     particleSize.value = fluid.particleSize
     particleDensity.value = fluid.particleDensity
   }
-  createOrEditItemIndex.value = index
+  createOrEditItemId.value = fluid.id
 }
 </script>

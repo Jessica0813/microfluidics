@@ -101,26 +101,27 @@ function checkNodeDataValidity() {
 async function findNextNode(node: GraphNode): Promise<void> {
   if (node.type === 'condition') {
     const edges = getConnectedEdges([node])
-    if (edges.length === 0) {
+    const outEdges = edges.filter((edge) => edge.target !== node.id)
+    if (outEdges.length === 0) {
       return
     }
-    const promises = edges.map(async (edge) => {
+    const promises = outEdges.map(async (edge) => {
       const nextNode = findNode(edge.target)
       if (nextNode) {
         await implementation(nextNode)
       }
     })
     await Promise.all(promises)
-    return
+  } else {
+    const outgoers = getOutgoers(node)
+    if (outgoers.length === 0) {
+      return
+    }
+    const promises = outgoers.map(async (outgoer) => {
+      await implementation(outgoer)
+    })
+    await Promise.all(promises)
   }
-  const outgoers = getOutgoers(node)
-  if (outgoers.length === 0) {
-    return
-  }
-  const promises = outgoers.map(async (outgoer) => {
-    await implementation(outgoer)
-  })
-  await Promise.all(promises)
 }
 
 async function implementation(node: GraphNode): Promise<void> {
@@ -136,10 +137,13 @@ async function implementation(node: GraphNode): Promise<void> {
   } else if (node.type === 'condition') {
     node.selected = true
     await new Promise<void>((resolve) => {
-      node.selected = false
-      findNextNode(node)
-      resolve()
+      setTimeout(async () => {
+        node.selected = false
+        await findNextNode(node)
+        resolve()
+      }, 0)
     })
+    node.selected = false
   } else if (node.type === 'pause') {
     node.selected = true
     await new Promise<void>((resolve) => {

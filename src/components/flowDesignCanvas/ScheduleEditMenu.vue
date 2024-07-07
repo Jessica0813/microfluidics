@@ -146,17 +146,6 @@ const isSubProcessDurationMenuOpen = ref(false)
 const isChildProcessSelected = ref(false)
 const editedProcessId = ref(-1)
 
-const isMenuOpen = computed(() => {
-  return (
-    isFluidMenuOpen.value ||
-    isInletMenuOpen.value ||
-    isInjectionMenuOpen.value ||
-    isPressureMenuOpen.value ||
-    isFlowrateMenuOpen.value ||
-    isSubProcessDurationMenuOpen.value
-  )
-})
-
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 const { isDraggingOrResizingSubProcess } = storeToRefs(useFlowChartCanvasStore())
@@ -269,15 +258,14 @@ watch(isTotalDurationMenuOpen, (newValue, oldValue) => {
   }
 })
 
-watch(isMenuOpen, (newValue, oldValue) => {
+function compareAndUpdateState(newValue: boolean, oldValue: boolean) {
   if (newValue === false && oldValue === true) {
-    const node = findNode(props.id)
     let newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     if (editedProcessId.value !== -1) {
       oldScheduledFlowControl.processes[editedProcessId.value].selected = false
       newData.processes[editedProcessId.value].selected = false
     }
-    if (node && JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
+    if (JSON.stringify(newData) !== JSON.stringify(oldScheduledFlowControl)) {
       if (
         flowControl.value.pressure !== oldFlowControl.pressure ||
         flowControl.value.duration !== oldFlowControl.duration ||
@@ -302,6 +290,30 @@ watch(isMenuOpen, (newValue, oldValue) => {
       oldFlowControl = Object.assign({}, flowControl.value)
     }
   }
+}
+
+watch(isFluidMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isInletMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isInjectionMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isPressureMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isFlowrateMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isSubProcessDurationMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
 })
 
 function deleteSelectedElements() {

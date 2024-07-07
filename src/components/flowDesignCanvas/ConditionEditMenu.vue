@@ -62,6 +62,7 @@ import { storeToRefs } from 'pinia'
 import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { SensorType } from '@/types/sensor'
+import type { Condition } from '@/types/condition'
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
@@ -98,28 +99,45 @@ const condition = computed(() => {
   return data.condition
 })
 
-const dynamicOperators = ref<string[]>([])
-
-// const dynamicOperators = computed(() => {
-//   const selectedSensor = condition.value.sensor
-
-//   if (selectedSensor === null || selectedSensor.type === SensorType.Color) {
-//     return ['=', '!=', 'is Like']
-//   } else if (
-//     selectedSensor.type === SensorType.Viscosity ||
-//     selectedSensor.type === SensorType.Temperature
-//   ) {
-//     return ['>', '<', '=', '!=', '>=', '<=']
-//   } else {
-//     return []
-//   }
-// })
-
-const isMenuOpen = computed(() => {
-  return isOperatorMenuOpen.value || isColorMenuOpen.value || isMeasurementMenuOpen.value
-})
+const dynamicOperators = ref<string[]>(
+  condition.value.sensor === null || condition.value.sensor.type === SensorType.Color
+    ? ['=', '!=', 'is Like']
+    : ['=', '!=', '>', '<', '>=', '<=']
+)
 
 let oldCondition = JSON.parse(JSON.stringify(condition.value))
+
+watch(
+  () => props.isEditMenuOpen,
+  (newValue) => {
+    if (!newValue) {
+      isColorMenuOpen.value = false
+      isMeasurementMenuOpen.value = false
+    }
+  }
+)
+
+function updateState(newCondition: Condition) {
+  const node = findNode(props.id)
+  if (!node) {
+    return
+  }
+  const state: StateController = {
+    type: ActionType.UPDATE_NODE_DATA,
+    name: 'update node data ' + node.id,
+    objectId: node.id,
+    oldState: {
+      objectPosition: node.position,
+      data: oldCondition
+    },
+    newState: {
+      objectPosition: node.position,
+      data: newCondition
+    }
+  }
+  addState(state)
+  oldCondition = newCondition
+}
 
 watch(isSensorMenuOpen, (newValue, oldValue) => {
   if (newValue === false && oldValue === true) {
@@ -143,67 +161,35 @@ watch(isSensorMenuOpen, (newValue, oldValue) => {
       condition.value.color = '#FFFFFF'
       newCondition = JSON.parse(JSON.stringify(condition.value))
 
-      const state: StateController = {
-        type: ActionType.UPDATE_NODE_DATA,
-        name: 'update node data ' + node.id,
-        objectId: node.id,
-        oldState: {
-          objectPosition: node.position,
-          data: oldCondition
-        },
-        newState: {
-          objectPosition: node.position,
-          data: newCondition
-        }
-      }
-      addState(state)
-      oldCondition = newCondition
+      updateState(newCondition)
     }
   }
 })
 
-watch(
-  () => props.isEditMenuOpen,
-  (newValue) => {
-    if (!newValue) {
-      isColorMenuOpen.value = false
-      isMeasurementMenuOpen.value = false
+function compareAndUpdateState(newValue: boolean, oldValue: boolean) {
+  if (newValue === false && oldValue === true) {
+    const newCondition = JSON.parse(JSON.stringify(condition.value))
+    if (
+      newCondition.operator !== oldCondition.operator ||
+      newCondition.color !== oldCondition.color ||
+      newCondition.measurement !== oldCondition.measurement
+    ) {
+      updateState(newCondition)
     }
   }
-)
+}
 
-watch(
-  isMenuOpen,
-  (newValue, oldValue) => {
-    if (newValue === false && oldValue === true) {
-      const node = findNode(props.id)
-      const newCondition = JSON.parse(JSON.stringify(condition.value))
-      if (
-        node &&
-        (newCondition.measurement !== oldCondition.measurement ||
-          newCondition.color !== oldCondition.color ||
-          newCondition.operator !== oldCondition.operator)
-      ) {
-        const state: StateController = {
-          type: ActionType.UPDATE_NODE_DATA,
-          name: 'update node data ' + node.id,
-          objectId: node.id,
-          oldState: {
-            objectPosition: node.position,
-            data: oldCondition
-          },
-          newState: {
-            objectPosition: node.position,
-            data: newCondition
-          }
-        }
-        addState(state)
-        oldCondition = newCondition
-      }
-    }
-  },
-  { deep: true }
-)
+watch(isOperatorMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isColorMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
+
+watch(isMeasurementMenuOpen, (newValue, oldValue) => {
+  compareAndUpdateState(newValue, oldValue)
+})
 
 function deleteSelectedElements() {
   if (props.id !== null) {

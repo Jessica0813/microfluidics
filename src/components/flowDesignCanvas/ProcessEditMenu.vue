@@ -93,17 +93,6 @@ const isPressureMenuOpen = ref(false)
 const isViscosityMenuOpen = ref(false)
 const isDurationMenuOpen = ref(false)
 
-const isMenuOpen = computed(() => {
-  return (
-    isFluidMenuOpen.value ||
-    isInletMenuOpen.value ||
-    isInjectionMenuOpen.value ||
-    isPressureMenuOpen.value ||
-    isViscosityMenuOpen.value ||
-    isDurationMenuOpen.value
-  )
-})
-
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 const { fluids } = storeToRefs(useFluidStore())
@@ -131,29 +120,29 @@ watch(
   () => props.isEditMenuOpen,
   (newValue, oldValue) => {
     if (!newValue && oldValue) {
-      if (isMenuOpen.value) {
-        isPressureMenuOpen.value = false
-        isViscosityMenuOpen.value = false
-        isDurationMenuOpen.value = false
-      }
+      isPressureMenuOpen.value = false
+      isViscosityMenuOpen.value = false
+      isDurationMenuOpen.value = false
     }
   }
 )
 
-watch(isMenuOpen, (newValue, oldValue) => {
+function updateState(newValue: boolean, oldValue: boolean) {
+  const node = findNode(props.id)
+  if (!node) {
+    return
+  }
   if (newValue === false && oldValue === true) {
-    const node = findNode(props.id)
     if (
-      node &&
-      (flowControl.value.pressure !== oldFlowControl.pressure ||
-        flowControl.value.duration !== oldFlowControl.duration ||
-        flowControl.value.flowrate !== oldFlowControl.flowrate ||
-        (!oldFlowControl.fluid && flowControl.value.fluid !== oldFlowControl.fluid) ||
-        (oldFlowControl.fluid &&
-          flowControl.value.fluid &&
-          flowControl.value.fluid.id !== oldFlowControl.fluid.id) ||
-        flowControl.value.injection !== oldFlowControl.injection ||
-        flowControl.value.inlet !== oldFlowControl.inlet)
+      flowControl.value.pressure !== oldFlowControl.pressure ||
+      flowControl.value.duration !== oldFlowControl.duration ||
+      flowControl.value.flowrate !== oldFlowControl.flowrate ||
+      (!oldFlowControl.fluid && flowControl.value.fluid !== oldFlowControl.fluid) ||
+      (oldFlowControl.fluid &&
+        flowControl.value.fluid &&
+        flowControl.value.fluid.id !== oldFlowControl.fluid.id) ||
+      flowControl.value.injection !== oldFlowControl.injection ||
+      flowControl.value.inlet !== oldFlowControl.inlet
     ) {
       const newFlowControl = JSON.parse(JSON.stringify(flowControl.value))
       const state: StateController = {
@@ -173,6 +162,30 @@ watch(isMenuOpen, (newValue, oldValue) => {
       oldFlowControl = newFlowControl
     }
   }
+}
+
+watch(isFluidMenuOpen, (newValue, oldValue) => {
+  updateState(newValue, oldValue)
+})
+
+watch(isInletMenuOpen, (newValue, oldValue) => {
+  updateState(newValue, oldValue)
+})
+
+watch(isInjectionMenuOpen, (newValue, oldValue) => {
+  updateState(newValue, oldValue)
+})
+
+watch(isPressureMenuOpen, (newValue, oldValue) => {
+  updateState(newValue, oldValue)
+})
+
+watch(isViscosityMenuOpen, (newValue, oldValue) => {
+  updateState(newValue, oldValue)
+})
+
+watch(isDurationMenuOpen, (newValue, oldValue) => {
+  updateState(newValue, oldValue)
 })
 
 function deleteSelectedElements() {

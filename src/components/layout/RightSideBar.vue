@@ -4,20 +4,37 @@
     <button class="icon-button with-right-border" title="DRC" @click="checkNodeDataValidity">
       <v-icon size="small" color="#66615b">mdi-text-box-check-outline</v-icon>
     </button>
-    <button class="icon-button" title="run" @click="runSimulation">
+    <button
+      class="icon-button"
+      title="run"
+      @click="
+        async () => {
+          await runSimulation()
+        }
+      "
+    >
       <v-icon size="small" color="#66615b">mdi-play</v-icon>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useVueFlow, type Node } from '@vue-flow/core'
+import { useVueFlow, type GraphNode } from '@vue-flow/core'
 import { SensorType } from '@/types/sensor'
 import TableConfigureButton from './TableConfigureButton.vue'
 
-const { getIncomers, nodes, getOutgoers } = useVueFlow()
+const {
+  findNode,
+  getIncomers,
+  nodes,
+  getOutgoers,
+  getConnectedEdges,
+  removeSelectedElements,
+  getSelectedElements
+} = useVueFlow()
 
 function checkNodeDataValidity() {
+  removeSelectedElements(getSelectedElements.value)
   for (const node of nodes.value) {
     switch (node.type) {
       case 'process':
@@ -81,8 +98,71 @@ function checkNodeDataValidity() {
   }
 }
 
-function runSimulation() {
-  let startNodes: Node[] = []
+async function findNextNode(node: GraphNode): Promise<void> {
+  if (node.type === 'condition') {
+    const edges = getConnectedEdges([node])
+    if (edges.length === 0) {
+      return
+    }
+    const promises = edges.map(async (edge) => {
+      const nextNode = findNode(edge.target)
+      if (nextNode) {
+        await implementation(nextNode)
+      }
+    })
+    await Promise.all(promises)
+    return
+  }
+  const outgoers = getOutgoers(node)
+  if (outgoers.length === 0) {
+    return
+  }
+  const promises = outgoers.map(async (outgoer) => {
+    await implementation(outgoer)
+  })
+  await Promise.all(promises)
+}
+
+async function implementation(node: GraphNode): Promise<void> {
+  if (node.type === 'process') {
+    node.selected = true
+    await new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        node.selected = false
+        await findNextNode(node)
+        resolve()
+      }, node.data.flowControl.duration * 1000)
+    })
+  } else if (node.type === 'condition') {
+    node.selected = true
+    await new Promise<void>((resolve) => {
+      node.selected = false
+      findNextNode(node)
+      resolve()
+    })
+  } else if (node.type === 'pause') {
+    node.selected = true
+    await new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        node.selected = false
+        await findNextNode(node)
+        resolve()
+      }, node.data.pause.duration * 1000)
+    })
+  } else if (node.type === 'schedule') {
+    node.selected = true
+    await new Promise<void>((resolve) => {
+      setTimeout(async () => {
+        node.selected = false
+        await findNextNode(node)
+        resolve()
+      }, node.data.scheduledFlowControl.totalDuration * 1000)
+    })
+  }
+}
+
+async function runSimulation() {
+  let startNodes: GraphNode[] = []
   for (const node of nodes.value) {
     const incomers = getIncomers(node)
     if (incomers.length === 0) {
@@ -90,11 +170,15 @@ function runSimulation() {
     }
   }
   if (startNodes.length === 0) {
-    console.warn('No start node found')
     return
   }
 
-  //start from all the start nodes at the same time
+  // Start from all the start nodes concurrently
+  const promises = startNodes.map(async (startNode) => {
+    await implementation(startNode)
+  })
+
+  await Promise.all(promises)
 }
 </script>
 

@@ -38,13 +38,13 @@
         mode="hex"
       ></v-color-picker>
     </v-menu>
-    <v-menu :close-on-content-click="false" offset="10" v-else v-model="isViscosityMenuOpen">
+    <v-menu :close-on-content-click="false" offset="10" v-else v-model="isMeasurementMenuOpen">
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Viscosity' }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Measurement' }">
           <v-icon size="small" color="#66615b">mdi-numeric</v-icon>
         </button>
       </template>
-      <CustomizedNumberInput v-model:number="condition.viscosity" />
+      <CustomizedNumberInput v-model:number="condition.measurement" />
     </v-menu>
     <button
       class="customized-button"
@@ -78,7 +78,7 @@ const props = defineProps<{
 const isSensorMenuOpen = ref(false)
 const isOperatorMenuOpen = ref(false)
 const isColorMenuOpen = ref(false)
-const isViscosityMenuOpen = ref(false)
+const isMeasurementMenuOpen = ref(false)
 
 const { sensors } = storeToRefs(useSensorStore())
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
@@ -92,44 +92,82 @@ const condition = computed(() => {
       sensor: null,
       operator: '=',
       color: '#FFFFFF',
-      viscosity: 0
+      measurement: 0
     }
   }
   return data.condition
 })
 
-const dynamicOperators = computed(() => {
-  const selectedSensor = condition.value.sensor
+const dynamicOperators = ref<string[]>([])
 
-  if (selectedSensor === null || selectedSensor.type === SensorType.Color) {
-    return ['=', '!=']
-  } else if (
-    selectedSensor.type === SensorType.Viscosity ||
-    selectedSensor.type === SensorType.Temperature
-  ) {
-    return ['>', '<', '=', '!=', '>=', '<=']
-  } else {
-    return []
-  }
-})
+// const dynamicOperators = computed(() => {
+//   const selectedSensor = condition.value.sensor
+
+//   if (selectedSensor === null || selectedSensor.type === SensorType.Color) {
+//     return ['=', '!=', 'is Like']
+//   } else if (
+//     selectedSensor.type === SensorType.Viscosity ||
+//     selectedSensor.type === SensorType.Temperature
+//   ) {
+//     return ['>', '<', '=', '!=', '>=', '<=']
+//   } else {
+//     return []
+//   }
+// })
 
 const isMenuOpen = computed(() => {
-  return (
-    isSensorMenuOpen.value ||
-    isOperatorMenuOpen.value ||
-    isColorMenuOpen.value ||
-    isViscosityMenuOpen.value
-  )
+  return isOperatorMenuOpen.value || isColorMenuOpen.value || isMeasurementMenuOpen.value
 })
 
 let oldCondition = JSON.parse(JSON.stringify(condition.value))
+
+watch(isSensorMenuOpen, (newValue, oldValue) => {
+  if (newValue === false && oldValue === true) {
+    let newCondition = JSON.parse(JSON.stringify(condition.value))
+    if (
+      (oldCondition.sensor &&
+        newCondition.sensor &&
+        newCondition.sensor.id !== oldCondition.sensor.id) ||
+      (!oldCondition.sensor && newCondition.sensor !== oldCondition.sensor)
+    ) {
+      const node = findNode(props.id)
+      if (!node) {
+        return
+      }
+      dynamicOperators.value =
+        newCondition.sensor === null || newCondition.sensor.type === SensorType.Color
+          ? ['=', '!=', 'is Like']
+          : ['=', '!=', '>', '<', '>=', '<=']
+      condition.value.operator = dynamicOperators.value[0]
+      condition.value.measurement = 0
+      condition.value.color = '#FFFFFF'
+      newCondition = JSON.parse(JSON.stringify(condition.value))
+
+      const state: StateController = {
+        type: ActionType.UPDATE_NODE_DATA,
+        name: 'update node data ' + node.id,
+        objectId: node.id,
+        oldState: {
+          objectPosition: node.position,
+          data: oldCondition
+        },
+        newState: {
+          objectPosition: node.position,
+          data: newCondition
+        }
+      }
+      addState(state)
+      oldCondition = newCondition
+    }
+  }
+})
 
 watch(
   () => props.isEditMenuOpen,
   (newValue) => {
     if (!newValue) {
       isColorMenuOpen.value = false
-      isViscosityMenuOpen.value = false
+      isMeasurementMenuOpen.value = false
     }
   }
 )
@@ -138,17 +176,12 @@ watch(
   isMenuOpen,
   (newValue, oldValue) => {
     if (newValue === false && oldValue === true) {
-      console.log('1', oldCondition)
       const node = findNode(props.id)
       const newCondition = JSON.parse(JSON.stringify(condition.value))
       if (
         node &&
-        (newCondition.viscosity !== oldCondition.viscosity ||
+        (newCondition.measurement !== oldCondition.measurement ||
           newCondition.color !== oldCondition.color ||
-          (oldCondition.sensor &&
-            newCondition.sensor &&
-            newCondition.sensor.id !== oldCondition.sensor.id) ||
-          (!oldCondition.sensor && newCondition.sensor !== oldCondition.sensor) ||
           newCondition.operator !== oldCondition.operator)
       ) {
         const state: StateController = {

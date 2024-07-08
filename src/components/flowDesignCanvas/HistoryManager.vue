@@ -55,7 +55,7 @@ import hotkeys from 'hotkeys-js'
 
 import { ActionType } from '@/types/stateController'
 import { type Sensor, SensorType } from '@/types/sensor'
-import type { FlowControlProcess } from '@/types/flowControl'
+import type { FlowControlProcess } from '@/types/node'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
@@ -733,3 +733,4 @@ hotkeys('ctrl+y, command+y', function (event) {
   background-color: #bdbdbd;
 }
 </style>
+@/types/node

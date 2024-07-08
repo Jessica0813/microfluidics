@@ -6,7 +6,7 @@ import type { Selection, BaseType } from 'd3-selection'
 import type { D3DragEvent } from 'd3-drag'
 import type { Instance } from 'tippy.js'
 
-import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/node'
 import { type StateController, ActionType } from '@/types/stateController'
 
 import { useTooltipContent } from '@/composables/useTooltipContent'

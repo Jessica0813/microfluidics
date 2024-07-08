@@ -336,3 +336,4 @@ onMounted(() => {
   svgChart.node()
 })
 </script>
+@/types/node

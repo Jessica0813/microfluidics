@@ -1,4 +1,4 @@
-import type { FlowControlProcess } from '@/types/flowControl'
+import type { FlowControlProcess } from '@/types/node'
 
 export function useTooltipContent(process: FlowControlProcess) {
   if (process && (process.injection === '' || process.injection === 'pump')) {

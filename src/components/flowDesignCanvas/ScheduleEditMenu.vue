@@ -102,7 +102,7 @@ import { storeToRefs } from 'pinia'
 import { useVueFlow } from '@vue-flow/core'
 
 import { type StateController, ActionType } from '@/types/stateController'
-import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/node'
 
 import { createDeleteNodeState } from '@/composables/useStateCreation'
 
@@ -369,3 +369,4 @@ function deleteSubprocess() {
   padding: 4px;
 }
 </style>
+@/types/node

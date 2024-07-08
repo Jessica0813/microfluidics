@@ -75,7 +75,7 @@ import { useVueFlow } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
 import { useStateStore } from '@/stores/useStateStore'
 import { createDeleteNodeState } from '@/composables/useStateCreation'
-import type { FlowControl } from '@/types/flowControl'
+import type { FlowControl } from '@/types/node'
 import { useFluidStore } from '@/stores/useFluidStore'
 import CustomizedNumberInput from '../general/CustomizedNumberInput.vue'
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
@@ -202,3 +202,4 @@ function deleteSelectedElements() {
   }
 }
 </script>
+@/types/node

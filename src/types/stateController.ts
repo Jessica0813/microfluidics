@@ -1,5 +1,4 @@
-import type { FlowControl, ScheduledFlowControl } from './flowControl'
-import type { Condition } from './condition'
+import type { FlowControl, ScheduledFlowControl, Condition } from './node'
 import { type Sensor, SensorType } from './sensor'
 
 export enum ActionType {

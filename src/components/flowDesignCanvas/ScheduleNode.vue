@@ -77,7 +77,7 @@ import { ref, computed, watch } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import { NodeResizer } from '@vue-flow/node-resizer'
-import type { FlowControlProcess } from '@/types/flowControl'
+import type { FlowControlProcess } from '@/types/node'
 import RangBarChart from './RangeBarChart.vue'
 
 const { selected, id, data } = defineProps<NodeProps>()
@@ -121,3 +121,4 @@ function unselectProcess() {
   }
 }
 </script>
+@/types/node

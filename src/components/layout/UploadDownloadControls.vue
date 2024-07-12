@@ -16,7 +16,7 @@
           </button>
         </template>
         <div class="menu">
-          <button class="button" @click="downloadData">Export Flow Chart Data</button>
+          <button class="button" @click="downloadData">Export Data</button>
           <button
             class="button"
             @click="
@@ -36,11 +36,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useVueFlow } from '@vue-flow/core'
 import type { NodeExportModel, EdgeExportModel } from '../../types/exportObject'
+import type { Fluid } from '@/types/fluid.ts'
 import { useScreenshot } from '@/composables/useScreenshot'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
+import { useFluidStore } from '@/stores/useFluidStore'
 import UploadMenu from './UploadMenu.vue'
 import LoadingIndicator from '../general/LoadingIndicator.vue'
 
@@ -48,10 +51,13 @@ const { nodes, edges, vueFlowRef, viewport, setViewport, fitView } = useVueFlow(
 const { getIndexes } = useNodeIdStore()
 const { capture } = useScreenshot()
 const { toggleShowPatternedBackground } = useFlowChartCanvasStore()
+const { fluids } = storeToRefs(useFluidStore())
+const { getFluidIndex } = useFluidStore()
 
 const isDialogVisible = ref(false)
 let nodeExportData: NodeExportModel[] = []
 let edgeExportData: EdgeExportModel[] = []
+let fluidExportData: Fluid[] = []
 
 function downloadData() {
   if (!vueFlowRef.value) {
@@ -82,10 +88,25 @@ function downloadData() {
     edgeExportData.push(exportEdge)
   }
 
+  for (const fluid of fluids.value) {
+    const exportFluid = {
+      id: fluid.id,
+      name: fluid.name,
+      color: fluid.color,
+      viscosity: fluid.viscosity,
+      withParticle: fluid.withParticle,
+      particleSize: fluid.particleSize,
+      particleDensity: fluid.particleDensity
+    }
+    fluidExportData.push(exportFluid)
+  }
+
   const exportData = {
     nodes: nodeExportData,
     edges: edgeExportData,
-    indexes: getIndexes()
+    fluids: fluidExportData,
+    indexes: getIndexes(),
+    fluidIndex: getFluidIndex()
   }
 
   const stringifiedData = JSON.stringify(exportData)

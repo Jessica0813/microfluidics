@@ -3,35 +3,18 @@ import { ref, computed } from 'vue'
 import type { Fluid } from '@/types/fluid.ts'
 
 export const useFluidStore = defineStore('fluid', () => {
-  const fluids = ref<Fluid[]>([
-    {
-      id: 'fluid-1',
-      name: 'Water',
-      color: '#0000ff',
-      viscosity: 1,
-      withParticle: 'No'
-    },
-    {
-      id: 'fluid-2',
-      name: 'Oil',
-      color: '#ff0000',
-      viscosity: 0.5,
-      withParticle: 'Yes',
-      particleSize: 5,
-      particleDensity: 0.5
-    }
-  ])
+  const fluids = ref<Fluid[]>([])
 
-  let fluidId = 3
+  let fluidIndex = 3
 
   const fluidNames = computed(() => fluids.value.map((fluid) => fluid.name))
 
   function generateFluidId() {
-    return `fluid-${fluidId++}`
+    return `fluid-${fluidIndex++}`
   }
 
   function addFluid(fluid: Fluid) {
-    fluids.value.unshift(fluid)
+    fluids.value.push(fluid)
   }
 
   function removeFluid(id: string) {
@@ -54,6 +37,17 @@ export const useFluidStore = defineStore('fluid', () => {
     return fluids.value.find((fluid) => fluid.id === id)
   }
 
+  function getFluidIndex() {
+    return fluidIndex
+  }
+
+  function initFluidIndex(index: number) {
+    fluidIndex = index
+  }
+
+  function resetFluids() {
+    fluids.value = []
+  }
   return {
     fluids,
     fluidNames,
@@ -62,6 +56,9 @@ export const useFluidStore = defineStore('fluid', () => {
     removeFluid,
     editFluid,
     isNameExist,
-    getFluidById
+    getFluidById,
+    getFluidIndex,
+    initFluidIndex,
+    resetFluids
   }
 })

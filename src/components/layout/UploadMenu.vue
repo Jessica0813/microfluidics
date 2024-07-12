@@ -21,13 +21,24 @@
 import { useVueFlow } from '@vue-flow/core'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
 import { useStateStore } from '@/stores/useStateStore'
+import { useFluidStore } from '@/stores/useFluidStore'
+import { useSensorStore } from '@/stores/useSensorStore'
 
-const { addNodes, addEdges } = useVueFlow()
+const { addNodes, addEdges, nodes, edges, removeEdges, removeNodes } = useVueFlow()
 const { initIndexes } = useNodeIdStore()
 const { toggleShouldRecordState } = useStateStore()
+const { initFluidIndex, addFluid, resetFluids, getFluidById } = useFluidStore()
+const { findSensor } = useSensorStore()
 
 function handleJsonUpload(e: Event) {
   toggleShouldRecordState()
+  //reset everything
+  const edgesId = edges.value.map((edge) => edge.id)
+  const nodesId = nodes.value.map((node) => node.id)
+  removeEdges(edgesId)
+  removeNodes(nodesId)
+  resetFluids()
+
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (!file) {
@@ -43,7 +54,40 @@ function handleJsonUpload(e: Event) {
 
       const data = JSON.parse(result)
 
+      for (const fluid of data.fluids) {
+        addFluid(fluid)
+      }
+      initFluidIndex(data.fluidIndex)
+
       addNodes([...data.nodes])
+
+      for (const node of data.nodes) {
+        if (node.type === 'process' && node.data.flowControl.fluid !== null) {
+          const fluid = getFluidById(node.data.flowControl.fluid.id)
+          if (fluid) {
+            node.data.flowControl.fluid = fluid
+          }
+        } else if (node.type === 'condition' && node.data.condition.sensor !== null) {
+          const sensor = findSensor(node.data.condition.sensor.id)
+          if (sensor) {
+            node.data.condition.sensor = sensor
+          } else {
+            node.data.condition.sensor = null
+          }
+        } else if (
+          node.type === 'schedule' &&
+          node.data.scheduledFlowControl.processes.length > 0
+        ) {
+          for (const process of node.data.scheduledFlowControl.processes) {
+            if (process.fluid !== null) {
+              const fluid = getFluidById(process.fluid.id)
+              if (fluid) {
+                process.fluid = fluid
+              }
+            }
+          }
+        }
+      }
 
       setTimeout(() => {
         addEdges([...data.edges])

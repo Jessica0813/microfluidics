@@ -1,4 +1,4 @@
-import type { FlowControl, ScheduledFlowControl, Condition } from './node'
+import type { FlowControl, ScheduledFlowControl, Condition, NodeType } from './node'
 import { type Sensor, SensorType } from './sensor'
 
 export enum ActionType {
@@ -33,7 +33,7 @@ export interface state {
   objectType?: SensorType
   objectRadius?: number
   data: FlowControl | ScheduledFlowControl | Condition | Sensor | any
-  nodeType?: string
+  nodeType?: NodeType | string
   changedSubprocessId?: string
   source?: string
   target?: string

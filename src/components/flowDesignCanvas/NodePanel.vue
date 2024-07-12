@@ -4,7 +4,7 @@
       title="Process Node"
       class="icon-padding"
       :draggable="true"
-      @dragstart="onDragStart($event, 'process')"
+      @dragstart="onDragStart($event, NodeType.Process)"
     >
       <v-icon size="small" color="#515a6e"> mdi-form-select </v-icon>
     </div>
@@ -12,7 +12,7 @@
       title="Pause Node"
       class="icon-padding"
       :draggable="true"
-      @dragstart="onDragStart($event, 'pause')"
+      @dragstart="onDragStart($event, NodeType.Pause)"
     >
       <v-icon size="small" color="#515a6e"> mdi-pause </v-icon>
     </div>
@@ -20,7 +20,7 @@
       title="Condition Node"
       class="icon-padding"
       :draggable="true"
-      @dragstart="onDragStart($event, 'condition')"
+      @dragstart="onDragStart($event, NodeType.Condition)"
     >
       <v-icon size="small" color="#515a6e" style="transform: rotate(180deg)">
         mdi-call-split</v-icon
@@ -30,7 +30,7 @@
       title="Schedule Node"
       class="icon-padding"
       :draggable="true"
-      @dragstart="onDragStart($event, 'schedule')"
+      @dragstart="onDragStart($event, NodeType.Schedule)"
     >
       <v-icon size="small" color="#515a6e"> mdi-chart-gantt</v-icon>
     </div>
@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { NodeType } from '@/types/node'
 function onDragStart(event: DragEvent, nodeType: string) {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', nodeType)

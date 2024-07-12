@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import { useVueFlow, type GraphNode } from '@vue-flow/core'
+import { NodeType } from '@/types/node'
 import { SensorType } from '@/types/sensor'
 import TableConfigureButton from './TableConfigureButton.vue'
 
@@ -37,7 +38,7 @@ function checkNodeDataValidity() {
   removeSelectedElements(getSelectedElements.value)
   for (const node of nodes.value) {
     switch (node.type) {
-      case 'process':
+      case NodeType.Process:
         if (node.data.flowControl) {
           const flowControl = node.data.flowControl
           if (
@@ -53,7 +54,7 @@ function checkNodeDataValidity() {
           node.selected = true
         }
         break
-      case 'condition':
+      case NodeType.Condition:
         if (node.data.condition) {
           const condition = node.data.condition
           if (
@@ -66,12 +67,12 @@ function checkNodeDataValidity() {
           node.selected = true
         }
         break
-      case 'pause':
+      case NodeType.Pause:
         if (node.data.pause.duration <= 0) {
           node.selected = true
         }
         break
-      case 'schedule':
+      case NodeType.Schedule:
         if (
           !node.data.scheduledFlowControl &&
           node.data.scheduledFlowControl.totalDuration > 0 &&
@@ -99,7 +100,7 @@ function checkNodeDataValidity() {
 }
 
 async function findNextNode(node: GraphNode): Promise<void> {
-  if (node.type === 'condition') {
+  if (node.type === NodeType.Condition) {
     const edges = getConnectedEdges([node])
     const outEdges = edges.filter((edge) => edge.target !== node.id)
     if (outEdges.length === 0) {
@@ -125,7 +126,7 @@ async function findNextNode(node: GraphNode): Promise<void> {
 }
 
 async function implementation(node: GraphNode): Promise<void> {
-  if (node.type === 'process') {
+  if (node.type === NodeType.Process) {
     node.selected = true
     await new Promise<void>((resolve) => {
       setTimeout(async () => {
@@ -134,7 +135,7 @@ async function implementation(node: GraphNode): Promise<void> {
         resolve()
       }, node.data.flowControl.duration * 1000)
     })
-  } else if (node.type === 'condition') {
+  } else if (node.type === NodeType.Condition) {
     node.selected = true
     await new Promise<void>((resolve) => {
       setTimeout(async () => {
@@ -144,7 +145,7 @@ async function implementation(node: GraphNode): Promise<void> {
       }, 0)
     })
     node.selected = false
-  } else if (node.type === 'pause') {
+  } else if (node.type === NodeType.Pause) {
     node.selected = true
     await new Promise<void>((resolve) => {
       setTimeout(async () => {
@@ -153,7 +154,7 @@ async function implementation(node: GraphNode): Promise<void> {
         resolve()
       }, node.data.pause.duration * 1000)
     })
-  } else if (node.type === 'schedule') {
+  } else if (node.type === NodeType.Schedule) {
     node.selected = true
     await new Promise<void>((resolve) => {
       setTimeout(async () => {

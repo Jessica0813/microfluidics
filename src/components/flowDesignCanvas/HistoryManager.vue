@@ -55,7 +55,7 @@ import hotkeys from 'hotkeys-js'
 
 import { ActionType } from '@/types/stateController'
 import { type Sensor, SensorType } from '@/types/sensor'
-import type { FlowControlProcess } from '@/types/node'
+import { NodeType, type FlowControlProcess } from '@/types/node'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useSensorStore } from '@/stores/useSensorStore'
@@ -106,7 +106,7 @@ function undo() {
               ) {
                 const node = {
                   id: state.objectId[i],
-                  type: state.oldState[i].nodeType || 'process',
+                  type: state.oldState[i].nodeType || NodeType.Process,
                   position: state.oldState[i].objectPosition || { x: 0, y: 0 },
                   data: {},
                   selected: true
@@ -187,13 +187,13 @@ function undo() {
         }
         case ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS: {
           const scheduleNode = findNode(state.objectId[0])
-          if (scheduleNode && scheduleNode.type === 'schedule') {
+          if (scheduleNode && scheduleNode.type === NodeType.Schedule) {
             scheduleNode.data.scheduledFlowControl = state.oldState[0].data
             scheduleNode.selected = true
           }
           const node = {
             id: state.objectId[1],
-            type: state.oldState[1].nodeType || 'process',
+            type: state.oldState[1].nodeType || NodeType.Process,
             position: state.oldState[1].objectPosition || { x: 0, y: 0 },
             data: state.oldState[1].data,
             selected: true
@@ -226,7 +226,7 @@ function undo() {
       const node = findNode(state.objectId)
       if (node) {
         const data = { ...state.oldState.data }
-        if (node.type === 'process') {
+        if (node.type === NodeType.Process) {
           node.data.flowControl = data
           node.data.isOverScheduleNode = false
           if (node.data.flowControl.fluid !== null) {
@@ -235,9 +235,9 @@ function undo() {
               node.data.flowControl.fluid = fluid
             }
           }
-        } else if (node.type === 'pause') {
+        } else if (node.type === NodeType.Pause) {
           node.data.pause = data
-        } else if (node.type === 'condition') {
+        } else if (node.type === NodeType.Condition) {
           node.data.condition = data
           if (node.data.condition.sensor !== null) {
             const sensor = findSensor(node.data.condition.sensor.id)
@@ -245,7 +245,7 @@ function undo() {
               node.data.condition.sensor = sensor
             }
           }
-        } else if (node.type === 'schedule') {
+        } else if (node.type === NodeType.Schedule) {
           node.data.scheduledFlowControl = data
           if (state.oldState.changedSubprocessId) {
             const id = state.oldState.changedSubprocessId
@@ -439,7 +439,7 @@ function redo() {
           for (let i = 0; i < state.objectId.length; i++) {
             let node = {
               id: state.objectId[i],
-              type: state.oldState[i].nodeType || 'process',
+              type: state.oldState[i].nodeType || NodeType.Process,
               position: state.oldState[i].objectPosition || { x: 0, y: 0 },
               data: state.oldState[i].data,
               selected: true
@@ -464,7 +464,7 @@ function redo() {
         }
         case ActionType.UPDATE_NODE_DATA_BY_DRAG_PROCESS: {
           const scheduleNode = findNode(state.objectId[0])
-          if (scheduleNode && scheduleNode.type === 'schedule') {
+          if (scheduleNode && scheduleNode.type === NodeType.Schedule) {
             scheduleNode.data.scheduledFlowControl = state.newState[0].data
             scheduleNode.selected = true
             if (state.newState[0].changedSubprocessId) {
@@ -492,19 +492,19 @@ function redo() {
     case ActionType.CREATE_NODE: {
       let node = {
         id: state.objectId,
-        type: state.oldState.nodeType || 'process',
+        type: state.oldState.nodeType || NodeType.Process,
         position: state.oldState.objectPosition || { x: 0, y: 0 },
         data: {},
         selected: true
       }
       const data = { ...state.oldState.data }
-      if (node.type === 'process') {
+      if (node.type === NodeType.Process) {
         node = { ...node, data: { flowControl: data } }
-      } else if (node.type === 'condition') {
+      } else if (node.type === NodeType.Condition) {
         node = { ...node, data: { condition: data } }
-      } else if (node.type === 'pause') {
+      } else if (node.type === NodeType.Pause) {
         node = { ...node, data: { pause: data } }
-      } else if (node.type === 'schedule') {
+      } else if (node.type === NodeType.Schedule) {
         node = { ...node, data: { scheduledFlowControl: data } }
       }
       addNodes([node])
@@ -522,7 +522,7 @@ function redo() {
       const node = findNode(state.objectId)
       if (node) {
         const data = { ...state.newState?.data }
-        if (node.type === 'process') {
+        if (node.type === NodeType.Process) {
           node.data.flowControl = data
           node.data.isOverScheduleNode = false
           if (node.data.flowControl.fluid !== null) {
@@ -531,9 +531,9 @@ function redo() {
               node.data.flowControl.fluid = fluid
             }
           }
-        } else if (node.type === 'pause') {
+        } else if (node.type === NodeType.Pause) {
           node.data.pause = data
-        } else if (node.type === 'condition') {
+        } else if (node.type === NodeType.Condition) {
           node.data.condition = data
           if (node.data.condition.sensor !== null) {
             const sensor = findSensor(node.data.condition.sensor.id)
@@ -541,7 +541,7 @@ function redo() {
               node.data.condition.sensor = sensor
             }
           }
-        } else if (node.type === 'schedule') {
+        } else if (node.type === NodeType.Schedule) {
           node.data.scheduledFlowControl = data
           if (state.newState?.changedSubprocessId) {
             const id = state.newState?.changedSubprocessId

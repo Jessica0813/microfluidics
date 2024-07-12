@@ -9,22 +9,22 @@
       <v-icon size="small" color="#66615b">mdi-drag</v-icon>
     </div>
     <ProcessEditMenu
-      v-if="findNode(selectedId)?.type === 'process'"
+      v-if="findNode(selectedId)?.type === NodeType.Process"
       :id="selectedId"
       :is-edit-menu-open="isEditMenuOpen"
     />
     <PauseEditMenu
-      v-else-if="findNode(selectedId)?.type === 'pause'"
+      v-else-if="findNode(selectedId)?.type === NodeType.Pause"
       :id="selectedId"
       :is-edit-menu-open="isEditMenuOpen"
     />
     <ConditionEditMenu
-      v-else-if="findNode(selectedId)?.type === 'condition'"
+      v-else-if="findNode(selectedId)?.type === NodeType.Condition"
       :id="selectedId"
       :is-edit-menu-open="isEditMenuOpen"
     />
     <ScheduleEditMenu
-      v-else-if="findNode(selectedId)?.type === 'schedule'"
+      v-else-if="findNode(selectedId)?.type === NodeType.Schedule"
       :id="selectedId"
       :is-edit-menu-open="isEditMenuOpen"
       v-model:edited-flow-control="flowControl"
@@ -43,6 +43,7 @@ import { select } from 'd3'
 import { drag, type D3DragEvent } from 'd3-drag'
 
 import { type StateController, ActionType } from '@/types/stateController'
+import { NodeType } from '@/types/node'
 
 import {
   useMenuPositionCalculator,
@@ -143,7 +144,7 @@ function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
   }
 
   for (const node of nodes.value) {
-    if (node.type === 'schedule') {
+    if (node.type === NodeType.Schedule) {
       const scheduleNode = document.getElementById(node.id)
       const { left, top, right, bottom } = scheduleNode!.getBoundingClientRect()
       const mousePosition = { x: dragEvent.event.x, y: dragEvent.event.y }
@@ -257,7 +258,7 @@ watch(
 
 onNodeDragStart((dragEvent: NodeDragEvent) => {
   isEditMenuOpen.value = false
-  if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
+  if (dragEvent.node.type === NodeType.Process && dragEvent.nodes.length === 1) {
     nodePositionbeforeDrag = { x: dragEvent.node.position.x, y: dragEvent.node.position.y }
   }
 })
@@ -266,13 +267,13 @@ onNodeDrag((dragEvent: NodeDragEvent) => {
   if (isEditMenuOpen.value) {
     isEditMenuOpen.value = false
   }
-  if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
+  if (dragEvent.node.type === NodeType.Process && dragEvent.nodes.length === 1) {
     checkIfNodeIsOverScheduleNode(dragEvent)
   }
 })
 
 onNodeDragStop((dragEvent: NodeDragEvent) => {
-  if (dragEvent.node.type === 'process' && dragEvent.nodes.length === 1) {
+  if (dragEvent.node.type === NodeType.Process && dragEvent.nodes.length === 1) {
     checkIfNodeIsOverScheduleNode(dragEvent)
   }
   if (isNodeOverScheduleNode.value && intersectionScheduleNode.value) {

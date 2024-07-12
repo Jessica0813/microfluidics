@@ -54,6 +54,7 @@ import { VueFlow, useVueFlow, type EdgeUpdateEvent } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 
 import { type StateController, ActionType } from '@/types/stateController'
+import { NodeType } from '@/types/node'
 
 import { useStateStore } from '@/stores/useStateStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
@@ -115,13 +116,9 @@ onConnect((params) => {
     return
   }
   // look through edges to check if any edge is connected to the source node
-  if (
-    params.source.includes('process_') ||
-    params.source.includes('schedule_') ||
-    params.source.includes('pause_')
-  ) {
+  if (!params.source.includes('condition_')) {
     addEdges([{ ...params, type: 'custom', id: getEdgeId() }])
-  } else if (params.source.includes('condition_')) {
+  } else {
     let isTrueEdgeExist: boolean = false
     let isFalseEdgeExist: boolean = false
     edges.value.forEach((edge) => {
@@ -172,9 +169,9 @@ function onDrop(event: any) {
   const type = event.dataTransfer?.getData('application/vueflow')
   if (type === '') return
 
-  if (type === 'process') {
+  if (type === NodeType.Process) {
     for (const node of nodes.value) {
-      if (node.type === 'schedule') {
+      if (node.type === NodeType.Schedule) {
         // check if the mouse is over a schedule node
         const nodePosition = node.position
         const nodeDimensions = node.dimensions
@@ -231,13 +228,13 @@ function onDrop(event: any) {
   })
 
   let nodeId: string = ''
-  if (type === 'process') {
+  if (type === NodeType.Process) {
     nodeId = getProcessNodeId()
-  } else if (type === 'pause') {
+  } else if (type === NodeType.Pause) {
     nodeId = getPauseNodeId()
-  } else if (type === 'condition') {
+  } else if (type === NodeType.Condition) {
     nodeId = getConditionNodeId()
-  } else if (type === 'schedule') {
+  } else if (type === NodeType.Schedule) {
     nodeId = getProcessScheduleNodeId()
   } else {
     return
@@ -252,19 +249,19 @@ function onDrop(event: any) {
 
   let nodeData = {}
 
-  if (type === 'schedule') {
+  if (type === NodeType.Schedule) {
     nodeData = {
       totalDuration: 20,
       name: 'a',
       processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
-  } else if (type === 'pause') {
+  } else if (type === NodeType.Pause) {
     nodeData = {
       duration: 0
     }
     newNode = { ...newNode, data: { pause: nodeData } }
-  } else if (type === 'process') {
+  } else if (type === NodeType.Process) {
     nodeData = {
       inlet: 'inlet 1',
       injection: 'pump',
@@ -274,7 +271,7 @@ function onDrop(event: any) {
       flowrate: 0
     }
     newNode = { ...newNode, data: { flowControl: nodeData, isOverScheduleNode: false } }
-  } else if (type === 'condition') {
+  } else if (type === NodeType.Condition) {
     nodeData = {
       name: 'xxx',
       sensor: null,
@@ -303,13 +300,13 @@ function onDrop(event: any) {
 
           let stringifiedData: any
 
-          if (type === 'schedule') {
+          if (type === NodeType.Schedule) {
             stringifiedData = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
-          } else if (type === 'pause') {
+          } else if (type === NodeType.Pause) {
             stringifiedData = Object.assign({}, node.data.pause)
-          } else if (type === 'process') {
+          } else if (type === NodeType.Process) {
             stringifiedData = Object.assign({}, node.data.flowControl)
-          } else if (type === 'condition') {
+          } else if (type === NodeType.Condition) {
             stringifiedData = Object.assign({}, node.data.condition)
           }
 

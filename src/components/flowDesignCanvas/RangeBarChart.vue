@@ -16,7 +16,7 @@ import { scaleLinear, scaleBand, axisTop } from 'd3'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 
-import type { FlowControlProcess, ScheduledFlowControl } from '@/types/flowControl'
+import type { FlowControlProcess, ScheduledFlowControl } from '@/types/node'
 
 import { useLeftResize, useRightResize, useDrag } from '@/composables/useDragandResize'
 import { useTooltipContent } from '@/composables/useTooltipContent'

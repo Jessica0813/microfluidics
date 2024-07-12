@@ -8,6 +8,7 @@ import { useVueFlow } from '@vue-flow/core'
 import hotkeys from 'hotkeys-js'
 
 import { type StateController, ActionType } from '@/types/stateController'
+import { NodeType } from '@/types/node'
 
 import {
   createDeleteNodeState,
@@ -160,13 +161,13 @@ hotkeys('command+v', function (event) {
       if (node) {
         removeSelectedNodes([node])
         let newId = ''
-        if (node.type === 'process') {
+        if (node.type === NodeType.Process) {
           newId = getProcessNodeId()
-        } else if (node.type === 'condition') {
+        } else if (node.type === NodeType.Condition) {
           newId = getConditionNodeId()
-        } else if (node.type === 'pause') {
+        } else if (node.type === NodeType.Pause) {
           newId = getPauseNodeId()
-        } else if (node.type === 'schedule') {
+        } else if (node.type === NodeType.Schedule) {
           newId = getProcessScheduleNodeId()
         }
         newIds.push(newId)

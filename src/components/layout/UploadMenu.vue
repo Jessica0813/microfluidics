@@ -23,6 +23,7 @@ import { useNodeIdStore } from '@/stores/useNodeIdStore'
 import { useStateStore } from '@/stores/useStateStore'
 import { useFluidStore } from '@/stores/useFluidStore'
 import { useSensorStore } from '@/stores/useSensorStore'
+import { NodeType } from '@/types/node'
 
 const { addNodes, addEdges, nodes, edges, removeEdges, removeNodes } = useVueFlow()
 const { initIndexes } = useNodeIdStore()
@@ -62,12 +63,12 @@ function handleJsonUpload(e: Event) {
       addNodes([...data.nodes])
 
       for (const node of data.nodes) {
-        if (node.type === 'process' && node.data.flowControl.fluid !== null) {
+        if (node.type === NodeType.Process && node.data.flowControl.fluid !== null) {
           const fluid = getFluidById(node.data.flowControl.fluid.id)
           if (fluid) {
             node.data.flowControl.fluid = fluid
           }
-        } else if (node.type === 'condition' && node.data.condition.sensor !== null) {
+        } else if (node.type === NodeType.Condition && node.data.condition.sensor !== null) {
           const sensor = findSensor(node.data.condition.sensor.id)
           if (sensor) {
             node.data.condition.sensor = sensor
@@ -75,7 +76,7 @@ function handleJsonUpload(e: Event) {
             node.data.condition.sensor = null
           }
         } else if (
-          node.type === 'schedule' &&
+          node.type === NodeType.Schedule &&
           node.data.scheduledFlowControl.processes.length > 0
         ) {
           for (const process of node.data.scheduledFlowControl.processes) {

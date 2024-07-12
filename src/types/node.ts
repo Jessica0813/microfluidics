@@ -1,6 +1,13 @@
 import type { Fluid } from './fluid'
 import { type Sensor } from './sensor'
 
+export enum NodeType {
+  Process = 'process',
+  Condition = 'condition',
+  Pause = 'pause',
+  Schedule = 'schedule'
+}
+
 export interface Condition {
   name: string
   sensor: Sensor

@@ -1,6 +1,7 @@
 import type { Node } from '@vue-flow/core'
 import type { GraphNode, GraphEdge, RemoveNodes, RemoveEdges } from '@vue-flow/core'
 import { type StateController, ActionType } from '@/types/stateController'
+import { NodeType } from '@/types/node'
 
 export function createDeleteNodeState(
   getSelectedNodes: GraphNode<any, any, string>[],
@@ -35,13 +36,13 @@ export function createDeleteNodeState(
   const node = getSelectedNodes[0]
   if (Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
     let data = ''
-    if (node.type === 'process') {
+    if (node.type === NodeType.Process) {
       data = Object.assign({}, node.data.flowControl)
-    } else if (node.type === 'condition') {
+    } else if (node.type === NodeType.Condition) {
       data = Object.assign({}, node.data.condition)
-    } else if (node.type === 'pause') {
+    } else if (node.type === NodeType.Pause) {
       data = Object.assign({}, node.data.pause)
-    } else if (node.type === 'schedule') {
+    } else if (node.type === NodeType.Schedule) {
       data = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
     }
     state.objectId.push(node.id)
@@ -151,13 +152,13 @@ export function createDeleteMultiNodesState(
   getSelectedNodes.forEach((node) => {
     if (node && Array.isArray(state.objectId) && Array.isArray(state.oldState)) {
       let data = ''
-      if (node.type === 'process') {
+      if (node.type === NodeType.Process) {
         data = Object.assign({}, node.data.flowControl)
-      } else if (node.type === 'condition') {
+      } else if (node.type === NodeType.Condition) {
         data = Object.assign({}, node.data.condition)
-      } else if (node.type === 'pause') {
+      } else if (node.type === NodeType.Pause) {
         data = Object.assign({}, node.data.pause)
-      } else if (node.type === 'schedule') {
+      } else if (node.type === NodeType.Schedule) {
         data = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
       }
       state.objectId.push(node.id)

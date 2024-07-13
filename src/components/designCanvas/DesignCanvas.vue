@@ -36,11 +36,7 @@
       <g id="canvas"></g>
     </svg>
     <div class="control-bar" v-show="isDesignCanvasVisible">
-      <DesignCanvasControl
-        v-model:transform="transform"
-        :d3-zoom="d3Zoom"
-        :d3-selection="d3Selection"
-      />
+      <DesignCanvasControl v-model:transform="transform" />
     </div>
     <button
       @click="designCanvasSize = designCanvasSize === 'small' ? 'large' : 'small'"
@@ -105,7 +101,7 @@ const isPanelMenuOpen = ref(false)
 
 const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
   useSensorStore()
-const { setZooming } = useDesignCanvasStore()
+const { setZooming, setD3Zoom, setD3Selection } = useDesignCanvasStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 
 function onDragOver(event: any) {
@@ -230,6 +226,9 @@ onMounted(() => {
     })
 
   d3Selection.value.call(d3Zoom.value).on('wheel.zoom')
+
+  setD3Zoom(d3Zoom.value)
+  setD3Selection(d3Selection.value)
 
   const updateCirclesWithText = () => {
     const sensorGroup = canvas.selectAll<SVGGElement, Sensor>('.sensor-group').data(sensors)

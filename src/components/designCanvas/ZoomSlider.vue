@@ -25,16 +25,13 @@
 
 <script setup lang="ts">
 import { toRef } from 'vue'
+import { storeToRefs } from 'pinia'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
-import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
+import type { Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
 import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
-const props = defineProps<{
-  d3Zoom: D3Zoom | undefined
-  d3Selection: D3Selection | undefined
-}>()
 const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
 
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
@@ -42,9 +39,11 @@ const maxZoomReached = toRef(() => transform.value.k >= 2)
 
 const { setZooming } = useDesignCanvasStore()
 
+const { d3Zoom, d3Selection } = storeToRefs(useDesignCanvasStore())
+
 function zoomTo(value: number) {
-  if (props.d3Zoom && props.d3Selection) {
-    props.d3Zoom.scaleTo(props.d3Selection, value)
+  if (d3Zoom.value && d3Selection.value) {
+    d3Zoom.value.scaleTo(d3Selection.value, value)
   }
 }
 
@@ -83,8 +82,8 @@ function zoomBySlider() {
 function resetView() {
   setZooming()
 
-  if (props.d3Zoom && props.d3Selection) {
-    props.d3Zoom.transform(props.d3Selection, zoomIdentity)
+  if (d3Zoom.value && d3Selection.value) {
+    d3Zoom.value.transform(d3Selection.value, zoomIdentity)
   }
 
   setTimeout(function () {

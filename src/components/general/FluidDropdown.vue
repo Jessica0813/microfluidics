@@ -1,5 +1,6 @@
 <template>
   <div class="dropdown-menu">
+    <button class="dropdown-item" v-if="items.length === 0">No fluids availables</button>
     <button
       class="dropdown-item"
       v-for="(item, index) in items"

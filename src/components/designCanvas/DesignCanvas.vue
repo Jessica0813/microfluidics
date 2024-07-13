@@ -94,7 +94,6 @@ const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'sma
 const svg = ref<HTMLElement | null>(null)
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-// const transform = ref({ x: 0, y: 0, k: 1 })
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
 const isPanelMenuOpen = ref(false)
@@ -246,7 +245,7 @@ onMounted(() => {
       .enter()
       .append('g')
       .attr('class', 'sensor-group')
-      .attr('id', (sensor) => `sensor-${sensor.id}`)
+      .attr('id', (sensor) => `${sensor.id}`)
 
     // Append Circle
     sensorEnter

@@ -122,7 +122,7 @@ function isSensorinView(target: HTMLElement) {
 }
 
 function showSensorEditMenu() {
-  const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
+  const target = document.getElementById(`${selectedSensor.value.id}`)
 
   if (!target) {
     return

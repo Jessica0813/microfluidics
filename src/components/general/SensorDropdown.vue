@@ -1,5 +1,6 @@
 <template>
   <div class="dropdown-menu">
+    <button class="dropdown-item" v-if="items.length === 0">No sensors availables</button>
     <button
       class="dropdown-item"
       v-for="(item, index) in items"
@@ -30,7 +31,7 @@ const { d3Zoom, d3Selection, transform } = storeToRefs(useDesignCanvasStore())
 
 function isSensorinView(sensor: Sensor) {
   const designCanvas = document.getElementById('design-canvas')
-  const target = document.getElementById(`sensor-${sensor.id}`)
+  const target = document.getElementById(`${sensor.id}`)
   if (!designCanvas || !target) return
 
   const x = target.getBoundingClientRect()

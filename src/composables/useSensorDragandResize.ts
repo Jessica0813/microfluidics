@@ -163,21 +163,21 @@ export function d3UpperLeftResize() {
     updatedRadius = originalRadius + (startPositionX - event.x) / 2
     select(`#${event.subject.id}`)
       .select('.sensor')
-      .attr('r', updatedRadius)
+      .attr('r', Math.abs(updatedRadius))
       .attr('cx', event.x + updatedRadius)
       .attr('cy', event.y + updatedRadius)
     select(`#${event.subject.id}`).select('.upper-left-dot').attr('cx', event.x).attr('cy', event.y)
     select(`#${event.subject.id}`)
       .select('.sensor-rect')
-      .attr('x', event.x)
-      .attr('y', event.y)
-      .attr('width', updatedRadius * 2)
-      .attr('height', updatedRadius * 2)
+      .attr('x', updatedRadius > 0 ? event.x : event.x - Math.abs(updatedRadius * 2))
+      .attr('y', updatedRadius > 0 ? event.y : event.y - Math.abs(updatedRadius * 2))
+      .attr('width', Math.abs(updatedRadius * 2))
+      .attr('height', Math.abs(updatedRadius * 2))
     select(`#${event.subject.id}`)
       .select('.sensor-label')
       .attr('x', event.x + updatedRadius)
       .attr('y', event.y + updatedRadius)
-      .attr('dy', -updatedRadius - 5)
+      .attr('dy', -Math.abs(updatedRadius) - 5)
 
     select(`#${event.subject.id}`)
       .select('.upper-right-dot')
@@ -200,7 +200,7 @@ export function d3UpperLeftResize() {
         x: event.x + updatedRadius,
         y: event.y + updatedRadius
       },
-      radius: updatedRadius
+      radius: Math.abs(updatedRadius)
     })
 
     select('body').style('cursor', 'default')
@@ -224,7 +224,7 @@ export function d3UpperRightResize() {
     updatedRadius = originalRadius + (event.x - startPositionX) / 2
     select(`#${event.subject.id}`)
       .select('.sensor')
-      .attr('r', updatedRadius)
+      .attr('r', Math.abs(updatedRadius))
       .attr('cx', event.x - updatedRadius)
       .attr('cy', event.y + updatedRadius)
     select(`#${event.subject.id}`)
@@ -233,15 +233,15 @@ export function d3UpperRightResize() {
       .attr('cy', event.y)
     select(`#${event.subject.id}`)
       .select('.sensor-rect')
-      .attr('x', event.x - updatedRadius * 2)
-      .attr('y', event.y)
-      .attr('width', updatedRadius * 2)
-      .attr('height', updatedRadius * 2)
+      .attr('x', updatedRadius > 0 ? event.x - updatedRadius * 2 : event.x)
+      .attr('y', updatedRadius > 0 ? event.y : event.y - Math.abs(updatedRadius * 2))
+      .attr('width', Math.abs(updatedRadius * 2))
+      .attr('height', Math.abs(updatedRadius * 2))
     select(`#${event.subject.id}`)
       .select('.sensor-label')
       .attr('x', event.x - updatedRadius)
       .attr('y', event.y + updatedRadius)
-      .attr('dy', -updatedRadius - 5)
+      .attr('dy', -Math.abs(updatedRadius) - 5)
     select(`#${event.subject.id}`)
       .select('.upper-right-dot')
       .attr('cx', event.x)
@@ -263,7 +263,7 @@ export function d3UpperRightResize() {
         x: event.x - updatedRadius,
         y: event.y + updatedRadius
       },
-      radius: updatedRadius
+      radius: Math.abs(updatedRadius)
     })
 
     select('body').style('cursor', 'default')
@@ -286,7 +286,7 @@ export function d3LowerLeftResize() {
     updatedRadius = originalRadius + (startPositionX - event.x) / 2
     select(`#${event.subject.id}`)
       .select('.sensor')
-      .attr('r', updatedRadius)
+      .attr('r', Math.abs(updatedRadius))
       .attr('cx', event.x + updatedRadius)
       .attr('cy', event.y - updatedRadius)
     select(`#${event.subject.id}`)
@@ -295,15 +295,15 @@ export function d3LowerLeftResize() {
       .attr('cy', event.y - updatedRadius * 2)
     select(`#${event.subject.id}`)
       .select('.sensor-rect')
-      .attr('x', event.x)
-      .attr('y', event.y - updatedRadius * 2)
-      .attr('width', updatedRadius * 2)
-      .attr('height', updatedRadius * 2)
+      .attr('x', updatedRadius > 0 ? event.x : event.x - Math.abs(updatedRadius * 2))
+      .attr('y', updatedRadius > 0 ? event.y - updatedRadius * 2 : event.y)
+      .attr('width', Math.abs(updatedRadius * 2))
+      .attr('height', Math.abs(updatedRadius * 2))
     select(`#${event.subject.id}`)
       .select('.sensor-label')
       .attr('x', event.x + updatedRadius)
       .attr('y', event.y - updatedRadius)
-      .attr('dy', -updatedRadius - 5)
+      .attr('dy', -Math.abs(updatedRadius) - 5)
 
     select(`#${event.subject.id}`)
       .select('.upper-right-dot')
@@ -323,7 +323,7 @@ export function d3LowerLeftResize() {
         x: event.x + updatedRadius,
         y: event.y - updatedRadius
       },
-      radius: updatedRadius
+      radius: Math.abs(updatedRadius)
     })
 
     select('body').style('cursor', 'default')
@@ -346,7 +346,7 @@ export function d3LowerRightResize() {
     updatedRadius = originalRadius + (event.x - startPositionX) / 2
     select(`#${event.subject.id}`)
       .select('.sensor')
-      .attr('r', updatedRadius)
+      .attr('r', Math.abs(updatedRadius))
       .attr('cx', event.x - updatedRadius)
       .attr('cy', event.y - updatedRadius)
     select(`#${event.subject.id}`)
@@ -355,15 +355,15 @@ export function d3LowerRightResize() {
       .attr('cy', event.y - updatedRadius * 2)
     select(`#${event.subject.id}`)
       .select('.sensor-rect')
-      .attr('x', event.x - updatedRadius * 2)
-      .attr('y', event.y - updatedRadius * 2)
-      .attr('width', updatedRadius * 2)
-      .attr('height', updatedRadius * 2)
+      .attr('x', updatedRadius > 0 ? event.x - updatedRadius * 2 : event.x)
+      .attr('y', updatedRadius > 0 ? event.y - updatedRadius * 2 : event.y)
+      .attr('width', Math.abs(updatedRadius * 2))
+      .attr('height', Math.abs(updatedRadius * 2))
     select(`#${event.subject.id}`)
       .select('.sensor-label')
       .attr('x', event.x - updatedRadius)
       .attr('y', event.y - updatedRadius)
-      .attr('dy', -updatedRadius - 5)
+      .attr('dy', -Math.abs(updatedRadius) - 5)
 
     select(`#${event.subject.id}`)
       .select('.upper-right-dot')
@@ -386,7 +386,7 @@ export function d3LowerRightResize() {
         x: event.x - updatedRadius,
         y: event.y - updatedRadius
       },
-      radius: updatedRadius
+      radius: Math.abs(updatedRadius)
     })
 
     select('body').style('cursor', 'default')

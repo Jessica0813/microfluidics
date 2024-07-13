@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
 
-export const useSensorCanvasStore = defineStore('sensorCanvas', () => {
+export const useDesignCanvasStore = defineStore('designCanvas', () => {
+  const transform = ref({ x: 0, y: 0, k: 1 })
   const isCanvasZooming = ref(false)
   const isDraggingSensor = ref(false)
 
@@ -17,9 +18,9 @@ export const useSensorCanvasStore = defineStore('sensorCanvas', () => {
     isDraggingSensor.value = !isDraggingSensor.value
   }
 
-  return {
-    isZoomingOrDragging,
-    setZooming,
-    setDragging
+  function setTransform(newTransform: { x: number; y: number; k: number }) {
+    transform.value = newTransform
   }
+
+  return { transform, isZoomingOrDragging, setTransform, setZooming, setDragging }
 })

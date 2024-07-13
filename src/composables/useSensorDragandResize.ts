@@ -3,11 +3,11 @@ import { drag, select } from 'd3'
 import { type D3DragEvent } from 'd3-drag'
 import { type Sensor } from '@/types/sensor'
 import { useSensorStore } from '@/stores/useSensorStore'
-import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
+import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
 export function d3Drag() {
   const { editSensor, editMultiSensors, onSelectSensor, toggleIsMetaKeyPressed } = useSensorStore()
-  const { setDragging } = useSensorCanvasStore()
+  const { setDragging } = useDesignCanvasStore()
   const { selectedSensors } = storeToRefs(useSensorStore())
   const d3Drag = drag<SVGGElement, Sensor, any>()
   let startOffsetX: number = 0
@@ -151,7 +151,7 @@ let updatedRadius = 0
 
 export function d3UpperLeftResize() {
   const { editSensor } = useSensorStore()
-  const { setDragging } = useSensorCanvasStore()
+  const { setDragging } = useDesignCanvasStore()
   const d3UpperLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     setDragging()
@@ -215,7 +215,7 @@ export function d3UpperLeftResize() {
 
 export function d3UpperRightResize() {
   const { editSensor } = useSensorStore()
-  const { setDragging } = useSensorCanvasStore()
+  const { setDragging } = useDesignCanvasStore()
   const d3UpperRightResize = drag<SVGCircleElement, Sensor, any>()
   d3UpperRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     setDragging()
@@ -277,7 +277,7 @@ export function d3UpperRightResize() {
 
 export function d3LowerLeftResize() {
   const { editSensor } = useSensorStore()
-  const { setDragging } = useSensorCanvasStore()
+  const { setDragging } = useDesignCanvasStore()
   const d3LowerLeftResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerLeftResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     setDragging()
@@ -340,7 +340,7 @@ export function d3LowerLeftResize() {
 
 export function d3LowerRightResize() {
   const { editSensor } = useSensorStore()
-  const { setDragging } = useSensorCanvasStore()
+  const { setDragging } = useDesignCanvasStore()
   const d3LowerRightResize = drag<SVGCircleElement, Sensor, any>()
   d3LowerRightResize.on('start', (event: D3DragEvent<SVGCircleElement, Sensor, any>) => {
     setDragging()

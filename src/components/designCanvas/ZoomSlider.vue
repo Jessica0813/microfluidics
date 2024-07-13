@@ -29,7 +29,7 @@ import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
 import type { D3Zoom, D3Selection, Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
-import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
+import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
 const props = defineProps<{
   d3Zoom: D3Zoom | undefined
@@ -40,7 +40,7 @@ const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
 const maxZoomReached = toRef(() => transform.value.k >= 2)
 
-const { setZooming } = useSensorCanvasStore()
+const { setZooming } = useDesignCanvasStore()
 
 function zoomTo(value: number) {
   if (props.d3Zoom && props.d3Selection) {

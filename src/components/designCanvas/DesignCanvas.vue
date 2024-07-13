@@ -83,7 +83,7 @@ import {
 } from '@/composables/useSensorDragandResize'
 
 import { useSensorStore } from '@/stores/useSensorStore'
-import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
+import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
 import SensorEditMenu from './SensorEditMenu.vue'
 import SensorPanel from './SensorPanel.vue'
@@ -105,7 +105,7 @@ const isPanelMenuOpen = ref(false)
 
 const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
   useSensorStore()
-const { setZooming } = useSensorCanvasStore()
+const { setZooming } = useDesignCanvasStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 
 function onDragOver(event: any) {

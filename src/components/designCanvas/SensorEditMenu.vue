@@ -59,7 +59,7 @@ import { useMenuPositionCalculatorForSensor } from '@/composables/useMenuPositio
 
 import { useSensorStore } from '@/stores/useSensorStore'
 import { useStateStore } from '@/stores/useStateStore'
-import { useSensorCanvasStore } from '@/stores/useSensorCanvasStore'
+import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
 import CustomizedDropdown from '../general/CustomizedDropdown.vue'
 import InputWithValidation from '../general/InputWithValidation.vue'
@@ -96,7 +96,7 @@ let y: number = 0
 const { deleteSelectedSensor, checkIfSensorNameExists } = useSensorStore()
 const { selectedSensors } = storeToRefs(useSensorStore())
 const { addState } = useStateStore()
-const { isZoomingOrDragging } = storeToRefs(useSensorCanvasStore())
+const { isZoomingOrDragging } = storeToRefs(useDesignCanvasStore())
 
 function handleInput(value: string) {
   if (value === '') {

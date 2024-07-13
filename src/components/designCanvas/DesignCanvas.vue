@@ -17,7 +17,7 @@
       v-show="isDesignCanvasVisible"
       v-model:isPanelMenuOpen="isPanelMenuOpen"
     />
-    <svg ref="svg" width="100%" height="100%" @click="removeSelectedSensor">
+    <svg ref="svg" width="100%" height="100%" @click="removeSelectedSensor" id="design-canvas">
       <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
           <rect width="100%" height="100%" fill="none" stroke="#E0E0E0" stroke-width="0.5" />

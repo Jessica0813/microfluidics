@@ -109,7 +109,6 @@ export const useSensorStore = defineStore('sensor', () => {
         addState(state)
       }
     }
-    // selectedSensors.value = []
   }
 
   function deleteSensorWithId(id: string) {

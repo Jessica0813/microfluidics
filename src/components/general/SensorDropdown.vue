@@ -6,6 +6,7 @@
       :style="{ color: selected === item ? '#007bff' : '' }"
       :key="index"
       @click="selectItem(item)"
+      @mouseover="onHover(item)"
     >
       {{ item.name }}
     </button>
@@ -14,12 +15,38 @@
 
 <script setup lang="ts">
 import { type Sensor } from '@/types/sensor'
+import { useSensorStore } from '@/stores/useSensorStore'
 
 defineProps<{
   items: Sensor[]
 }>()
 
 const selected = defineModel<Sensor | undefined>('selected', { default: undefined })
+
+const { onSelectSensor, removeAllSelectedSensors } = useSensorStore()
+
+function isSensorinView(sensor: Sensor) {
+  const designCanvas = document.getElementById('design-canvas')
+  const target = document.getElementById(`sensor-${sensor.id}`)
+  if (!designCanvas || !target) return false
+
+  const x = target.getBoundingClientRect()
+
+  const targetLeft = x.left
+  const targetTop = x.top
+  const targetRight = x.right
+  const targetBottom = x.bottom
+
+  const { left, top, right, bottom } = designCanvas.getBoundingClientRect()
+  return targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
+}
+
+function onHover(item: Sensor) {
+  removeAllSelectedSensors()
+  if (isSensorinView(item)) {
+    onSelectSensor(item.id)
+  }
+}
 
 const selectItem = (item: Sensor) => {
   selected.value = item

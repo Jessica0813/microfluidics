@@ -28,18 +28,14 @@ import { toRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import IconZoomIn from '../icons/IconZoomIn.vue'
 import IconZoomOut from '../icons/IconZoomOut.vue'
-import type { Transform } from '@/types/d3'
 import { zoomIdentity } from 'd3-zoom'
 import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
-const transform = defineModel<Transform>('transform', { default: { x: 0, y: 0, k: 1 } })
+const { setZooming } = useDesignCanvasStore()
+const { d3Zoom, d3Selection, transform } = storeToRefs(useDesignCanvasStore())
 
 const minZoomReached = toRef(() => transform.value.k <= 0.2)
 const maxZoomReached = toRef(() => transform.value.k >= 2)
-
-const { setZooming } = useDesignCanvasStore()
-
-const { d3Zoom, d3Selection } = storeToRefs(useDesignCanvasStore())
 
 function zoomTo(value: number) {
   if (d3Zoom.value && d3Selection.value) {

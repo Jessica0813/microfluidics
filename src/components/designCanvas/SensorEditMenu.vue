@@ -66,7 +66,6 @@ import InputWithValidation from '../general/InputWithValidation.vue'
 
 const props = defineProps<{
   designCanvasRef: HTMLElement | null
-  transform: { x: number; y: number; k: number }
 }>()
 
 const sensorFloatingRef = ref<HTMLDivElement | null>(null)

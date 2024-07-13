@@ -15,7 +15,9 @@
 
 <script setup lang="ts">
 import { type Sensor } from '@/types/sensor'
+import { storeToRefs } from 'pinia'
 import { useSensorStore } from '@/stores/useSensorStore'
+import { useDesignCanvasStore } from '@/stores/useDesignCanvasStore'
 
 defineProps<{
   items: Sensor[]
@@ -24,11 +26,12 @@ defineProps<{
 const selected = defineModel<Sensor | undefined>('selected', { default: undefined })
 
 const { onSelectSensor, removeAllSelectedSensors } = useSensorStore()
+const { d3Zoom, d3Selection, transform } = storeToRefs(useDesignCanvasStore())
 
 function isSensorinView(sensor: Sensor) {
   const designCanvas = document.getElementById('design-canvas')
   const target = document.getElementById(`sensor-${sensor.id}`)
-  if (!designCanvas || !target) return false
+  if (!designCanvas || !target) return
 
   const x = target.getBoundingClientRect()
 
@@ -38,14 +41,29 @@ function isSensorinView(sensor: Sensor) {
   const targetBottom = x.bottom
 
   const { left, top, right, bottom } = designCanvas.getBoundingClientRect()
-  return targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
+
+  const isInView =
+    targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
+
+  if (!isInView) {
+    const deltaX =
+      (targetLeft < left ? left - targetLeft : targetRight > right ? right - targetRight : 0) /
+      transform.value.k
+
+    const deltaY =
+      (targetTop < top ? top - targetTop : targetBottom > bottom ? bottom - targetBottom : 0) /
+      transform.value.k
+
+    if (d3Zoom.value && d3Selection.value) {
+      d3Zoom.value.translateBy(d3Selection.value, deltaX, deltaY)
+    }
+  }
 }
 
 function onHover(item: Sensor) {
   removeAllSelectedSensors()
-  if (isSensorinView(item)) {
-    onSelectSensor(item.id)
-  }
+  isSensorinView(item)
+  onSelectSensor(item.id)
 }
 
 const selectItem = (item: Sensor) => {

@@ -11,7 +11,7 @@
         : '4px 4px 8px 2px rgba(128, 128, 128, 0.2)'
     }"
   >
-    <SensorEditMenu :design-canvas-ref="svg" :transform="transform" />
+    <SensorEditMenu :design-canvas-ref="svg" />
     <SensorPanel
       class="sensor-panel"
       v-show="isDesignCanvasVisible"
@@ -36,7 +36,7 @@
       <g id="canvas"></g>
     </svg>
     <div class="control-bar" v-show="isDesignCanvasVisible">
-      <DesignCanvasControl v-model:transform="transform" />
+      <DesignCanvasControl />
     </div>
     <button
       @click="designCanvasSize = designCanvasSize === 'small' ? 'large' : 'small'"
@@ -94,14 +94,15 @@ const designCanvasSize = defineModel<string>('designCanvasSize', { default: 'sma
 const svg = ref<HTMLElement | null>(null)
 const d3Zoom = ref<D3Zoom>()
 const d3Selection = ref<D3Selection>()
-const transform = ref({ x: 0, y: 0, k: 1 })
+// const transform = ref({ x: 0, y: 0, k: 1 })
 const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
 const isPanelMenuOpen = ref(false)
 
 const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
   useSensorStore()
-const { setZooming, setD3Zoom, setD3Selection } = useDesignCanvasStore()
+const { setZooming, setD3Zoom, setD3Selection, setTransform } = useDesignCanvasStore()
+const { transform } = storeToRefs(useDesignCanvasStore())
 const { selectedSensors } = storeToRefs(useSensorStore())
 
 function onDragOver(event: any) {
@@ -205,7 +206,7 @@ onMounted(() => {
       setZooming()
     })
     .on('zoom', (event) => {
-      transform.value = event.transform
+      setTransform(event.transform)
 
       const transform10 = event.transform.k * 10
       const transform50 = transform10 * 5

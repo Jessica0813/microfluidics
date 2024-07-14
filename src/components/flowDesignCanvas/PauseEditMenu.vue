@@ -1,6 +1,11 @@
 <template>
   <div class="bar">
-    <v-menu :close-on-content-click="false" offset="10" v-model="isPauseMenuOpen">
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-model="isPauseMenuOpen"
+      @update:model-value="(value) => updateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Pause' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -57,8 +62,8 @@ watch(
   }
 )
 
-watch(isPauseMenuOpen, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
+function updateState(value: boolean) {
+  if (!value) {
     const node = findNode(props.id)
     if (node && pause.value.duration !== oldPause.duration) {
       let newPause = Object.assign({}, pause.value)
@@ -79,7 +84,7 @@ watch(isPauseMenuOpen, (newValue, oldValue) => {
       oldPause = newPause
     }
   }
-})
+}
 
 function deleteSelectedElements() {
   if (props.id !== null) {

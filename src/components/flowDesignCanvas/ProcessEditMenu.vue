@@ -3,7 +3,7 @@
     <v-menu
       offset="10"
       v-model="isFluidMenuOpen"
-      @update:model-value="(value) => updateState(value, true)"
+      @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Fluid' }">
@@ -15,7 +15,7 @@
     <v-menu
       offset="10"
       v-model="isInletMenuOpen"
-      @update:model-value="(value) => updateState(value, true)"
+      @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Inlet' }">
@@ -27,7 +27,7 @@
     <v-menu
       offset="10"
       v-model="isInjectionMenuOpen"
-      @update:model-value="(value) => updateState(value, true)"
+      @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
@@ -41,7 +41,7 @@
       offset="10"
       v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
       v-model="isPressureMenuOpen"
-      @update:model-value="(value) => updateState(value, true)"
+      @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Pressure' }">
@@ -55,7 +55,7 @@
       offset="10"
       v-else-if="flowControl.injection === 'needle'"
       v-model="isViscosityMenuOpen"
-      @update:model-value="(value) => updateState(value, true)"
+      @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Flowrate' }">
@@ -68,7 +68,7 @@
       :close-on-content-click="false"
       offset="10"
       v-model="isDurationMenuOpen"
-      @update:model-value="(value) => updateState(value, true)"
+      @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Duration' }">
@@ -146,12 +146,12 @@ watch(
   }
 )
 
-function updateState(newValue: boolean, oldValue: boolean) {
-  const node = findNode(props.id)
-  if (!node) {
-    return
-  }
-  if (newValue === false && oldValue === true) {
+function updateState(newValue: boolean) {
+  if (newValue === false) {
+    const node = findNode(props.id)
+    if (!node) {
+      return
+    }
     if (
       flowControl.value.pressure !== oldFlowControl.pressure ||
       flowControl.value.duration !== oldFlowControl.duration ||

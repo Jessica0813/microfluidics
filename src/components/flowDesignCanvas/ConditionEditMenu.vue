@@ -1,6 +1,14 @@
 <template>
   <div class="bar">
-    <v-menu offset="10" v-model="isSensorMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isSensorMenuOpen"
+      @update:model-value="
+        (value) => {
+          onSensorValueChange(value)
+        }
+      "
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Sensor' }">
           <v-icon size="small" color="#66615b">mdi-leak</v-icon>
@@ -8,7 +16,11 @@
       </template>
       <SensorDropdown :items="sensors" :node-id="id" v-model:selected="condition.sensor" />
     </v-menu>
-    <v-menu offset="10" v-model="isOperatorMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isOperatorMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Operator' }">
           <v-icon size="small" color="#66615b">mdi-compare-horizontal</v-icon>
@@ -25,6 +37,7 @@
       v-model="isColorMenuOpen"
       :close-on-content-click="false"
       offset="10"
+      @update:model-value="(value) => compareAndUpdateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Color' }">
@@ -38,7 +51,13 @@
         mode="hex"
       ></v-color-picker>
     </v-menu>
-    <v-menu :close-on-content-click="false" offset="10" v-else v-model="isMeasurementMenuOpen">
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-else
+      v-model="isMeasurementMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Measurement' }">
           <v-icon size="small" color="#66615b">mdi-numeric</v-icon>
@@ -139,8 +158,8 @@ function updateState(newCondition: Condition) {
   oldCondition = newCondition
 }
 
-watch(isSensorMenuOpen, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
+function onSensorValueChange(value: boolean) {
+  if (value === false) {
     let newCondition = JSON.parse(JSON.stringify(condition.value))
     if (
       (oldCondition.sensor &&
@@ -164,10 +183,10 @@ watch(isSensorMenuOpen, (newValue, oldValue) => {
       updateState(newCondition)
     }
   }
-})
+}
 
-function compareAndUpdateState(newValue: boolean, oldValue: boolean) {
-  if (newValue === false && oldValue === true) {
+function compareAndUpdateState(newValue: boolean) {
+  if (newValue === false) {
     const newCondition = JSON.parse(JSON.stringify(condition.value))
     if (
       newCondition.operator !== oldCondition.operator ||
@@ -178,18 +197,6 @@ function compareAndUpdateState(newValue: boolean, oldValue: boolean) {
     }
   }
 }
-
-watch(isOperatorMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isColorMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isMeasurementMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
 
 function deleteSelectedElements() {
   if (props.id !== null) {

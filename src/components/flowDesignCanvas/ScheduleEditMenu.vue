@@ -1,6 +1,11 @@
 <template>
   <div class="bar" v-if="!isChildProcessSelected">
-    <v-menu :close-on-content-click="false" offset="10" v-model="isTotalDurationMenuOpen">
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-model="isTotalDurationMenuOpen"
+      @update:model-value="(value) => onTotalDurationChange(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Duration' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -17,7 +22,11 @@
     </button>
   </div>
   <div class="bar" v-else>
-    <v-menu offset="10" v-model="isFluidMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isFluidMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Fluid' }">
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
@@ -25,7 +34,11 @@
       </template>
       <FluidDropdown v-model:selected="flowControl.fluid" :items="fluids" />
     </v-menu>
-    <v-menu offset="10" v-model="isInletMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isInletMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Inlet' }">
           <v-icon size="small" color="#66615b">mdi-location-enter</v-icon>
@@ -33,7 +46,11 @@
       </template>
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
     </v-menu>
-    <v-menu offset="10" v-model="isInjectionMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isInjectionMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
           <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
@@ -46,6 +63,7 @@
       offset="10"
       v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
       v-model="isPressureMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Pressure' }">
@@ -59,6 +77,7 @@
       offset="10"
       v-else-if="flowControl.injection === 'needle'"
       v-model="isFlowrateMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Flowrate' }">
@@ -67,7 +86,12 @@
       </template>
       <CustomizedNumberInput v-model:number="flowControl.flowrate" />
     </v-menu>
-    <v-menu :close-on-content-click="false" offset="10" v-model="isSubProcessDurationMenuOpen">
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-model="isSubProcessDurationMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Time Range' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -248,18 +272,18 @@ function updataState(newData: ScheduledFlowControl, changedSubprocessId: string 
   }
 }
 
-watch(isTotalDurationMenuOpen, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
+function onTotalDurationChange(value: boolean) {
+  if (value === false) {
     const node = findNode(props.id)
     const newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     if (node && newData.totalDuration !== oldScheduledFlowControl.totalDuration) {
       updataState(newData, undefined)
     }
   }
-})
+}
 
-function compareAndUpdateState(newValue: boolean, oldValue: boolean) {
-  if (newValue === false && oldValue === true) {
+function compareAndUpdateState(newValue: boolean) {
+  if (newValue === false) {
     let newData = JSON.parse(JSON.stringify(scheduledFlowControl.value))
     if (editedProcessId.value !== -1) {
       oldScheduledFlowControl.processes[editedProcessId.value].selected = false
@@ -291,30 +315,6 @@ function compareAndUpdateState(newValue: boolean, oldValue: boolean) {
     }
   }
 }
-
-watch(isFluidMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isInletMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isInjectionMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isPressureMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isFlowrateMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
-
-watch(isSubProcessDurationMenuOpen, (newValue, oldValue) => {
-  compareAndUpdateState(newValue, oldValue)
-})
 
 function deleteSelectedElements() {
   if (props.id !== null) {

@@ -1,6 +1,10 @@
 <template>
   <div class="bar">
-    <v-menu offset="10" v-model="isFluidMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isFluidMenuOpen"
+      @update:model-value="(value) => updateState(value, true)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Fluid' }">
           <v-icon size="small" color="#66615b">mdi-waves</v-icon>
@@ -8,7 +12,11 @@
       </template>
       <FluidDropdown v-model:selected="flowControl.fluid" :items="fluids" />
     </v-menu>
-    <v-menu offset="10" v-model="isInletMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isInletMenuOpen"
+      @update:model-value="(value) => updateState(value, true)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Inlet' }">
           <v-icon size="small" color="#66615b">mdi-location-enter</v-icon>
@@ -16,7 +24,11 @@
       </template>
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
     </v-menu>
-    <v-menu offset="10" v-model="isInjectionMenuOpen">
+    <v-menu
+      offset="10"
+      v-model="isInjectionMenuOpen"
+      @update:model-value="(value) => updateState(value, true)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
           <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
@@ -29,6 +41,7 @@
       offset="10"
       v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
       v-model="isPressureMenuOpen"
+      @update:model-value="(value) => updateState(value, true)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Pressure' }">
@@ -42,6 +55,7 @@
       offset="10"
       v-else-if="flowControl.injection === 'needle'"
       v-model="isViscosityMenuOpen"
+      @update:model-value="(value) => updateState(value, true)"
     >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Flowrate' }">
@@ -50,7 +64,12 @@
       </template>
       <CustomizedNumberInput v-model:number="flowControl.flowrate" />
     </v-menu>
-    <v-menu :close-on-content-click="false" offset="10" v-model="isDurationMenuOpen">
+    <v-menu
+      :close-on-content-click="false"
+      offset="10"
+      v-model="isDurationMenuOpen"
+      @update:model-value="(value) => updateState(value, true)"
+    >
       <template v-slot:activator="{ props }">
         <button class="customized-button" v-bind="props" v-tippy="{ content: 'Duration' }">
           <v-icon size="small" color="#66615b">mdi-clock-outline</v-icon>
@@ -163,30 +182,6 @@ function updateState(newValue: boolean, oldValue: boolean) {
     }
   }
 }
-
-watch(isFluidMenuOpen, (newValue, oldValue) => {
-  updateState(newValue, oldValue)
-})
-
-watch(isInletMenuOpen, (newValue, oldValue) => {
-  updateState(newValue, oldValue)
-})
-
-watch(isInjectionMenuOpen, (newValue, oldValue) => {
-  updateState(newValue, oldValue)
-})
-
-watch(isPressureMenuOpen, (newValue, oldValue) => {
-  updateState(newValue, oldValue)
-})
-
-watch(isViscosityMenuOpen, (newValue, oldValue) => {
-  updateState(newValue, oldValue)
-})
-
-watch(isDurationMenuOpen, (newValue, oldValue) => {
-  updateState(newValue, oldValue)
-})
 
 function deleteSelectedElements() {
   if (props.id !== null) {

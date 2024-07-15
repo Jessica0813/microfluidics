@@ -171,12 +171,8 @@ export const useSensorStore = defineStore('sensor', () => {
   }
 
   function removeAllSelectedSensors() {
-    // loop throught all the sensors in selectedSensor and set selected in the sesnor array to false
     selectedSensors.value.forEach((sensor) => {
-      const sensorIndex = sensors.value.findIndex((s) => s.id === sensor.id)
-      if (sensorIndex !== -1) {
-        sensors.value[sensorIndex].selected = false
-      }
+      sensor.selected = false
     })
   }
 

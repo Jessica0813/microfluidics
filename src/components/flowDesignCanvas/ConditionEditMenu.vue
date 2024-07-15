@@ -5,6 +5,7 @@
       v-model="isSensorMenuOpen"
       @update:model-value="
         (value) => {
+          removeAllSelectedSensors()
           onSensorValueChange(value)
         }
       "
@@ -101,6 +102,7 @@ const isColorMenuOpen = ref(false)
 const isMeasurementMenuOpen = ref(false)
 
 const { sensors } = storeToRefs(useSensorStore())
+const { removeAllSelectedSensors } = useSensorStore()
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
 

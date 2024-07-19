@@ -132,10 +132,10 @@ function showEditMenuBar() {
   }
 
   const element = document.getElementById(selectedId.value!)
+  isEditMenuOpen.value = true
   useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
     position.value = pos
   })
-  isEditMenuOpen.value = true
 }
 
 function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
@@ -346,7 +346,9 @@ onViewportChangeStart(() => {
 
 onViewportChangeEnd(() => {
   if (selectedId.value) {
-    showEditMenuBar()
+    setTimeout(() => {
+      showEditMenuBar()
+    }, 200)
   }
 })
 

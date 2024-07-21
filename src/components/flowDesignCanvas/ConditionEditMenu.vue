@@ -132,8 +132,15 @@ watch(
   () => props.isEditMenuOpen,
   (newValue) => {
     if (!newValue) {
-      isColorMenuOpen.value = false
-      isMeasurementMenuOpen.value = false
+      if (isSensorMenuOpen.value) {
+        isSensorMenuOpen.value = false
+        onSensorValueChange(false)
+      } else {
+        isOperatorMenuOpen.value = false
+        isColorMenuOpen.value = false
+        isMeasurementMenuOpen.value = false
+        compareAndUpdateState(false)
+      }
     }
   }
 )

@@ -139,9 +139,13 @@ watch(
   () => props.isEditMenuOpen,
   (newValue, oldValue) => {
     if (!newValue && oldValue) {
+      isFluidMenuOpen.value = false
+      isInletMenuOpen.value = false
+      isInjectionMenuOpen.value = false
       isPressureMenuOpen.value = false
       isViscosityMenuOpen.value = false
       isDurationMenuOpen.value = false
+      updateState(false)
     }
   }
 )

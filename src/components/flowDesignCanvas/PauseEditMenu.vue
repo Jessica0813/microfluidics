@@ -58,6 +58,7 @@ watch(
   (newValue) => {
     if (!newValue) {
       isPauseMenuOpen.value = false
+      updateState(false)
     }
   }
 )

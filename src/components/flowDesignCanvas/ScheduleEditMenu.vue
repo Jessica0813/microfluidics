@@ -209,6 +209,11 @@ watch(
       isFluidMenuOpen.value = false
       isInletMenuOpen.value = false
       isInjectionMenuOpen.value = false
+      if (isChildProcessSelected.value) {
+        compareAndUpdateState(false)
+      } else {
+        onTotalDurationChange(false)
+      }
     }
   }
 )

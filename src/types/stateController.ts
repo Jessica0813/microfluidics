@@ -39,6 +39,7 @@ export interface state {
   target?: string
   sourceHandleId?: string
   targetHandleId?: string
+  edgeLabel?: string
 }
 export interface StateController {
   type: ActionType

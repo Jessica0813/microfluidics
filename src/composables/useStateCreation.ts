@@ -27,7 +27,8 @@ export function createDeleteNodeState(
           source: edge.source,
           target: edge.target,
           sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+          targetHandleId: edge.targetHandle ? edge.targetHandle : '',
+          edgeLabel: edge.label?.toString()
         })
         removeEdges([edge])
       }
@@ -68,7 +69,8 @@ export function createDeleteEdgeState(getSelectedEdges: GraphEdge[], removeEdges
         source: edge.source,
         target: edge.target,
         sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-        targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+        targetHandleId: edge.targetHandle ? edge.targetHandle : '',
+        edgeLabel: edge.label?.toString()
       }
     }
     removeEdges([edge])
@@ -95,7 +97,8 @@ export function createDeleteMultiEdgesState(
         source: edge.source,
         target: edge.target,
         sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-        targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+        targetHandleId: edge.targetHandle ? edge.targetHandle : '',
+        edgeLabel: edge.label?.toString()
       })
       removeEdges([edge])
     }
@@ -130,7 +133,8 @@ export function createDeleteMultiNodesState(
           source: edge.source,
           target: edge.target,
           sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-          targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+          targetHandleId: edge.targetHandle ? edge.targetHandle : '',
+          edgeLabel: edge.label?.toString()
         })
         removeEdges([edge])
       }

@@ -94,7 +94,10 @@ const {
   project,
   vueFlowRef,
   onNodesChange,
-  onEdgesChange
+  onEdgesChange,
+  getConnectedEdges,
+  getOutgoers,
+  getIncomers
 } = useVueFlow()
 
 const { addState } = useStateStore()
@@ -113,6 +116,14 @@ function onDragOver(event: any) {
 
 onConnect((params) => {
   if (params.source === params.target) {
+    return
+  }
+  const outGoers = getOutgoers(params.source)
+  const inComers = getIncomers(params.source)
+  if (
+    outGoers.some((node) => node.id === params.target) ||
+    inComers.some((node) => node.id === params.target)
+  ) {
     return
   }
   // look through edges to check if any edge is connected to the source node
@@ -142,6 +153,37 @@ onConnect((params) => {
 })
 
 function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
+  if (
+    connection.source === connection.target ||
+    (connection.sourceHandle === edge.sourceHandle && connection.targetHandle === edge.targetHandle)
+  ) {
+    return
+  }
+  let newEdgeLable = ''
+  if (connection.source !== connection.source) {
+    if (connection.source.includes('condition_')) {
+      const connectedEdges = getConnectedEdges(connection.source)
+      const outEdges = connectedEdges.filter((edge) => edge.target !== connection.source)
+      if (outEdges.length === 2) {
+        return
+      } else if (outEdges.length === 0) {
+        newEdgeLable = 'Yes'
+      } else if (outEdges.length === 1) {
+        if (outEdges[0].label?.toString() === 'Yes') {
+          newEdgeLable = 'No'
+        } else {
+          newEdgeLable = 'Yes'
+        }
+      }
+    } else {
+      if (edge.label === 'Yes' || edge.label === 'No') {
+        newEdgeLable = ''
+      }
+    }
+  } else {
+    newEdgeLable = edge.label?.toString() || ''
+  }
+
   const state: StateController = {
     type: ActionType.UPDATE_EDGE,
     name: 'update edge ' + edge.id,
@@ -151,18 +193,23 @@ function onEdgeUpdate({ edge, connection }: EdgeUpdateEvent) {
       source: edge.source,
       target: edge.target,
       sourceHandleId: edge.sourceHandle ? edge.sourceHandle : '',
-      targetHandleId: edge.targetHandle ? edge.targetHandle : ''
+      targetHandleId: edge.targetHandle ? edge.targetHandle : '',
+      edgeLabel: edge.label?.toString() || ''
     },
     newState: {
       data: '',
       source: connection.source,
       target: connection.target,
       sourceHandleId: connection.sourceHandle ? connection.sourceHandle : '',
-      targetHandleId: connection.targetHandle ? connection.targetHandle : ''
+      targetHandleId: connection.targetHandle ? connection.targetHandle : '',
+      edgeLabel: newEdgeLable
     }
   }
+  const updatedEdge = updateEdge(edge, connection, false)
+  if (updatedEdge) {
+    updatedEdge.label = newEdgeLable
+  }
   addState(state)
-  updateEdge(edge, connection, false)
 }
 
 function onDrop(event: any) {
@@ -404,7 +451,8 @@ onEdgesChange((edgesChange) => {
           source: change.item.source,
           target: change.item.target,
           sourceHandleId: change.item.sourceHandle ? change.item.sourceHandle : '',
-          targetHandleId: change.item.targetHandle ? change.item.targetHandle : ''
+          targetHandleId: change.item.targetHandle ? change.item.targetHandle : '',
+          edgeLabel: change.item.label?.toString() || ''
         }
       }
       addState(state)

@@ -128,13 +128,14 @@ function undo() {
                   sourceHandle: state.oldState[i].sourceHandleId,
                   targetHandle: state.oldState[i].targetHandleId
                 }
-                if (state.objectId[i].includes('edgeTrue')) {
-                  addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: 'Yes' }])
-                } else if (state.objectId[i].includes('edgeFalse')) {
-                  addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: 'No' }])
-                } else if (state.objectId[i].includes('edge')) {
-                  addEdges([{ ...edge, id: state.objectId[i], type: 'custom', label: '' }])
-                }
+                addEdges([
+                  {
+                    ...edge,
+                    id: state.objectId[i],
+                    type: 'custom',
+                    label: state.oldState[i].edgeLabel
+                  }
+                ])
                 const readdedEdge = findEdge(state.objectId[i])
                 if (readdedEdge) {
                   readdedEdge.selected = true
@@ -283,13 +284,7 @@ function undo() {
         sourceHandle: state.oldState.sourceHandleId,
         targetHandle: state.oldState.targetHandleId
       }
-      if (state.objectId.includes('edgeTrue')) {
-        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'Yes' }])
-      } else if (state.objectId.includes('edgeFalse')) {
-        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'No' }])
-      } else if (state.objectId.includes('edge')) {
-        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: '' }])
-      }
+      addEdges([{ ...edge, id: state.objectId, type: 'custom', label: state.oldState.edgeLabel }])
       const readdedEdge = findEdge(state.objectId)
       if (readdedEdge) {
         readdedEdge.selected = true
@@ -304,6 +299,7 @@ function undo() {
         edge.sourceHandle = state.oldState.sourceHandleId
         edge.targetHandle = state.oldState.targetHandleId
         edge.selected = true
+        edge.label = state.oldState.edgeLabel
       }
       break
     }
@@ -572,13 +568,7 @@ function redo() {
         sourceHandle: state.oldState.sourceHandleId,
         targetHandle: state.oldState.targetHandleId
       }
-      if (state.objectId.includes('edgeTrue')) {
-        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'Yes' }])
-      } else if (state.objectId.includes('edgeFalse')) {
-        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: 'No' }])
-      } else if (state.objectId.includes('edge')) {
-        addEdges([{ ...edge, id: state.objectId, type: 'custom', label: '' }])
-      }
+      addEdges([{ ...edge, id: state.objectId, type: 'custom', label: state.oldState.edgeLabel }])
       const readdedEdge = findEdge(state.objectId)
       if (readdedEdge) {
         readdedEdge.selected = true
@@ -600,6 +590,7 @@ function redo() {
         edge.sourceHandle = state.newState?.sourceHandleId
         edge.targetHandle = state.newState?.targetHandleId
         edge.selected = true
+        edge.label = state.newState?.edgeLabel
       }
       break
     }

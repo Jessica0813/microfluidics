@@ -8,8 +8,6 @@ export const useNodeIdStore = defineStore('nodeId', () => {
   let subProcessIndex = 1
 
   let edgeIndex = 1
-  let edgeTrueIndex = 1
-  let edgeFalseIndex = 1
 
   function getProcessNodeId() {
     return `process_${processNodeIndex++}`
@@ -35,14 +33,6 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     return `edge_${edgeIndex++}`
   }
 
-  function getEdgeTrueId() {
-    return `edgeTrue_${edgeTrueIndex++}`
-  }
-
-  function getEdgeFalseId() {
-    return `edgeFalse_${edgeFalseIndex++}`
-  }
-
   function getIndexes() {
     return {
       processNodeIndex: processNodeIndex,
@@ -50,9 +40,7 @@ export const useNodeIdStore = defineStore('nodeId', () => {
       conditionNodeIndex: conditionNodeIndex,
       scheduleNodeIndex: scheduleNodeIndex,
       subProcessIndex: subProcessIndex,
-      edgeIndex: edgeIndex,
-      edgeTrueIndex: edgeTrueIndex,
-      edgeFalseIndex: edgeFalseIndex
+      edgeIndex: edgeIndex
     }
   }
 
@@ -63,8 +51,6 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     initalscheduleNodeIndex: number
     initalsubProcessIndex: number
     initaledgeIndex: number
-    initaledgeTrueIndex: number
-    initaledgeFalseIndex: number
   }) {
     processNodeIndex = indexes.initalProcessNodeIndex
     pauseNodeIndex = indexes.initalpauseNodeIndex
@@ -72,8 +58,6 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     scheduleNodeIndex = indexes.initalscheduleNodeIndex
     subProcessIndex = indexes.initalsubProcessIndex
     edgeIndex = indexes.initaledgeIndex
-    edgeTrueIndex = indexes.initaledgeTrueIndex
-    edgeFalseIndex = indexes.initaledgeFalseIndex
   }
 
   return {
@@ -83,8 +67,6 @@ export const useNodeIdStore = defineStore('nodeId', () => {
     getProcessScheduleNodeId,
     getSubProcessId,
     getEdgeId,
-    getEdgeTrueId,
-    getEdgeFalseId,
     getIndexes,
     initIndexes
   }

@@ -79,9 +79,7 @@ const {
   getConditionNodeId,
   getProcessScheduleNodeId,
   getSubProcessId,
-  getEdgeId,
-  getEdgeFalseId,
-  getEdgeTrueId
+  getEdgeId
 } = useNodeIdStore()
 const {
   nodes,
@@ -145,9 +143,9 @@ onConnect((params) => {
     if (isTrueEdgeExist && isFalseEdgeExist) {
       return
     } else if ((!isTrueEdgeExist && !isFalseEdgeExist) || isFalseEdgeExist) {
-      addEdges([{ ...params, type: 'custom', id: getEdgeTrueId(), label: 'Yes' }])
+      addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'Yes' }])
     } else if (isTrueEdgeExist) {
-      addEdges([{ ...params, type: 'custom', id: getEdgeFalseId(), label: 'No' }])
+      addEdges([{ ...params, type: 'custom', id: getEdgeId(), label: 'No' }])
     }
   }
 })

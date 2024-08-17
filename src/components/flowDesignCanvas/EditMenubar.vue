@@ -120,6 +120,24 @@ function isNodeinView(nodeX: number, nodeY: number, width: number, height: numbe
   )
 }
 
+function isEdgeinView() {
+  if (vueFlowRef.value === null) return
+
+  const element = document.getElementById(selectedId.value!)
+  if (!element) {
+    return
+  }
+  const edgeBoundingRect = element.getBoundingClientRect()
+  const edgeLeft = edgeBoundingRect.left
+  const edgeRight = edgeBoundingRect.right
+  const edgeTop = edgeBoundingRect.top
+  const edgeBottom = edgeBoundingRect.bottom
+
+  const { left, top, right, bottom } = vueFlowRef.value.getBoundingClientRect()
+
+  return edgeRight > left && edgeLeft < right && edgeBottom > top && edgeTop < bottom
+}
+
 function showNodeMenuBar() {
   const node = findNode(selectedId.value!)
 
@@ -133,14 +151,28 @@ function showNodeMenuBar() {
     return
   }
 
+  openNodeMenuBar()
+}
+
+function showEdgeMenuBar() {
+  if (!isEdgeinView()) {
+    return
+  }
+
+  openEdgeMenuBar()
+}
+
+function openNodeMenuBar() {
   const element = document.getElementById(selectedId.value!)
+  if (!element) return
+
   isEditMenuOpen.value = true
   useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
     position.value = pos
   })
 }
 
-function showEdgeMenuBar() {
+function openEdgeMenuBar() {
   const element = document.getElementById(selectedId.value!)
   if (!element) {
     return
@@ -191,15 +223,14 @@ function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
 watch(getSelectedElements, (newSelectedElements) => {
   if (newSelectedElements.length === 1) {
     selectedId.value = newSelectedElements[0].id
-    console.log('selectedId', selectedId.value)
 
     let element = document.getElementById(selectedId.value!)
 
     if (selectedId.value.includes('edge')) {
       if (!element) {
         setTimeout(() => {
-          showEdgeMenuBar()
-        }, 800)
+          openEdgeMenuBar()
+        }, 1000)
       } else {
         isEditMenuOpen.value = true
         useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
@@ -209,11 +240,7 @@ watch(getSelectedElements, (newSelectedElements) => {
     } else {
       if (!element) {
         setTimeout(() => {
-          element = document.getElementById(selectedId.value!)
-          isEditMenuOpen.value = true
-          useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-            position.value = pos
-          })
+          openNodeMenuBar()
         }, 800)
       } else {
         isEditMenuOpen.value = true
@@ -225,7 +252,6 @@ watch(getSelectedElements, (newSelectedElements) => {
   } else {
     isEditMenuOpen.value = false
     selectedId.value = null
-    console.log('settonull')
   }
 })
 

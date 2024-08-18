@@ -39,40 +39,34 @@ const maxZoomReached = toRef(() => viewport.value.zoom >= 2)
 const { zoomTo, viewport, setViewport } = useVueFlow()
 const { setZooming } = useFlowChartCanvasStore()
 
-function zoomIn() {
+async function zoomIn() {
   setZooming(true)
   zoom.value = zoom.value + 0.1
   if (zoom.value > 2) {
     zoom.value = 2
   }
-  zoomTo(zoom.value)
-  setTimeout(function () {
-    setZooming(false)
-  }, 200)
+  await zoomTo(zoom.value)
+  setZooming(false)
 }
 
-function zoomOut() {
+async function zoomOut() {
   setZooming(true)
   zoom.value = zoom.value - 0.1
   if (zoom.value < 0.2) {
     zoom.value = 0.2
   }
-  zoomTo(zoom.value)
-  setTimeout(function () {
-    setZooming(false)
-  }, 200)
+  await zoomTo(zoom.value)
+  setZooming(false)
 }
 
 function zoomBySlider() {
   zoomTo(zoom.value)
 }
 
-function resetView() {
+async function resetView() {
   setZooming(true)
-  setViewport({ zoom: 1, x: 0, y: 0 })
-  setTimeout(function () {
-    setZooming(false)
-  }, 200)
+  await setViewport({ zoom: 1, x: 0, y: 0 })
+  setZooming(false)
 }
 
 watch(

@@ -54,7 +54,7 @@ function zoomIn() {
 
   setTimeout(function () {
     setZooming()
-  }, 200)
+  }, 100)
 }
 
 function zoomOut() {
@@ -68,7 +68,7 @@ function zoomOut() {
 
   setTimeout(function () {
     setZooming()
-  }, 200)
+  }, 100)
 }
 
 function zoomBySlider() {
@@ -84,7 +84,7 @@ function resetView() {
 
   setTimeout(function () {
     setZooming()
-  }, 200)
+  }, 100)
 }
 </script>
 

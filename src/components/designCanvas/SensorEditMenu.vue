@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sensorFloatingRef"
-    class="wrapper sensor-edit-menu"
+    class="wrapper sensor-edit-menu fade-appearance"
     id="sensor-menu-bar"
     v-show="isEditMenuOpen"
   >
@@ -106,22 +106,6 @@ function handleInput(value: string) {
   isNameValid.value = !checkIfSensorNameExists(selectedSensor.value.id, value)
 }
 
-// function isSensorinView(target: HTMLElement) {
-//   if (props.designCanvasRef === null) {
-//     return false
-//   }
-
-//   const x = target.getBoundingClientRect()
-
-//   const targetLeft = x.left
-//   const targetTop = x.top
-//   const targetRight = x.right
-//   const targetBottom = x.bottom
-
-//   const { left, top, right, bottom } = props.designCanvasRef.getBoundingClientRect()
-//   return targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
-// }
-
 function showSensorEditMenu() {
   const target = document.getElementById(`${selectedSensor.value.id}`)
 
@@ -146,11 +130,6 @@ watch([selectedSensors, isZoomingOrDragging], ([newSelectedSensors, newIsZooming
 
   if (newSelectedSensors.length === 1) {
     selectedSensor.value = newSelectedSensors[0]
-    // const target = document.getElementById(`sensor-${selectedSensor.value.id}`)
-    // useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {
-    //   position.value = pos
-    // })
-    // isEditMenuOpen.value = true
     showSensorEditMenu()
     oldType = selectedSensor.value.type
     oldName = selectedSensor.value.name
@@ -280,5 +259,9 @@ watch(
   margin-left: 2px;
   background-color: white;
   cursor: all-scroll;
+}
+
+.fade-appearance {
+  animation: fadeIn 0.5s ease;
 }
 </style>

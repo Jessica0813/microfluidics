@@ -1,5 +1,5 @@
 <template>
-  <div ref="floatingRef" class="wrapper" v-show="isEditMenuOpen" id="menu-bar">
+  <div ref="floatingRef" class="wrapper fade-appearance" v-show="isEditMenuOpen" id="menu-bar">
     <div
       class="drag-button"
       @mouseenter="isDraggable = true"
@@ -102,24 +102,6 @@ const {
 } = useVueFlow()
 const { isFlowChartCanvasZooming } = storeToRefs(useFlowChartCanvasStore())
 
-function showMenuBar() {
-  const element = document.getElementById(selectedId.value!)
-
-  if (!element) {
-    return
-  }
-
-  if (!useElementInView(vueFlowRef.value, element)) {
-    return
-  }
-
-  if (selectedId.value?.includes('edge')) {
-    openEdgeMenuBar(element)
-  } else {
-    openNodeMenuBar(element)
-  }
-}
-
 function openNodeMenuBar(element: HTMLElement | null) {
   if (!element) {
     return
@@ -138,6 +120,25 @@ function openEdgeMenuBar(element: HTMLElement | null) {
   useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
     position.value = pos
   })
+}
+
+function showMenuBar() {
+  const element = document.getElementById(selectedId.value!)
+
+  if (!element) {
+    console.log('element not found')
+    return
+  }
+
+  if (!useElementInView(vueFlowRef.value, element)) {
+    return
+  }
+
+  if (selectedId.value?.includes('edge')) {
+    openEdgeMenuBar(element)
+  } else {
+    openNodeMenuBar(element)
+  }
 }
 
 function checkIfNodeIsOverScheduleNode(dragEvent: NodeDragEvent) {
@@ -329,9 +330,7 @@ onViewportChangeStart(() => {
 
 onViewportChangeEnd(() => {
   if (selectedId.value) {
-    setTimeout(() => {
-      showMenuBar()
-    }, 200)
+    showMenuBar()
   }
 })
 
@@ -341,9 +340,7 @@ onEdgeUpdateStart(() => {
 
 onEdgeUpdateEnd((event) => {
   if (selectedId.value === event.edge.id && !isEditMenuOpen.value) {
-    setTimeout(() => {
-      showMenuBar()
-    }, 200)
+    showMenuBar()
   }
 })
 
@@ -417,5 +414,9 @@ watch(
   margin-left: 4px;
   background-color: white;
   cursor: all-scroll;
+}
+
+.fade-appearance {
+  animation: fadeIn 0.5s ease;
 }
 </style>

@@ -56,6 +56,7 @@ import { type Sensor, SensorType } from '@/types/sensor'
 import { type StateController, ActionType } from '@/types/stateController'
 
 import { useMenuPositionCalculatorForSensor } from '@/composables/useMenuPositionCalculator'
+import { useElementInView } from '@/composables/useElementInView'
 
 import { useSensorStore } from '@/stores/useSensorStore'
 import { useStateStore } from '@/stores/useStateStore'
@@ -105,21 +106,21 @@ function handleInput(value: string) {
   isNameValid.value = !checkIfSensorNameExists(selectedSensor.value.id, value)
 }
 
-function isSensorinView(target: HTMLElement) {
-  if (props.designCanvasRef === null) {
-    return false
-  }
+// function isSensorinView(target: HTMLElement) {
+//   if (props.designCanvasRef === null) {
+//     return false
+//   }
 
-  const x = target.getBoundingClientRect()
+//   const x = target.getBoundingClientRect()
 
-  const targetLeft = x.left
-  const targetTop = x.top
-  const targetRight = x.right
-  const targetBottom = x.bottom
+//   const targetLeft = x.left
+//   const targetTop = x.top
+//   const targetRight = x.right
+//   const targetBottom = x.bottom
 
-  const { left, top, right, bottom } = props.designCanvasRef.getBoundingClientRect()
-  return targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
-}
+//   const { left, top, right, bottom } = props.designCanvasRef.getBoundingClientRect()
+//   return targetRight > left && targetBottom > top && targetLeft < right && targetTop < bottom
+// }
 
 function showSensorEditMenu() {
   const target = document.getElementById(`${selectedSensor.value.id}`)
@@ -128,7 +129,7 @@ function showSensorEditMenu() {
     return
   }
 
-  if (selectedSensor.value.id !== '' && !isSensorinView(target)) {
+  if (selectedSensor.value.id !== '' && !useElementInView(props.designCanvasRef, target)) {
     return
   }
   useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {

@@ -49,6 +49,7 @@ import {
   useMenuPositionCalculator,
   useMenuPositionCalculatorForEdges
 } from '@/composables/useMenuPositionCalculator'
+import { useElementInView } from '@/composables/useElementInView'
 
 import { useFlowChartCanvasStore } from '@/stores/useFlowChartCanvasStore'
 import { useNodeIdStore } from '@/stores/useNodeIdStore'
@@ -94,7 +95,6 @@ const {
   getSelectedElements,
   onViewportChangeStart,
   onViewportChangeEnd,
-  viewport,
   vueFlowRef,
   removeNodes,
   onEdgeUpdateStart,
@@ -102,78 +102,35 @@ const {
 } = useVueFlow()
 const { isFlowChartCanvasZooming } = storeToRefs(useFlowChartCanvasStore())
 
-function isNodeinView(nodeX: number, nodeY: number, width: number, height: number) {
-  if (vueFlowRef.value === null) return
-
-  const { x, y, zoom } = viewport.value
-  const screenX = nodeX * zoom + x
-  const screenY = nodeY * zoom + y
-  const widthWithZoom = width * zoom
-  const heightWithZoom = height * zoom
-
-  const { left, top, right, bottom } = vueFlowRef.value.getBoundingClientRect()
-  return (
-    screenX + widthWithZoom > left &&
-    screenY + heightWithZoom > top &&
-    screenX < right &&
-    screenY < bottom
-  )
-}
-
-function isEdgeinView() {
-  if (vueFlowRef.value === null) return
-
+function showMenuBar() {
   const element = document.getElementById(selectedId.value!)
+
   if (!element) {
     return
   }
-  const edgeBoundingRect = element.getBoundingClientRect()
-  const edgeLeft = edgeBoundingRect.left
-  const edgeRight = edgeBoundingRect.right
-  const edgeTop = edgeBoundingRect.top
-  const edgeBottom = edgeBoundingRect.bottom
 
-  const { left, top, right, bottom } = vueFlowRef.value.getBoundingClientRect()
-
-  return edgeRight > left && edgeLeft < right && edgeBottom > top && edgeTop < bottom
-}
-
-function showNodeMenuBar() {
-  const node = findNode(selectedId.value!)
-
-  if (!node) {
+  if (!useElementInView(vueFlowRef.value, element)) {
     return
   }
 
-  if (
-    !isNodeinView(node.position.x, node.position.y, node.dimensions.width, node.dimensions.height)
-  ) {
-    return
+  if (selectedId.value?.includes('edge')) {
+    openEdgeMenuBar(element)
+  } else {
+    openNodeMenuBar(element)
   }
-
-  openNodeMenuBar()
 }
 
-function showEdgeMenuBar() {
-  if (!isEdgeinView()) {
+function openNodeMenuBar(element: HTMLElement | null) {
+  if (!element) {
     return
   }
-
-  openEdgeMenuBar()
-}
-
-function openNodeMenuBar() {
-  const element = document.getElementById(selectedId.value!)
-  if (!element) return
-
   isEditMenuOpen.value = true
   useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
     position.value = pos
   })
 }
 
-function openEdgeMenuBar() {
-  const element = document.getElementById(selectedId.value!)
+function openEdgeMenuBar(element: HTMLElement | null) {
   if (!element) {
     return
   }
@@ -229,24 +186,20 @@ watch(getSelectedElements, (newSelectedElements) => {
     if (selectedId.value.includes('edge')) {
       if (!element) {
         setTimeout(() => {
-          openEdgeMenuBar()
+          element = document.getElementById(selectedId.value!)
+          openEdgeMenuBar(element)
         }, 1000)
       } else {
-        isEditMenuOpen.value = true
-        useMenuPositionCalculatorForEdges(element, floatingRef.value).then((pos) => {
-          position.value = pos
-        })
+        openEdgeMenuBar(element)
       }
     } else {
       if (!element) {
         setTimeout(() => {
-          openNodeMenuBar()
+          element = document.getElementById(selectedId.value!)
+          openNodeMenuBar(element)
         }, 800)
       } else {
-        isEditMenuOpen.value = true
-        useMenuPositionCalculator(element, floatingRef.value).then((pos) => {
-          position.value = pos
-        })
+        openNodeMenuBar(element)
       }
     }
   } else {
@@ -364,7 +317,7 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
   dragEvent.node.data.isOverScheduleNode = false
 
   if (selectedId.value) {
-    showNodeMenuBar()
+    showMenuBar()
   }
 })
 
@@ -377,11 +330,7 @@ onViewportChangeStart(() => {
 onViewportChangeEnd(() => {
   if (selectedId.value) {
     setTimeout(() => {
-      if (selectedId.value?.includes('edge')) {
-        showEdgeMenuBar()
-      } else {
-        showNodeMenuBar()
-      }
+      showMenuBar()
     }, 200)
   }
 })
@@ -393,7 +342,7 @@ onEdgeUpdateStart(() => {
 onEdgeUpdateEnd((event) => {
   if (selectedId.value === event.edge.id && !isEditMenuOpen.value) {
     setTimeout(() => {
-      showEdgeMenuBar()
+      showMenuBar()
     }, 200)
   }
 })
@@ -403,11 +352,7 @@ watch(isFlowChartCanvasZooming, (newValue) => {
     if (newValue) {
       isEditMenuOpen.value = false
     } else {
-      if (selectedId.value?.includes('edge')) {
-        showEdgeMenuBar()
-      } else {
-        showNodeMenuBar()
-      }
+      showMenuBar()
     }
   }
 })

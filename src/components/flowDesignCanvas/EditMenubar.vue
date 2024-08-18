@@ -98,7 +98,7 @@ const {
   vueFlowRef,
   removeNodes,
   onEdgeUpdateStart,
-  onEdgeUpdateEnd
+  removeSelectedEdges
 } = useVueFlow()
 const { isFlowChartCanvasZooming } = storeToRefs(useFlowChartCanvasStore())
 
@@ -334,14 +334,8 @@ onViewportChangeEnd(() => {
   }
 })
 
-onEdgeUpdateStart(() => {
-  isEditMenuOpen.value = false
-})
-
-onEdgeUpdateEnd((event) => {
-  if (selectedId.value === event.edge.id && !isEditMenuOpen.value) {
-    showMenuBar()
-  }
+onEdgeUpdateStart((event) => {
+  removeSelectedEdges([event.edge])
 })
 
 watch(isFlowChartCanvasZooming, (newValue) => {

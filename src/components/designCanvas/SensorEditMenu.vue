@@ -84,7 +84,7 @@ const selectedSensor = ref<Sensor>({
   selected: false
 })
 
-const sensorTypes = [SensorType.Temperature, SensorType.Viscosity, SensorType.Color]
+const sensorTypes = [SensorType.Temperature, SensorType.Speed, SensorType.Color]
 let oldType: SensorType = SensorType.Temperature
 let oldName = ''
 const d3Drag = drag<HTMLDivElement, any, any>()
@@ -110,10 +110,12 @@ function showSensorEditMenu() {
   const target = document.getElementById(`${selectedSensor.value.id}`)
 
   if (!target) {
+    console.error('target not found')
     return
   }
 
   if (selectedSensor.value.id !== '' && !useElementInView(props.designCanvasRef, target)) {
+    console.error('target not in view')
     return
   }
   useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {

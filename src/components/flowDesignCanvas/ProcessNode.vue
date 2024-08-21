@@ -56,7 +56,7 @@
         >s
       </p>
       <p v-else>
-        <strong>{{ flowControl.injection + ' ' }}</strong>
+        <strong>Inject </strong>
         <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'Fluid' }}</strong> into
         <strong>{{ flowControl.inlet }}</strong> at a rate of
         <strong>{{ flowControl.flowrate }}</strong> for <strong>{{ flowControl.duration }}</strong

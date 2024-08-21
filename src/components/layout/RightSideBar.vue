@@ -59,7 +59,7 @@ function checkNodeDataValidity() {
           const condition = node.data.condition
           if (
             !condition.sensor ||
-            (condition.sensor.type === SensorType.Viscosity && condition.measurement <= 0)
+            (condition.sensor.type === SensorType.Speed && condition.measurement <= 0)
           ) {
             node.selected = true
           }

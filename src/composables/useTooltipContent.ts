@@ -12,7 +12,7 @@ export function useTooltipContent(process: FlowControlProcess) {
   } else if (process && process.injection === 'Needle') {
     return `
         <p  style="font-size: 10px">
-        <strong>${process.injection}</strong>
+        <strong>Inject</strong>
         <strong>${process.fluid ? process.fluid.name : 'Fluid'}</strong> into <strong>${process.inlet}</strong> at a
         rate of <strong>${process.flowrate}</strong> for
         <strong>${process.startTime} - ${process.endTime}s</strong></p>

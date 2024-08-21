@@ -115,11 +115,7 @@ function onDragOver(event: any) {
 function onDrop(event: any) {
   if (!svg.value) return
   const type = event.dataTransfer?.getData('application/desgin')
-  if (
-    type === SensorType.Temperature ||
-    type === SensorType.Viscosity ||
-    type === SensorType.Color
-  ) {
+  if (type === SensorType.Temperature || type === SensorType.Speed || type === SensorType.Color) {
     const left = svg.value.getBoundingClientRect().left
     const top = svg.value.getBoundingClientRect().top
     useDrop(left, top, event, transform.value, getSensorId(), addSensor)
@@ -345,7 +341,7 @@ onMounted(() => {
       .attr('dy', (sensor) => -sensor.radius - 5) // Adjust the text position based on your preference
       .attr('text-anchor', 'middle') // Center the text on the circle
       .style('font-size', 12)
-      .text((sensor) => sensor.name)
+      .text((sensor) => sensor.type + ' ' + sensor.name)
 
     sensorEnter.call(d3Drag()).on('click', (event) => {
       event.stopPropagation()
@@ -364,7 +360,7 @@ onMounted(() => {
       .attr('x', (sensor) => sensor.position.x)
       .attr('y', (sensor) => sensor.position.y)
       .attr('dy', (sensor) => -sensor.radius - 5)
-      .text((sensor) => sensor.name)
+      .text((sensor) => sensor.type + ' ' + sensor.name)
 
     sensorRect
       .attr('x', (sensor) => sensor.position.x - sensor.radius)

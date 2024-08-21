@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { SensorType } from '@/types/sensor'
 const isPanelMenuOpen = defineModel<boolean>('isPanelMenuOpen', { default: false })
-const sensorTypes = [SensorType.Temperature, SensorType.Viscosity, SensorType.Color]
+const sensorTypes = [SensorType.Temperature, SensorType.Speed, SensorType.Color]
 
 function onDragStart(event: DragEvent, sensorType: string) {
   if (event.dataTransfer) {

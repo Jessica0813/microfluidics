@@ -1,6 +1,6 @@
 export enum SensorType {
   Temperature = 'temperature',
-  Viscosity = 'viscosity',
+  Speed = 'speed',
   Color = 'color'
 }
 

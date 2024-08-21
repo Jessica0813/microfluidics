@@ -237,7 +237,7 @@ function onDrop(event: any) {
             endTime: 1.0,
             duration: 1.0,
             inlet: 'inlet 1',
-            injection: 'pump',
+            injection: 'Pump',
             fluid: null,
             pressure: 0,
             flowrate: 0
@@ -309,7 +309,7 @@ function onDrop(event: any) {
   } else if (type === NodeType.Process) {
     nodeData = {
       inlet: 'inlet 1',
-      injection: 'pump',
+      injection: 'Pump',
       fluid: null,
       pressure: 0,
       duration: 0,

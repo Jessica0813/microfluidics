@@ -47,7 +47,7 @@
         font-size: 14px;
       "
     >
-      <p v-if="flowControl.injection === '' || flowControl.injection === 'pump'">
+      <p v-if="flowControl.injection === '' || flowControl.injection === 'Pump'">
         <strong>{{ flowControl.injection + ' ' }}</strong>
         <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'Fluid' }}</strong> into
         <strong>{{ flowControl.inlet }}</strong> at
@@ -93,7 +93,7 @@ const flowControl = computed(() => {
   if (data === undefined || data.flowControl === undefined) {
     return {
       inlet: 'inlet 1',
-      injection: 'pump',
+      injection: 'Pump',
       fluid: 'water',
       pressure: 0,
       duration: 0,

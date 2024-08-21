@@ -2,6 +2,18 @@
   <div class="bar">
     <v-menu
       offset="10"
+      v-model="isInjectionMenuOpen"
+      @update:model-value="(value) => updateState(value)"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
+          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
+    </v-menu>
+    <v-menu
+      offset="10"
       v-model="isFluidMenuOpen"
       @update:model-value="(value) => updateState(value)"
     >
@@ -25,21 +37,9 @@
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
     </v-menu>
     <v-menu
-      offset="10"
-      v-model="isInjectionMenuOpen"
-      @update:model-value="(value) => updateState(value)"
-    >
-      <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
-          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
-        </button>
-      </template>
-      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
-    </v-menu>
-    <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
+      v-if="flowControl.injection === '' || flowControl.injection === 'Pump'"
       v-model="isPressureMenuOpen"
       @update:model-value="(value) => updateState(value)"
     >
@@ -53,7 +53,7 @@
     <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-else-if="flowControl.injection === 'needle'"
+      v-else-if="flowControl.injection === 'Needle'"
       v-model="isViscosityMenuOpen"
       @update:model-value="(value) => updateState(value)"
     >
@@ -121,7 +121,7 @@ const flowControl = computed(() => {
   if (data === undefined || data.flowControl === undefined) {
     return {
       inlet: 'inlet 1',
-      injection: 'pump',
+      injection: 'Pump',
       fluid: null,
       pressure: 0,
       duration: 0,
@@ -132,7 +132,7 @@ const flowControl = computed(() => {
 })
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['pump', 'needle']
+const injections = ['Pump', 'Needle']
 let oldFlowControl: FlowControl = JSON.parse(JSON.stringify(flowControl.value))
 
 watch(

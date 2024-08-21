@@ -1,7 +1,7 @@
 import type { FlowControlProcess } from '@/types/node'
 
 export function useTooltipContent(process: FlowControlProcess) {
-  if (process && (process.injection === '' || process.injection === 'pump')) {
+  if (process && (process.injection === '' || process.injection === 'Pump')) {
     return `
         <p  style="font-size: 10px">
         <strong>${process.injection}</strong>
@@ -9,7 +9,7 @@ export function useTooltipContent(process: FlowControlProcess) {
         <strong>${process.pressure}</strong> pressure for
         <strong>${process.startTime} - ${process.endTime}s</strong></p>
           `
-  } else if (process && process.injection === 'needle') {
+  } else if (process && process.injection === 'Needle') {
     return `
         <p  style="font-size: 10px">
         <strong>${process.injection}</strong>

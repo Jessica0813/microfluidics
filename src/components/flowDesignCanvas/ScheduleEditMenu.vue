@@ -24,6 +24,18 @@
   <div class="bar" v-else>
     <v-menu
       offset="10"
+      v-model="isInjectionMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
+          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
+    </v-menu>
+    <v-menu
+      offset="10"
       v-model="isFluidMenuOpen"
       @update:model-value="(value) => compareAndUpdateState(value)"
     >
@@ -47,21 +59,9 @@
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
     </v-menu>
     <v-menu
-      offset="10"
-      v-model="isInjectionMenuOpen"
-      @update:model-value="(value) => compareAndUpdateState(value)"
-    >
-      <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
-          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
-        </button>
-      </template>
-      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
-    </v-menu>
-    <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
+      v-if="flowControl.injection === '' || flowControl.injection === 'Pump'"
       v-model="isPressureMenuOpen"
       @update:model-value="(value) => compareAndUpdateState(value)"
     >
@@ -75,7 +75,7 @@
     <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-else-if="flowControl.injection === 'needle'"
+      v-else-if="flowControl.injection === 'Needle'"
       v-model="isFlowrateMenuOpen"
       @update:model-value="(value) => compareAndUpdateState(value)"
     >
@@ -152,7 +152,7 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
     endTime: 1.0,
     duration: 1.0,
     inlet: 'inlet 1',
-    injection: 'pump',
+    injection: 'Pump',
     fluid: null,
     pressure: 0,
     flowrate: 0
@@ -188,7 +188,7 @@ const scheduledFlowControl = computed(() => {
 })
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['pump', 'needle']
+const injections = ['Pump', 'Needle']
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 
@@ -239,7 +239,7 @@ watch(
         endTime: 1.0,
         duration: 1.0,
         inlet: 'inlet 1',
-        injection: 'pump',
+        injection: 'Pump',
         fluid: null,
         pressure: 0,
         flowrate: 0

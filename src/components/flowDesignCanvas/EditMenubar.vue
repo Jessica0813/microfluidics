@@ -69,7 +69,7 @@ const flowControl = ref({
   endTime: 1.0,
   duration: 1.0,
   inlet: 'inlet 1',
-  injection: 'pump',
+  injection: 'Pump',
   fluid: null,
   pressure: 0,
   flowrate: 0

@@ -115,7 +115,6 @@ function showSensorEditMenu() {
   }
 
   if (selectedSensor.value.id !== '' && !useElementInView(props.designCanvasRef, target)) {
-    console.error('target not in view')
     return
   }
   useMenuPositionCalculatorForSensor(target, sensorFloatingRef.value).then((pos) => {

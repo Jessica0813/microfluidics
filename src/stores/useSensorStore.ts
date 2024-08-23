@@ -19,23 +19,8 @@ export const useSensorStore = defineStore('sensor', () => {
 
   let sensorId = 1
 
-  // let tempSensorId = 1
-  // let viscSensorId = 1
-  // let colorSensorId = 1
-
   function getSensorId() {
     return `sensor_${sensorId++}`
-    // if (sensorType === undefined) {
-    //   return ''
-    // }
-    // switch (sensorType) {
-    //   case SensorType.Temperature:
-    //     return `temp_sensor_${tempSensorId++}`
-    //   case SensorType.Viscosity:
-    //     return `visc_sensor_${viscSensorId++}`
-    //   case SensorType.Color:
-    //     return `col_sensor_${colorSensorId++}`
-    // }
   }
 
   function toggleIsMetaKeyPressed() {

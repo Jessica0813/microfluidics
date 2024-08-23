@@ -98,11 +98,11 @@ const isCanvasFocused = ref(false)
 const isButtonHovered = ref(false)
 const isPanelMenuOpen = ref(false)
 
-const { sensors, removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
+const { removeAllSelectedSensors, addSensor, getSensorId, editSensor, editMultiSensors } =
   useSensorStore()
 const { setZooming, setD3Zoom, setD3Selection, setTransform } = useDesignCanvasStore()
 const { transform } = storeToRefs(useDesignCanvasStore())
-const { selectedSensors } = storeToRefs(useSensorStore())
+const { selectedSensors, sensors } = storeToRefs(useSensorStore())
 
 function onDragOver(event: any) {
   event.preventDefault()
@@ -227,7 +227,9 @@ onMounted(() => {
   setD3Selection(d3Selection.value)
 
   const updateCirclesWithText = () => {
-    const sensorGroup = canvas.selectAll<SVGGElement, Sensor>('.sensor-group').data(sensors)
+    const sensorGroup = canvas
+      .selectAll<SVGGElement, Sensor>('.sensor-group')
+      .data(sensors.value, (d) => d.id)
     const sensor = sensorGroup.selectAll('.sensor').data((d) => [d])
     const sensorText = sensorGroup.selectAll('.sensor-label').data((d) => [d])
     const sensorRect = sensorGroup.selectAll('.sensor-rect').data((d) => [d])
@@ -394,7 +396,7 @@ onMounted(() => {
   }
 
   // Watch for changes in the sensors array and update the visualization
-  watch(() => sensors, updateCirclesWithText, { deep: true, immediate: true })
+  watch(sensors, updateCirclesWithText, { deep: true, immediate: true })
 })
 </script>
 

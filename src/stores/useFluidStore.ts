@@ -3,9 +3,17 @@ import { ref, computed } from 'vue'
 import type { Fluid } from '@/types/fluid.ts'
 
 export const useFluidStore = defineStore('fluid', () => {
-  const fluids = ref<Fluid[]>([])
+  const fluids = ref<Fluid[]>([
+    {
+      id: 'fluid-0',
+      name: 'Air',
+      color: '#00000000',
+      viscosity: 0.018,
+      withParticle: 'No'
+    }
+  ])
 
-  let fluidIndex = 3
+  let fluidIndex = 1
 
   const fluidNames = computed(() => fluids.value.map((fluid) => fluid.name))
 

@@ -2,18 +2,6 @@
   <div class="bar">
     <v-menu
       offset="10"
-      v-model="isInjectionMenuOpen"
-      @update:model-value="(value) => updateState(value)"
-    >
-      <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
-          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
-        </button>
-      </template>
-      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
-    </v-menu>
-    <v-menu
-      offset="10"
       v-model="isFluidMenuOpen"
       @update:model-value="(value) => updateState(value)"
     >
@@ -35,6 +23,18 @@
         </button>
       </template>
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
+    </v-menu>
+    <v-menu
+      offset="10"
+      v-model="isInjectionMenuOpen"
+      @update:model-value="(value) => updateState(value)"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
+          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
     </v-menu>
     <v-menu
       :close-on-content-click="false"
@@ -83,7 +83,7 @@
       @update:model-value="(value) => updateState(value)"
     >
       <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Inlet State' }">
           <v-icon size="small" color="#66615b">mdi-transit-connection-horizontal</v-icon>
         </button>
       </template>

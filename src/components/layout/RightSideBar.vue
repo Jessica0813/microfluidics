@@ -44,8 +44,8 @@ function checkNodeDataValidity() {
           if (
             !flowControl.inlet ||
             !flowControl.fluid ||
-            (flowControl.injection === 'Pump' && flowControl.pressure <= 0) ||
-            (flowControl.injection === 'Needle' && flowControl.flowrate <= 0) ||
+            (flowControl.injection === 'pump' && flowControl.pressure <= 0) ||
+            (flowControl.injection === 'needle' && flowControl.flowrate <= 0) ||
             flowControl.duration <= 0
           ) {
             node.selected = true
@@ -83,8 +83,8 @@ function checkNodeDataValidity() {
             if (
               !flowControl.inlet ||
               !flowControl.fluid ||
-              (flowControl.injection === 'Pump' && flowControl.pressure <= 0) ||
-              (flowControl.injection === 'Needle' && flowControl.flowrate <= 0) ||
+              (flowControl.injection === 'pump' && flowControl.pressure <= 0) ||
+              (flowControl.injection === 'needle' && flowControl.flowrate <= 0) ||
               flowControl.duration <= 0
             ) {
               node.selected = true

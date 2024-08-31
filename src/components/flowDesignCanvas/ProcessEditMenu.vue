@@ -39,7 +39,7 @@
     <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-if="flowControl.injection === '' || flowControl.injection === 'Pump'"
+      v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
       v-model="isPressureMenuOpen"
       @update:model-value="(value) => updateState(value)"
     >
@@ -53,7 +53,7 @@
     <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-else-if="flowControl.injection === 'Needle'"
+      v-else-if="flowControl.injection === 'needle'"
       v-model="isViscosityMenuOpen"
       @update:model-value="(value) => updateState(value)"
     >
@@ -76,6 +76,18 @@
         </button>
       </template>
       <CustomizedNumberInput v-model:number="flowControl.duration" />
+    </v-menu>
+    <v-menu
+      offset="10"
+      v-model="isInletStateMenuOpen"
+      @update:model-value="(value) => updateState(value)"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
+          <v-icon size="small" color="#66615b">mdi-transit-connection-horizontal</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.inletState" :items="inletStates" />
     </v-menu>
     <button
       class="customized-button"
@@ -111,6 +123,7 @@ const isInjectionMenuOpen = ref(false)
 const isPressureMenuOpen = ref(false)
 const isViscosityMenuOpen = ref(false)
 const isDurationMenuOpen = ref(false)
+const isInletStateMenuOpen = ref(false)
 
 const { findNode, removeNodes, removeEdges, getConnectedEdges } = useVueFlow()
 const { addState } = useStateStore()
@@ -121,18 +134,20 @@ const flowControl = computed(() => {
   if (data === undefined || data.flowControl === undefined) {
     return {
       inlet: 'inlet 1',
-      injection: 'Pump',
+      injection: 'pump',
       fluid: null,
       pressure: 0,
       duration: 0,
-      flowrate: 0
+      flowrate: 0,
+      inletState: 'connect'
     }
   }
   return data.flowControl
 })
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['Pump', 'Needle']
+const injections = ['pump', 'needle']
+const inletStates = ['connect', 'block']
 let oldFlowControl: FlowControl = JSON.parse(JSON.stringify(flowControl.value))
 
 watch(
@@ -165,7 +180,8 @@ function updateState(newValue: boolean) {
         flowControl.value.fluid &&
         flowControl.value.fluid.id !== oldFlowControl.fluid.id) ||
       flowControl.value.injection !== oldFlowControl.injection ||
-      flowControl.value.inlet !== oldFlowControl.inlet
+      flowControl.value.inlet !== oldFlowControl.inlet ||
+      flowControl.value.inletState !== oldFlowControl.inletState
     ) {
       const newFlowControl = JSON.parse(JSON.stringify(flowControl.value))
       const state: StateController = {

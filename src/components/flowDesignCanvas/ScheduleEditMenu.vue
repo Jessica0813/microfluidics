@@ -61,7 +61,7 @@
     <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-if="flowControl.injection === '' || flowControl.injection === 'Pump'"
+      v-if="flowControl.injection === '' || flowControl.injection === 'pump'"
       v-model="isPressureMenuOpen"
       @update:model-value="(value) => compareAndUpdateState(value)"
     >
@@ -75,7 +75,7 @@
     <v-menu
       :close-on-content-click="false"
       offset="10"
-      v-else-if="flowControl.injection === 'Needle'"
+      v-else-if="flowControl.injection === 'needle'"
       v-model="isFlowrateMenuOpen"
       @update:model-value="(value) => compareAndUpdateState(value)"
     >
@@ -152,7 +152,7 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
     endTime: 1.0,
     duration: 1.0,
     inlet: 'inlet 1',
-    injection: 'Pump',
+    injection: 'pump',
     fluid: null,
     pressure: 0,
     flowrate: 0
@@ -188,7 +188,7 @@ const scheduledFlowControl = computed(() => {
 })
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
-const injections = ['Pump', 'Needle']
+const injections = ['pump', 'needle']
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 
@@ -239,7 +239,7 @@ watch(
         endTime: 1.0,
         duration: 1.0,
         inlet: 'inlet 1',
-        injection: 'Pump',
+        injection: 'pump',
         fluid: null,
         pressure: 0,
         flowrate: 0

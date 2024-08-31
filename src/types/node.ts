@@ -23,6 +23,7 @@ export interface FlowControl {
   pressure: number
   duration: number
   flowrate: number
+  inletState: string
 }
 
 export interface ScheduledFlowControl {

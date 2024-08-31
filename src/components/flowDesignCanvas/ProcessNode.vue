@@ -47,21 +47,30 @@
         font-size: 14px;
       "
     >
-      <p v-if="flowControl.injection === '' || flowControl.injection === 'Pump'">
-        <strong>{{ flowControl.injection + ' ' }}</strong>
-        <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'Fluid' }}</strong> into
-        <strong>{{ flowControl.inlet }}</strong> at
-        <strong>{{ flowControl.pressure }}</strong> pressure for
+      <span v-if="flowControl.injection === '' || flowControl.injection === 'pump'">
+        Inject
+        <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'fluid' }}</strong> into
+        <strong>{{ flowControl.inlet }}</strong> with a
+        <strong>{{ flowControl.injection + ' ' }}</strong> at
+        <strong>{{ flowControl.pressure }}</strong> psi for
         <strong>{{ flowControl.duration }}</strong
-        >s
-      </p>
-      <p v-else>
-        <strong>Inject </strong>
-        <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'Fluid' }}</strong> into
-        <strong>{{ flowControl.inlet }}</strong> at a rate of
-        <strong>{{ flowControl.flowrate }}</strong> for <strong>{{ flowControl.duration }}</strong
-        >s
-      </p>
+        >s,
+      </span>
+      <span v-else>
+        Inject
+        <strong>{{ flowControl.fluid ? flowControl.fluid.name : 'fluid' }}</strong> into
+        <strong>{{ flowControl.inlet }}</strong> with a
+        <strong>{{ flowControl.injection + ' ' }}</strong> at
+        <strong>{{ flowControl.flowrate }}</strong> µL/min for
+        <strong>{{ flowControl.duration }}</strong
+        >s,
+      </span>
+      <span v-if="flowControl.inletState === 'connect'">
+        then connect <strong>{{ flowControl.inlet }}</strong> to air
+      </span>
+      <span v-else>
+        then block <strong>{{ flowControl.inlet }}</strong> from air
+      </span>
     </div>
     <div
       v-else
@@ -93,11 +102,12 @@ const flowControl = computed(() => {
   if (data === undefined || data.flowControl === undefined) {
     return {
       inlet: 'inlet 1',
-      injection: 'Pump',
+      injection: 'pump',
       fluid: 'water',
       pressure: 0,
       duration: 0,
-      flowrate: 0
+      flowrate: 0,
+      inletState: 'connect'
     }
   }
   return data.flowControl

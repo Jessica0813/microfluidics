@@ -9,7 +9,6 @@ export enum NodeType {
 }
 
 export interface Condition {
-  name: string
   sensor: Sensor
   operator: string
   color: string
@@ -28,13 +27,11 @@ export interface FlowControl {
 
 export interface ScheduledFlowControl {
   totalDuration: number
-  name: string
   processes: FlowControlProcess[]
 }
 
 export interface FlowControlProcess {
   id: string
-  name: string
   selected: boolean
   startTime: number
   endTime: number
@@ -44,4 +41,5 @@ export interface FlowControlProcess {
   fluid: Fluid | null
   pressure: number
   flowrate: number
+  inletState: string
 }

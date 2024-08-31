@@ -24,18 +24,6 @@
   <div class="bar" v-else>
     <v-menu
       offset="10"
-      v-model="isInjectionMenuOpen"
-      @update:model-value="(value) => compareAndUpdateState(value)"
-    >
-      <template v-slot:activator="{ props }">
-        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
-          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
-        </button>
-      </template>
-      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
-    </v-menu>
-    <v-menu
-      offset="10"
       v-model="isFluidMenuOpen"
       @update:model-value="(value) => compareAndUpdateState(value)"
     >
@@ -57,6 +45,18 @@
         </button>
       </template>
       <CustomizedDropdown v-model:selected="flowControl.inlet" :items="inlets" />
+    </v-menu>
+    <v-menu
+      offset="10"
+      v-model="isInjectionMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Injection' }">
+          <v-icon size="small" color="#66615b">mdi-selection-ellipse-arrow-inside</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.injection" :items="injections" />
     </v-menu>
     <v-menu
       :close-on-content-click="false"
@@ -113,6 +113,18 @@
         />
       </div>
     </v-menu>
+    <v-menu
+      offset="10"
+      v-model="isInletStateMenuOpen"
+      @update:model-value="(value) => compareAndUpdateState(value)"
+    >
+      <template v-slot:activator="{ props }">
+        <button class="customized-button" v-bind="props" v-tippy="{ content: 'Inlet State' }">
+          <v-icon size="small" color="#66615b">mdi-transit-connection-horizontal</v-icon>
+        </button>
+      </template>
+      <CustomizedDropdown v-model:selected="flowControl.inletState" :items="inletStates" />
+    </v-menu>
     <button class="customized-button" @click="deleteSubprocess" v-tippy="{ content: 'Delete' }">
       <v-icon size="small" color="#66615b">mdi-trash-can-outline</v-icon>
     </button>
@@ -146,7 +158,6 @@ const props = defineProps<{
 const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
   default: {
     id: '-1',
-    name: 'xyz',
     selected: false,
     startTime: 0.0,
     endTime: 1.0,
@@ -155,7 +166,8 @@ const flowControl = defineModel<FlowControlProcess>('editedFlowControl', {
     injection: 'pump',
     fluid: null,
     pressure: 0,
-    flowrate: 0
+    flowrate: 0,
+    inletState: 'connect'
   }
 })
 
@@ -166,6 +178,7 @@ const isInjectionMenuOpen = ref(false)
 const isPressureMenuOpen = ref(false)
 const isFlowrateMenuOpen = ref(false)
 const isSubProcessDurationMenuOpen = ref(false)
+const isInletStateMenuOpen = ref(false)
 
 const isChildProcessSelected = ref(false)
 const editedProcessId = ref(-1)
@@ -180,7 +193,6 @@ const scheduledFlowControl = computed(() => {
   if (data === undefined || data.scheduledFlowControl === undefined) {
     return {
       totalDuration: 20,
-      name: 'a',
       processes: []
     }
   }
@@ -189,6 +201,7 @@ const scheduledFlowControl = computed(() => {
 
 const inlets = ['inlet 1', 'inlet 2', 'inlet 3']
 const injections = ['pump', 'needle']
+const inletStates = ['connect', 'block']
 let oldScheduledFlowControl = JSON.parse(JSON.stringify(scheduledFlowControl.value))
 let oldFlowControl = Object.assign({}, flowControl.value)
 
@@ -233,7 +246,6 @@ watch(
     if (i === scheduledFlowControl.value.processes.length) {
       flowControl.value = {
         id: '-1',
-        name: 'xyz',
         selected: false,
         startTime: 0.0,
         endTime: 1.0,
@@ -242,7 +254,8 @@ watch(
         injection: 'pump',
         fluid: null,
         pressure: 0,
-        flowrate: 0
+        flowrate: 0,
+        inletState: 'connect'
       }
       isChildProcessSelected.value = false
       editedProcessId.value = -1
@@ -304,7 +317,8 @@ function compareAndUpdateState(newValue: boolean) {
           flowControl.value.fluid &&
           flowControl.value.fluid.id !== oldFlowControl.fluid.id) ||
         flowControl.value.injection !== oldFlowControl.injection ||
-        flowControl.value.inlet !== oldFlowControl.inlet
+        flowControl.value.inlet !== oldFlowControl.inlet ||
+        flowControl.value.inletState !== oldFlowControl.inletState
       ) {
         updataState(newData, flowControl.value.id)
       } else if (

@@ -72,7 +72,8 @@ const flowControl = ref({
   injection: 'pump',
   fluid: null,
   pressure: 0,
-  flowrate: 0
+  flowrate: 0,
+  inletState: 'connect'
 })
 const floatingRef = ref<HTMLDivElement | null>(null)
 const isEditMenuOpen = ref(false)
@@ -277,7 +278,8 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
       injection: processNodeData.injection,
       fluid: processNodeData.fluid,
       pressure: processNodeData.pressure,
-      flowrate: processNodeData.flowrate
+      flowrate: processNodeData.flowrate,
+      inletState: processNodeData.inletState
     })
 
     isNodeOverScheduleNode.value = false

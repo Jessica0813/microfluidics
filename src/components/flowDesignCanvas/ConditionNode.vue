@@ -79,7 +79,6 @@ const nodeIsHovered = ref<boolean>(false)
 const condition = computed(() => {
   if (data === undefined || data.condition === undefined) {
     return {
-      name: 'xxx',
       sensor: null,
       operator: '=',
       color: '#ffffff',

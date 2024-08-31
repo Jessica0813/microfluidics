@@ -110,7 +110,6 @@ const condition = computed(() => {
   const data = findNode(props.id)?.data
   if (data === undefined || data.condition === undefined) {
     return {
-      name: 'xxx',
       sensor: null,
       operator: '=',
       color: '#FFFFFF',

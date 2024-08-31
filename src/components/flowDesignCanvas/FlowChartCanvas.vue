@@ -231,7 +231,6 @@ function onDrop(event: any) {
           const subProcessId = getSubProcessId()
           flowControlSubprocesses.push({
             id: subProcessId,
-            name: subProcessId,
             selected: false,
             startTime: 0.0,
             endTime: 1.0,
@@ -240,7 +239,8 @@ function onDrop(event: any) {
             injection: 'pump',
             fluid: null,
             pressure: 0,
-            flowrate: 0
+            flowrate: 0,
+            inletState: 'connect'
           })
           const newData = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
           const state: StateController = {
@@ -297,7 +297,6 @@ function onDrop(event: any) {
   if (type === NodeType.Schedule) {
     nodeData = {
       totalDuration: 20,
-      name: 'a',
       processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }
@@ -319,7 +318,6 @@ function onDrop(event: any) {
     newNode = { ...newNode, data: { flowControl: nodeData, isOverScheduleNode: false } }
   } else if (type === NodeType.Condition) {
     nodeData = {
-      name: 'xxx',
       sensor: null,
       operator: '=',
       color: '#FFFFFF',

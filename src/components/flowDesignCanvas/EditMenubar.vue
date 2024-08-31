@@ -266,6 +266,9 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
     const scheduleNodeData = intersectionScheduleNode.value.data.scheduledFlowControl
     const flowControlSubprocesses = scheduleNodeData.processes
     const oldData = JSON.parse(JSON.stringify(scheduleNodeData))
+    if (scheduleNodeData.totalDuration < processNodeData.duration) {
+      scheduleNodeData.totalDuration = processNodeData.duration
+    }
     const subProcessId = getSubProcessId()
     flowControlSubprocesses.push({
       id: subProcessId,

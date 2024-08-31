@@ -228,6 +228,9 @@ function onDrop(event: any) {
         ) {
           const flowControlSubprocesses = node.data.scheduledFlowControl.processes
           const oldData = JSON.parse(JSON.stringify(node.data.scheduledFlowControl))
+          if (node.data.scheduledFlowControl.totalDuration < 1) {
+            node.data.scheduledFlowControl.totalDuration = 1
+          }
           const subProcessId = getSubProcessId()
           flowControlSubprocesses.push({
             id: subProcessId,
@@ -296,7 +299,7 @@ function onDrop(event: any) {
 
   if (type === NodeType.Schedule) {
     nodeData = {
-      totalDuration: 20,
+      totalDuration: 0,
       processes: []
     }
     newNode = { ...newNode, data: { scheduledFlowControl: nodeData } }

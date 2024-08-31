@@ -88,7 +88,7 @@ const editedProcess = ref<FlowControlProcess>()
 const scheduledFlowControl = computed(() => {
   if (data === undefined || data.scheduledFlowControl === undefined) {
     return {
-      totalDuration: 20,
+      totalDuration: 0,
       name: 'a',
       processes: []
     }

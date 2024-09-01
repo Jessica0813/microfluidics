@@ -235,9 +235,9 @@ function onDrop(event: any) {
           flowControlSubprocesses.push({
             id: subProcessId,
             selected: false,
-            startTime: 0.0,
-            endTime: 1.0,
-            duration: 1.0,
+            startTime: 0,
+            endTime: 1,
+            duration: 1,
             inlet: 'inlet 1',
             injection: 'pump',
             fluid: null,

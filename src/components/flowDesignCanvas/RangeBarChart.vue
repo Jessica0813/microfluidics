@@ -12,7 +12,7 @@ import { onMounted, ref, watch } from 'vue'
 
 import { useVueFlow } from '@vue-flow/core'
 import { select } from 'd3-selection'
-import { scaleLinear, scaleBand, axisTop } from 'd3'
+import { scaleLinear, scaleBand, axisTop, format } from 'd3'
 import tippy from 'tippy.js'
 import type { Instance } from 'tippy.js'
 
@@ -52,6 +52,25 @@ function onClick(event: MouseEvent) {
   }
 }
 
+function createAxisValues(totalDuration: number): number[] {
+  const array: number[] = []
+
+  const integerFormat = format('.0f')
+  const floatFormat = format('.1f')
+
+  for (let currentValue = 0; currentValue < totalDuration; currentValue += 10) {
+    array.push(Number(integerFormat(currentValue)))
+  }
+
+  if (Number.isInteger(totalDuration)) {
+    array.push(Number(integerFormat(totalDuration)))
+  } else {
+    array.push(Number(floatFormat(totalDuration)))
+  }
+
+  return array
+}
+
 onMounted(() => {
   if (!chart.value) return
   const svgChart = select(chart.value)
@@ -74,11 +93,14 @@ onMounted(() => {
 
     svgChart.attr('width', width).attr('height', height)
 
+    const xAxisValues = createAxisValues(scheduledFlowControl.value.totalDuration)
+
     xAxis.call(
       axisTop(x)
-        .ticks(width / 100)
+        .tickValues(xAxisValues)
         .tickSize(-height)
         .tickSizeOuter(0)
+        .tickFormat((d) => (Number.isInteger(d) ? format('.0f')(d) : format('.1f')(d)))
     )
     xAxis.selectAll('.tick line').attr('opacity', 0.2)
     xAxis.selectAll('.tick text').attr('opacity', 0.6)

@@ -268,6 +268,8 @@ onNodeDragStop((dragEvent: NodeDragEvent) => {
     const oldData = JSON.parse(JSON.stringify(scheduleNodeData))
     if (scheduleNodeData.totalDuration < processNodeData.duration) {
       scheduleNodeData.totalDuration = processNodeData.duration
+    } else if (scheduleNodeData.totalDuration === 0 && processNodeData.duration === 0) {
+      scheduleNodeData.totalDuration = 1
     }
     const subProcessId = getSubProcessId()
     flowControlSubprocesses.push({

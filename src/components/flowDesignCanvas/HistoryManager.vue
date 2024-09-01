@@ -196,7 +196,7 @@ function undo() {
             id: state.objectId[1],
             type: state.oldState[1].nodeType || NodeType.Process,
             position: state.oldState[1].objectPosition || { x: 0, y: 0 },
-            data: state.oldState[1].data,
+            data: { flowControl: state.oldState[1].data },
             selected: true
           }
           addNodes([node])

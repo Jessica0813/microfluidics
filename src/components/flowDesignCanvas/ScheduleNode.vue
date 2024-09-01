@@ -89,7 +89,6 @@ const scheduledFlowControl = computed(() => {
   if (data === undefined || data.scheduledFlowControl === undefined) {
     return {
       totalDuration: 0,
-      name: 'a',
       processes: []
     }
   }
@@ -106,16 +105,22 @@ const isSelected = computed(() => {
   return false
 })
 
-watch(isSelected, (newValue, oldValue) => {
-  if (newValue === false && oldValue === true) {
+watch(isSelected, (newValue) => {
+  if (newValue === false) {
     if (editedProcess.value) {
       editedProcess.value.selected = false
     }
+  } else {
+    // loop through subProcess set editedProcess Value
+    scheduledFlowControl.value.processes.forEach((process: any) => {
+      if (process.selected) {
+        editedProcess.value = process
+      }
+    })
   }
 })
 
 function unselectProcess() {
-  //potential bug
   if (editedProcess.value) {
     editedProcess.value.selected = false
   }

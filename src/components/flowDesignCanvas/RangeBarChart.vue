@@ -27,7 +27,6 @@ const props = defineProps({
 const scheduledFlowControl = defineModel<ScheduledFlowControl>('scheduledFlowControl', {
   default: {
     totalDuration: 20,
-    name: 'a',
     processes: []
   }
 })
